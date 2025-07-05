@@ -1,75 +1,120 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React from 'react';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
+import { useRouter } from 'expo-router';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const { width, height } = Dimensions.get('window');
 
 export default function HomeScreen() {
+  const router = useRouter();
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      style={{ flex: 1 }}
+    >
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Large Centered Image */}
         <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+          source={require('../../assets/images/appointment login.jpeg')}
+          style={styles.image}
+          resizeMode="contain"
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+
+        {/* Heading Text */}
+        <Text style={styles.heading}>
+          Connect With Your Principal{'\n'}Schedule Meetings. No Waiting.
+        </Text>
+
+        {/* Login Button */}
+        <TouchableOpacity
+          style={styles.loginButton}
+          onPress={() => router.push('/login-form')}
+        >
+          <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
+
+        {/* Register Button */}
+        <TouchableOpacity
+          style={styles.registerButton}
+          onPress={() => router.push('/register')}
+        >
+          <Text style={styles.buttonTextAlt}>Register</Text>
+        </TouchableOpacity>
+
+        {/* Footer */}
+        <Text style={styles.footer}>Don’t have a college code? Learn more</Text>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
+  container: {
+    flexGrow: 1,
+    backgroundColor: '#0b0c10',
     alignItems: 'center',
-    gap: 8,
+    justifyContent: 'flex-start',
+    paddingTop: height * 0.08,
+    paddingHorizontal: width * 0.06,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  image: {
+    width: width * 0.85,
+    height: height * 0.3,
+    marginBottom: height * 0.05,
+    borderRadius: 20,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  heading: {
+    color: '#ffffff',
+    fontSize:
+      width < 360 ? 17 : width < 480 ? 19 : width < 768 ? 22 : 26,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginBottom: height * 0.05,
+  },
+  loginButton: {
+    backgroundColor: '#2979ff',
+    paddingVertical: height * 0.018,
+    borderRadius: 25,
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  registerButton: {
+    backgroundColor: '#1f1f1f',
+    paddingVertical: height * 0.018,
+    borderRadius: 25,
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: height * 0.04,
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: width < 360 ? 14 : 16,
+  },
+  buttonTextAlt: {
+    color: '#ccc',
+    fontWeight: 'bold',
+    fontSize: width < 360 ? 14 : 16,
+  },
+  footer: {
+    color: '#999',
+    fontSize: width < 360 ? 11 : 13,
+    textAlign: 'center',
+    marginBottom: 30,
   },
 });
