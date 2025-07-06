@@ -9,6 +9,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native';
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
@@ -20,6 +21,19 @@ export default function LoginForm() {
   const router = useRouter();
   const [selectedRole, setSelectedRole] = useState<'staff' | 'principal'>('staff');
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = () => {
+    if (!email || !password) {
+      Alert.alert('Missing Fields', 'Please enter both email and password.');
+      return;
+    }
+
+    // You can also validate email format or password strength here
+
+    router.push('/home');
+  };
 
   return (
     <KeyboardAvoidingView
@@ -50,6 +64,8 @@ export default function LoginForm() {
             style={styles.input}
             keyboardType="email-address"
             autoCapitalize="none"
+            value={email}
+            onChangeText={setEmail}
           />
         </View>
 
@@ -62,6 +78,8 @@ export default function LoginForm() {
               placeholderTextColor="#ccc"
               secureTextEntry={!showPassword}
               style={[styles.input, { flex: 1 }]}
+              value={password}
+              onChangeText={setPassword}
             />
             <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
               <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={20} color="#ccc" />
@@ -91,7 +109,7 @@ export default function LoginForm() {
         {/* Sign In Button */}
         <TouchableOpacity
           style={styles.signInButton}
-          onPress={() => router.push('/home')}
+          onPress={handleLogin}
         >
           <Text style={styles.signInText}>Sign In</Text>
         </TouchableOpacity>
@@ -104,7 +122,6 @@ export default function LoginForm() {
     </KeyboardAvoidingView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#0b0c10',
