@@ -5,66 +5,69 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  Dimensions,
   Alert,
 } from 'react-native';
-
-// REACT HOOKS
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-
-// STYLES
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { registerStyles } from './style';
+
+const { width } = Dimensions.get('window');
 
 export default function PersonalInfoForm() {
   const router = useRouter();
 
-  // Form state
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [collegeCode, setCollegeCode] = useState('');
-  const [selectedRole, setSelectedRole] = useState<'staff' | 'principal' | null>(null);
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<'staff' | 'principal' | ''>('');
 
-  // Handler
-  async function handleRegister(){
-
-    if (!fullName || !email || !phone || !collegeCode || !selectedRole) {
-      Alert.alert('Missing Information', 'Please fill out all fields before proceeding.');
+  const handleNext = async () => {
+    if (!fullName || !email || !phone || !collegeCode || !password || !selectedRole) {
+      Alert.alert('Validation Error', 'Please fill in all the fields.');
       return;
     }
-    else{
-      const data = {
-        "name":fullName,
-        "email":email,
-        "phone":phone,
-        "collegeCode":collegeCode,
-        "role":selectedRole
-      }
-      console.log(data)
-      try{
-        const url = "http://localhost:3000/register";
-        const response = await fetch(url,{
-          method:"POST",
-          headers:{
-            'Content-Type':'application/json',
-            'Access-Control-Allow-Origin':'null '
-          },
-          body:JSON.stringify(data)
-        })
 
-        if(response.ok){
-          const responseData = await response.json();
-          console.log("success:",responseData);
-        }
-        else{
-          console.log("Error:",response.status);
-        } 
+    try {
+      const userData = {
+        fullName,
+        email,
+        phone,
+        collegeCode,
+        password,
+        role: selectedRole,
+      };
+
+      const usersData = await AsyncStorage.getItem('registeredUsers');
+      const users = usersData ? JSON.parse(usersData) : [];
+
+      const emailExists = users.some((user: any) => user.email === email);
+      if (emailExists) {
+        Alert.alert('Already Registered', 'This email is already registered.');
+        return;
       }
-      catch(error){
-          console.error("Fetch error:",error);
-          }
+
+      users.push(userData);
+      await AsyncStorage.setItem('registeredUsers', JSON.stringify(users));
+
+      Alert.alert('Registration Successful', 'You can now log in.', [
+        {
+          text: 'OK',
+          onPress: () => router.push('/login'),
+        },
+      ]);
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'Failed to register. Please try again.');
     }
-
   };
+
+  const isFormValid =
+    fullName && email && phone && collegeCode && password && selectedRole;
 
   return (
     <ScrollView contentContainerStyle={registerStyles.container} showsVerticalScrollIndicator={false}>
@@ -74,11 +77,11 @@ export default function PersonalInfoForm() {
       <View style={registerStyles.inputBox}>
         <Text style={registerStyles.label}>Full Name</Text>
         <TextInput
-          placeholder="Enter your full name"
+          placeholder="Enter your fullname"
           placeholderTextColor="#ccc"
+          style={registerStyles.input}
           value={fullName}
           onChangeText={setFullName}
-          style={registerStyles.input}
         />
       </View>
 
@@ -89,22 +92,23 @@ export default function PersonalInfoForm() {
           placeholder="Enter your email"
           placeholderTextColor="#ccc"
           keyboardType="email-address"
+          autoCapitalize="none"
+          style={registerStyles.input}
           value={email}
           onChangeText={setEmail}
-          style={registerStyles.input}
         />
       </View>
 
-      {/* Phone Number */}
+      {/* Phone */}
       <View style={registerStyles.inputBox}>
         <Text style={registerStyles.label}>Phone Number</Text>
         <TextInput
           placeholder="Enter your phone number"
           placeholderTextColor="#ccc"
           keyboardType="phone-pad"
+          style={registerStyles.input}
           value={phone}
           onChangeText={setPhone}
-          style={registerStyles.input}
         />
       </View>
 
@@ -114,35 +118,78 @@ export default function PersonalInfoForm() {
         <TextInput
           placeholder="Enter college code"
           placeholderTextColor="#ccc"
+          style={registerStyles.input}
           value={collegeCode}
           onChangeText={setCollegeCode}
-          style={registerStyles.input}
         />
       </View>
 
-      {/* Role Toggle */}
+      {/* Password */}
+      <View style={registerStyles.inputBox}>
+        <Text style={registerStyles.label}>Password</Text>
+        <View style={registerStyles.passwordWrapper}>
+          <TextInput
+            placeholder="Enter your password"
+            placeholderTextColor="#ccc"
+            secureTextEntry={!showPassword}
+            style={[registerStyles.input, { flex: 1 }]}
+            value={password}
+            onChangeText={setPassword}
+          />
+          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+            <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={20} color="#ccc" />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Role Selection */}
       <Text style={registerStyles.label}>Select Role</Text>
       <View style={registerStyles.toggleContainer}>
         <TouchableOpacity
-          style={[registerStyles.toggleButton, selectedRole === 'staff' && registerStyles.toggleSelected]}
+          style={[
+            registerStyles.toggleButton,
+            selectedRole === 'staff' && registerStyles.toggleSelected,
+          ]}
           onPress={() => setSelectedRole('staff')}
         >
-          <Text style={selectedRole === 'staff' ? registerStyles.toggleTextSelected : registerStyles.toggleText}>
+          <Text
+            style={
+              selectedRole === 'staff'
+                ? registerStyles.toggleTextSelected
+                : registerStyles.toggleText
+            }
+          >
             Staff
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[registerStyles.toggleButton, selectedRole === 'principal' && registerStyles.toggleSelected]}
+          style={[
+            registerStyles.toggleButton,
+            selectedRole === 'principal' && registerStyles.toggleSelected,
+          ]}
           onPress={() => setSelectedRole('principal')}
         >
-          <Text style={selectedRole === 'principal' ? registerStyles.toggleTextSelected : registerStyles.toggleText}>
+          <Text
+            style={
+              selectedRole === 'principal'
+                ? registerStyles.toggleTextSelected
+                : registerStyles.toggleText
+            }
+          >
             Principal
           </Text>
         </TouchableOpacity>
       </View>
 
       {/* Next Button */}
-      <TouchableOpacity style={registerStyles.nextButton} onPress={handleRegister}>
+      <TouchableOpacity
+        style={[
+          registerStyles.nextButton,
+          !isFormValid && { backgroundColor: '#555' },
+        ]}
+        onPress={handleNext}
+        disabled={!isFormValid}
+      >
         <Text style={registerStyles.nextButtonText}>Next</Text>
       </TouchableOpacity>
     </ScrollView>

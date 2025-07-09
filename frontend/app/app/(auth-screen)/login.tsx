@@ -12,8 +12,7 @@ import {
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-
-// STYLES 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { loginStyles } from './style';
 
 export default function LoginForm() {
@@ -23,14 +22,43 @@ export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert('Missing Fields', 'Please enter both email and password.');
       return;
     }
 
-    // You can also validate email format or password strength here
+    try {
+      const usersData = await AsyncStorage.getItem('registeredUsers');
+      const users = usersData ? JSON.parse(usersData) : [];
 
+      const matchedUser = users.find(
+        (user: any) =>
+          user.email === email &&
+          user.password === password &&
+          user.role === selectedRole
+      );
+
+      if (matchedUser) {
+        Alert.alert('Login Success', 'Welcome!', [
+          {
+            text: 'OK',
+            onPress: () => {
+              if (selectedRole === 'staff') {
+                router.push('/staff-home');
+              } else {
+                router.push('/principal-home');
+              }
+            },
+          },
+        ]);
+      } else {
+        Alert.alert('Login Failed', 'Invalid email, password, or role.');
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Login Error', 'Something went wrong during login.');
+    }
   };
 
   return (
@@ -91,30 +119,56 @@ export default function LoginForm() {
         {/* Role Toggle */}
         <View style={loginStyles.toggleContainer}>
           <TouchableOpacity
-            style={[loginStyles.toggleButton, selectedRole === 'staff' && loginStyles.toggleSelected]}
+            style={[
+              loginStyles.toggleButton,
+              selectedRole === 'staff' && loginStyles.toggleSelected,
+            ]}
             onPress={() => setSelectedRole('staff')}
           >
-            <Text style={selectedRole === 'staff' ? loginStyles.toggleTextSelected : loginStyles.toggleText}>Staff</Text>
+            <Text
+              style={
+                selectedRole === 'staff'
+                  ? loginStyles.toggleTextSelected
+                  : loginStyles.toggleText
+              }
+            >
+              Staff
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[loginStyles.toggleButton, selectedRole === 'principal' && loginStyles.toggleSelected]}
+            style={[
+              loginStyles.toggleButton,
+              selectedRole === 'principal' && loginStyles.toggleSelected,
+            ]}
             onPress={() => setSelectedRole('principal')}
           >
-            <Text style={selectedRole === 'principal' ? loginStyles.toggleTextSelected : loginStyles.toggleText}>Principal</Text>
+            <Text
+              style={
+                selectedRole === 'principal'
+                  ? loginStyles.toggleTextSelected
+                  : loginStyles.toggleText
+              }
+            >
+              Principal
+            </Text>
           </TouchableOpacity>
         </View>
 
         {/* Sign In Button */}
-        <TouchableOpacity
-          style={loginStyles.signInButton}
-          onPress={handleLogin}
-        >
-          <Text style={loginStyles.signInText}>Sign In</Text>
+        <TouchableOpacity style={loginStyles.signInButton} onPress={handleLogin}>
+          <Text style={loginStyles.signInText}
+          onPress={() => router.push('/staff-home')}>Sign In</Text>
         </TouchableOpacity>
 
         {/* Footer */}
         <Text style={loginStyles.footerText}>
-          Don’t have an account? <Text style={{ textDecorationLine: 'underline' }}>Sign up</Text>
+          Don’t have an account?{' '}
+          <Text
+            style={{ textDecorationLine: 'underline' }}
+            onPress={() => router.push('/register')}
+          >
+            Sign up
+          </Text>
         </Text>
       </ScrollView>
     </KeyboardAvoidingView>
