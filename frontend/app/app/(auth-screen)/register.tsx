@@ -4,11 +4,11 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
   ScrollView,
-  Dimensions,
   Alert,
 } from 'react-native';
+
+// REACT HOOKS
 import { useRouter } from 'expo-router';
 
 // STYLES
@@ -25,10 +25,43 @@ export default function PersonalInfoForm() {
   const [selectedRole, setSelectedRole] = useState<'staff' | 'principal' | null>(null);
 
   // Handler
-  const handleNext = () => {
+  async function handleRegister(){
+
     if (!fullName || !email || !phone || !collegeCode || !selectedRole) {
       Alert.alert('Missing Information', 'Please fill out all fields before proceeding.');
       return;
+    }
+    else{
+      const data = {
+        "name":fullName,
+        "email":email,
+        "phone":phone,
+        "collegeCode":collegeCode,
+        "role":selectedRole
+      }
+      console.log(data)
+      try{
+        const url = "http://localhost:3000/register";
+        const response = await fetch(url,{
+          method:"POST",
+          headers:{
+            'Content-Type':'application/json',
+            'Access-Control-Allow-Origin':'null '
+          },
+          body:JSON.stringify(data)
+        })
+
+        if(response.ok){
+          const responseData = await response.json();
+          console.log("success:",responseData);
+        }
+        else{
+          console.log("Error:",response.status);
+        } 
+      }
+      catch(error){
+          console.error("Fetch error:",error);
+          }
     }
 
   };
@@ -109,7 +142,7 @@ export default function PersonalInfoForm() {
       </View>
 
       {/* Next Button */}
-      <TouchableOpacity style={registerStyles.nextButton} onPress={handleNext}>
+      <TouchableOpacity style={registerStyles.nextButton} onPress={handleRegister}>
         <Text style={registerStyles.nextButtonText}>Next</Text>
       </TouchableOpacity>
     </ScrollView>
