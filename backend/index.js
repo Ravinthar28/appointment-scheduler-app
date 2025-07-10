@@ -6,10 +6,7 @@ const mongoose = require('mongoose');
 const app = express();
 
 db_uri = "mongodb://localhost:27017/db";
-mongoose.connect(db_uri,{
-    useNewUrlParser:true,
-    useUnifiedTopology:true
-});
+
 
 const principal_schema = new mongoose.Schema({
     name:String,
@@ -30,8 +27,22 @@ const registerSchema = new mongoose.Schema({
   staffs:[staffs_schema]
 });
 
-function createPrincipal(data){
-    mongoose.model(data["college_code"])
+async function createPrincipal(data){
+    const collection_name = data["collegeCode"]
+    register = mongoose.model(collection_name,registerSchema);
+    
+    const newUser = new register({
+        principal:{
+            name:data["fullName"],
+            phoneNo:data["phone"],
+            mailId:data["ravinthar2022@gmail.com"],
+            password:data["1020"],
+            messages:[]
+        },
+        staffs:{}
+    })
+
+    await newUser.save();
 }
 
 app.use(cors());
@@ -39,12 +50,21 @@ app.use(express.json());
 
 app.post('/register',(req,res)=>{
     const data = req.body;
-    role = data["role"]
-    // if(role == "principal"){
-    //     //createPrincipal(data)
-    // }
+    const role = data["userData"]["role"]
+    if(role == "principal"){
+        createPrincipal(data["userData"]);
+    }
 });
 
-app.listen(3000,()=>{
-    console.log("Server is Started")
+mongoose.connect(db_uri,{
+    useNewUrlParser:true,
+    useUnifiedTopology:true
 })
+    .then(()=>{
+        console.log("Db is connected");
+    })
+    .then(()=>{
+        app.listen(3000,()=>{
+            console.log("Server is Started");
+        })
+    })
