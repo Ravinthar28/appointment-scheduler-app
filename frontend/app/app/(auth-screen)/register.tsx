@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 import { registerStyles } from './style';
 
 const { width } = Dimensions.get('window');
@@ -42,28 +42,45 @@ export default function PersonalInfoForm() {
         role: selectedRole,
       };
 
-      const usersData = await AsyncStorage.getItem('registeredUsers');
-      const users = usersData ? JSON.parse(usersData) : [];
-
-      const emailExists = users.some((user: any) => user.email === email);
-      if (emailExists) {
-        Alert.alert('Already Registered', 'This email is already registered.');
-        return;
+      const url = "http://localhost:3000/register";
+      const response = await fetch(url,{
+        method: "POST",
+        headers: { "Content-Type":"application/json"},
+        body: JSON.stringify({userData})
+      })
+      if(! response.ok){
+        throw new Error("Failed to fetch teh data");
+      }
+      else{
+        console.log("Data sent")
       }
 
-      users.push(userData);
-      await AsyncStorage.setItem('registeredUsers', JSON.stringify(users));
+    //   const usersData = await AsyncStorage.getItem('registeredUsers');
+    //   const users = usersData ? JSON.parse(usersData) : [];
 
-      Alert.alert('Registration Successful', 'You can now log in.', [
-        {
-          text: 'OK',
-          onPress: () => router.push('/login'),
-        },
-      ]);
-    } catch (error) {
-      console.error(error);
-      Alert.alert('Error', 'Failed to register. Please try again.');
+    //   const emailExists = users.some((user: any) => user.email === email);
+    //   if (emailExists) {
+    //     Alert.alert('Already Registered', 'This email is already registered.');
+    //     return;
+    //   }
+
+    //   users.push(userData);
+    //   await AsyncStorage.setItem('registeredUsers', JSON.stringify(users));
+
+    //   Alert.alert('Registration Successful', 'You can now log in.', [
+    //     {
+    //       text: 'OK',
+    //       onPress: () => router.push('/login'),
+    //     },
+    //   ]);
+    // } catch (error) {
+    //   console.error(error);
+    //   Alert.alert('Error', 'Failed to register. Please try again.');
     }
+    catch (error){
+      console.log(error);
+    }
+    
   };
 
   const isFormValid =
