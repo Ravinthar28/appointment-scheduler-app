@@ -23,12 +23,12 @@ export default function StaffHomePage() {
 
       {/* Profile */}
       <Image
-        source={require('../../assets/images/profile.png')}
+        source={require('../../assets/images/Principal.jpg')}
         style={staffhomepageStyles.avatar}
       />
-      <Text style={staffhomepageStyles.name}>Dr. Ethan Carter</Text>
+      <Text style={staffhomepageStyles.name}>Dr. C. Mathalai Sundaram</Text>
       <Text style={staffhomepageStyles.role}>Principal</Text>
-      <Text style={staffhomepageStyles.email}>ethan.carter@college.edu</Text>
+      <Text style={staffhomepageStyles.email}>principal@nscet.org</Text>
 
       {/* Request Button */}
       <TouchableOpacity style={staffhomepageStyles.appointmentButton}>
@@ -82,7 +82,7 @@ export default function StaffHomePage() {
             style={staffhomepageStyles.cardImage}
           />
           <View style={staffhomepageStyles.cardContent}>
-            <Text style={staffhomepageStyles.cardTitle}>Appointment with Dr. Carter</Text>
+            <Text style={staffhomepageStyles.cardTitle}>Appointment with Dr. C. Mathalai Sundaram</Text>
             <Text style={staffhomepageStyles.cardSubtitle}>10:00 AM - 11:00 AM</Text>
           </View>
         </View>
