@@ -51,10 +51,8 @@ export default function PersonalInfoForm() {
       if(! response.ok){
         throw new Error("Failed to fetch teh data");
       }
-      else{
-        console.log("Data sent")
-      }
-
+      const result =  await response.json()
+      alert(result)
     //   const usersData = await AsyncStorage.getItem('registeredUsers');
     //   const users = usersData ? JSON.parse(usersData) : [];
 

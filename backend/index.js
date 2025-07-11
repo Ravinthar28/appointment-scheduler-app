@@ -13,14 +13,14 @@ const principal_schema = new mongoose.Schema({
     phoneNo:Number,
     mailId:String,
     password:String,
-    messages:[String]
+    messages:[Object]
 });
 const staffs_schema = new mongoose.Schema({
     name:String,
     phoneNo:Number,
     mailId:String,
     password:String,
-    messages:[String]
+    messages:[Object]
 })
 const registerSchema = new mongoose.Schema({
   principal:[principal_schema],
@@ -43,6 +43,7 @@ async function createPrincipal(data){
     })
 
     await newUser.save();
+    return true;
 }
 
 app.use(cors());
@@ -52,7 +53,9 @@ app.post('/register',(req,res)=>{
     const data = req.body;
     const role = data["userData"]["role"]
     if(role == "principal"){
-        createPrincipal(data["userData"]);
+        if(createPrincipal(data["userData"])){
+            res.json("Registered Successfully");
+        }
     }
 });
 
