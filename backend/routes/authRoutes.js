@@ -1,6 +1,7 @@
 
 const express = require('express');
-const createPrincipal = require('../controllers/authController');
+const { createPrincipal }= require('../controllers/authController');
+const {createStaff} = require('../controllers/authController')
 const router = express.Router();
 
 router.post('/register',async (req,res)=>{
@@ -17,6 +18,15 @@ router.post('/register',async (req,res)=>{
           console.log(error);
           res.status(500).json("Error during registration");
         }
+    }
+    else{
+      try{
+        const result = await createStaff(data.userData)
+      }
+      catch(error){
+        console.log(error);
+        res.status(500).json("Error during registeration");
+      }
     }
 });
 

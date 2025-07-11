@@ -5,9 +5,9 @@ const authRoutes = require('./routes/authRoutes');
 const connectDB = require('./config/db');
 
 const app = express();
-
 const port = 3000;
 
+// MIDDLEWARES
 app.use(cors());
 app.use(express.json());
 
