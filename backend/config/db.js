@@ -1,9 +1,19 @@
 
 const mongoose = require('mongoose');
 
-mongoose.connect("mongodb://localhost:27017/appointmet-scheduler-app",{
-    useNewUrlParser:true,
-    useUnifiedTopology:true
-})
-.then(()=>console.log("MongoDb Connected"))
-.catch(err => console.log(err));
+const db_uri = "mongodb://localhost:27017/db";
+
+const connectDB = async ()=> {
+    try{
+        await mongoose.connect(db_uri,{
+            useNewUrlParser:true,
+            useUnifiedTopology:true});
+        console.log("Db is connected");
+    }
+    catch(error){
+        console.error("Db connection failed");
+        process.exit(1);
+    }
+};
+
+module.exports = connectDB

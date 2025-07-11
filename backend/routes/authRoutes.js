@@ -1,17 +1,23 @@
-// backend/routes/auth.js (or similar)
-router.post('/login', async (req, res) => {
-  const { email, password, role } = req.body;
 
-  try {
-    const user = await User.findOne({ email, password, role });
-    if (!user) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+const express = require('express');
+const createPrincipal = require('../controllers/authController');
+const router = express.Router();
+
+router.post('/register',async (req,res)=>{
+    const data = req.body;
+    const role = data["userData"]["role"]
+
+    // IF THE USER IS A PRINCIPAL
+    if(role == "principal"){
+        try{
+          const result = await createPrincipal(data.userData)
+          if(result) res.json("Registerd Successfully");
+        }
+        catch(error){
+          console.log(error);
+          res.status(500).json("Error during registration");
+        }
     }
-
-    res.json({ message: 'Login successful', user });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
-  }
 });
 
+module.exports = router;

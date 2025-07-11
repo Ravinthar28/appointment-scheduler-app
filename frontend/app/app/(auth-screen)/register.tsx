@@ -52,7 +52,7 @@ export default function PersonalInfoForm() {
         throw new Error("Failed to fetch teh data");
       }
       const result =  await response.json()
-      alert(result)
+      alert(result);
     //   const usersData = await AsyncStorage.getItem('registeredUsers');
     //   const users = usersData ? JSON.parse(usersData) : [];
 
