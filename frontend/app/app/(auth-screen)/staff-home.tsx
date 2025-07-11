@@ -2,16 +2,16 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   Image,
   TouchableOpacity,
-  Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router'; // ✅ Added for navigation
 import { staffhomepageStyles } from './style'; 
 
 export default function StaffHomePage() {
   const [selectedTab, setSelectedTab] = useState<'upcoming' | 'past'>('upcoming');
+  const router = useRouter(); // ✅ Initialize router
 
   return (
     <View style={staffhomepageStyles.container}>
@@ -31,7 +31,10 @@ export default function StaffHomePage() {
       <Text style={staffhomepageStyles.email}>principal@nscet.org</Text>
 
       {/* Request Button */}
-      <TouchableOpacity style={staffhomepageStyles.appointmentButton}>
+      <TouchableOpacity
+        style={staffhomepageStyles.appointmentButton}
+        onPress={() => router.push('/requestpage')} // ✅ Navigate to Request Appointment screen
+      >
         <Ionicons name="add" size={18} color="white" style={{ marginRight: 6 }} />
         <Text style={staffhomepageStyles.appointmentText}>Request Appointment</Text>
       </TouchableOpacity>
@@ -55,6 +58,7 @@ export default function StaffHomePage() {
             Upcoming Appointments
           </Text>
         </TouchableOpacity>
+
         <TouchableOpacity
           onPress={() => setSelectedTab('past')}
           style={[
@@ -82,7 +86,9 @@ export default function StaffHomePage() {
             style={staffhomepageStyles.cardImage}
           />
           <View style={staffhomepageStyles.cardContent}>
-            <Text style={staffhomepageStyles.cardTitle}>Appointment with Dr. C. Mathalai Sundaram</Text>
+            <Text style={staffhomepageStyles.cardTitle}>
+              Appointment with Dr. C. Mathalai Sundaram
+            </Text>
             <Text style={staffhomepageStyles.cardSubtitle}>10:00 AM - 11:00 AM</Text>
           </View>
         </View>

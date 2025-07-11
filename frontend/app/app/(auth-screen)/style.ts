@@ -297,3 +297,156 @@ export const staffhomepageStyles = StyleSheet.create({
   },
 });
 
+export const styles = StyleSheet.create({
+  container: {
+    flexGrow: 1,
+    backgroundColor: '#0b0c10',
+    padding: 20,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 20,
+  },
+  title: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: '600',
+  },
+  tabs: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 20,
+  },
+  tabButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    backgroundColor: '#1c1c1e',
+  },
+  tabSelected: {
+    backgroundColor: '#2d2e30',
+  },
+  tabText: {
+    color: '#aaa',
+    fontWeight: '500',
+  },
+  tabTextSelected: {
+    color: '#fff',
+    fontWeight: '700',
+  },
+  appointmentList: {
+    marginBottom: 30,
+  },
+  card: {
+    backgroundColor: '#1e1f23',
+    borderRadius: 12,
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 12,
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#444',
+  },
+  cardName: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  cardTime: {
+    color: '#ccc',
+    fontSize: 13,
+  },
+  statusDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: 'green',
+  },
+  formHeading: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 10,
+  },
+  input: {
+    backgroundColor: '#1c1c1e',
+    color: '#fff',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+  },
+  confirmButton: {
+    backgroundColor: '#4A90E2',
+    paddingVertical: 14,
+    borderRadius: 25,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  confirmText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+});
+export const appointmentstyles = StyleSheet.create({
+  container: {
+    backgroundColor: '#0d1117',
+    flexGrow: 1,
+    padding: 20,
+    justifyContent: 'center',
+  },
+  heading: {
+    fontSize: 20,
+    color: '#fff',
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    marginBottom: 20,
+  },
+  input: {
+    backgroundColor: '#1e2732',
+    color: '#fff',
+    borderRadius: 10,
+    padding: 10,
+    fontSize: 16,
+    height: 120,
+    textAlignVertical: 'top',
+    marginBottom: 20,
+  },
+  label: {
+    color: '#888',
+    fontSize: 16,
+    marginBottom: 8,
+    marginTop: 10,
+  },
+  selector: {
+    backgroundColor: '#1e2732',
+    padding: 12,
+    borderRadius: 10,
+    marginBottom: 20,
+  },
+  selectorText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  button: {
+    backgroundColor: '#007AFF',
+    paddingVertical: 14,
+    borderRadius: 20,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 16,
+  },
+});
+
+

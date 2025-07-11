@@ -12,7 +12,6 @@ import {
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { loginStyles } from './style';
 
 export default function LoginForm() {
@@ -21,43 +20,16 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [collegeCode, setCollegeCode] = useState('');
 
-  const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert('Missing Fields', 'Please enter both email and password.');
-      return;
-    }
 
-    try {
-      const usersData = await AsyncStorage.getItem('registeredUsers');
-      const users = usersData ? JSON.parse(usersData) : [];
-
-      const matchedUser = users.find(
-        (user: any) =>
-          user.email === email &&
-          user.password === password &&
-          user.role === selectedRole
-      );
-
-      if (matchedUser) {
-        Alert.alert('Login Success', 'Welcome!', [
-          {
-            text: 'OK',
-            onPress: () => {
-              if (selectedRole === 'staff') {
-                router.push('/staff-home');
-              } else {
-                router.push('/principal-home');
-              }
-            },
-          },
-        ]);
-      } else {
-        Alert.alert('Login Failed', 'Invalid email, password, or role.');
-      }
-    } catch (error) {
-      console.error(error);
-      Alert.alert('Login Error', 'Something went wrong during login.');
+  const handleLogin = () => {
+    if (selectedRole === 'staff') {
+      router.push('/staff-home');
+    } else if (selectedRole === 'principal') {
+      router.push('/principal-home');
+    } else {
+      Alert.alert('Select Role', 'Please select a role to proceed.');
     }
   };
 
@@ -92,6 +64,7 @@ export default function LoginForm() {
             autoCapitalize="none"
             value={email}
             onChangeText={setEmail}
+            editable={false} // disabled
           />
         </View>
 
@@ -106,12 +79,27 @@ export default function LoginForm() {
               style={[loginStyles.input, { flex: 1 }]}
               value={password}
               onChangeText={setPassword}
+              editable={false} // disabled
             />
             <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
               <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={20} color="#ccc" />
             </TouchableOpacity>
           </View>
         </View>
+
+      {/* College Code Input */}
+<View style={loginStyles.inputBox}>
+  <Text style={loginStyles.label}>College Code</Text>
+  <TextInput
+    placeholder="Enter College Code"
+    placeholderTextColor="#ccc"
+    style={loginStyles.input}
+    keyboardType="default"
+    autoCapitalize="none"
+    value={collegeCode}
+    onChangeText={setCollegeCode}
+  />
+</View>
 
         {/* Forgot Password */}
         <Text style={loginStyles.forgotText}>Forgot Password?</Text>
@@ -156,8 +144,7 @@ export default function LoginForm() {
 
         {/* Sign In Button */}
         <TouchableOpacity style={loginStyles.signInButton} onPress={handleLogin}>
-          <Text style={loginStyles.signInText}
-          onPress={() => router.push('/staff-home')}>Sign In</Text>
+          <Text style={loginStyles.signInText}>Sign In</Text>
         </TouchableOpacity>
 
         {/* Footer */}
