@@ -1,8 +1,8 @@
 
 const express = require('express');
+
 const { createPrincipal, loginPrincipal }= require('../controllers/authController');
-const {createStaff} = require('../controllers/authController');
-const { loignPricipal } = require('../controllers/authController');
+const {createStaff, loginStaff} = require('../controllers/authController');
 
 const router = express.Router();
 
@@ -38,9 +38,11 @@ router.post('/login',async (req,res)=>{
   try{
     if(role == 'principal'){
       const result = await loginPrincipal(data.userData);
-      if(result){
-        res.sendStatus(result);
-      }
+      if(result) res.sendStatus(result);
+    }
+    else if(role == 'staff'){
+      const result = await loginStaff(data.userData);
+      if(result) res.sendStatus(result);
     }
   }
   catch(error){

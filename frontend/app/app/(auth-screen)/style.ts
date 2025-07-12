@@ -448,5 +448,3 @@ export const appointmentstyles = StyleSheet.create({
     fontSize: 16,
   },
 });
-
-
