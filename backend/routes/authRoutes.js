@@ -38,7 +38,9 @@ router.post('/login',async (req,res)=>{
   try{
     if(role == 'principal'){
       const result = await loginPrincipal(data.userData);
-      if(result) res.status(result);
+      if(result){
+        res.sendStatus(result);
+      }
     }
   }
   catch(error){

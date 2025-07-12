@@ -59,11 +59,9 @@ async function loginPrincipal(data){
     if(user){
 
         if(user.principal.password == data.password){
-            console.log('correct password')
             return 200;
         }
         else{
-            console.log('wrong password');
             return 401;
         }
     }

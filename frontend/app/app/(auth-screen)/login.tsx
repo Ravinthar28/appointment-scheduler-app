@@ -24,13 +24,14 @@ export default function LoginForm() {
 
 
   const handleLogin = async () => {
+
     try{
       const userData = {
         email,
         password,
         collegeCode,
         selectedRole
-      }
+      };
       const url = "http://localhost:3000/login"
       const response = await fetch(url,{
         method:'POST',
@@ -40,15 +41,17 @@ export default function LoginForm() {
       if(! response.ok){
         throw new Error ("Faild to load");
       }
-      const result = await response.json();
-      if(result){
-        if(result.status == 200){
-          router.push('/(auth-screen)/principal-home')
+      if(response.status){
+        if(response.status == 200){
+          if(selectedRole == 'principal') router.push('/(auth-screen)/principal-home')
+
+          if(selectedRole == 'staff') router.push('/(auth-screen)/staff-home');
         }
+        else alert('hai')
       }
     }
     catch(error){
-      console.log(error);
+      alert("Check the email and password");
     }
     // if (selectedRole === 'staff') {
     //   router.push('/staff-home');
