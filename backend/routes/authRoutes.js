@@ -1,34 +1,50 @@
 
 const express = require('express');
-const { createPrincipal }= require('../controllers/authController');
-const {createStaff} = require('../controllers/authController')
+const { createPrincipal, loginPrincipal }= require('../controllers/authController');
+const {createStaff} = require('../controllers/authController');
+const { loignPricipal } = require('../controllers/authController');
+
 const router = express.Router();
 
 router.post('/register',async (req,res)=>{
     const data = req.body;
     const role = data["userData"]["role"]
 
-    // IF THE USER IS A PRINCIPAL
-    if(role == "principal"){
-        try{
-          const result = await createPrincipal(data.userData)
+    try{
+      // FOR PRINCIPAL REGISTER
+      if(role == 'principal'){
+        const result = await createPrincipal(data.userData)
           if(result) res.json("Registerd Successfully");
-        }
-        catch(error){
+      }
+      // FOR STAFF REGISTER
+      else if(role == 'staff'){
+        const result = await createStaff(data.userData)
+          if(result) res.json("Registed Successfully");
+      }
+      // TO HANDLE UNKNOWN REGISTER
+      else{
+        res.json("Unknown role is selected");
+      }
+    }
+    catch(error){
           console.log(error);
           res.status(500).json("Error during registration");
         }
-    }
-    else{
-      try{
-        const result = await createStaff(data.userData)
-        if(result) res.json("Registed Successfully");
-      }
-      catch(error){
-        console.log(error);
-        res.status(500).json("Error during registeration");
-      }
-    }
 });
+
+router.post('/login',async (req,res)=>{
+  const data = req.body;
+  const role = data.userData.selectedRole;
+  try{
+    if(role == 'principal'){
+      const result = await loginPrincipal(data.userData);
+      if(result) res.status(result);
+    }
+  }
+  catch(error){
+    res.json(`error occured ${error}`);
+    console.log(error);
+  }
+})
 
 module.exports = router;

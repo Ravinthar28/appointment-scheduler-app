@@ -23,14 +23,40 @@ export default function LoginForm() {
   const [collegeCode, setCollegeCode] = useState('');
 
 
-  const handleLogin = () => {
-    if (selectedRole === 'staff') {
-      router.push('/staff-home');
-    } else if (selectedRole === 'principal') {
-      router.push('/principal-home');
-    } else {
-      Alert.alert('Select Role', 'Please select a role to proceed.');
+  const handleLogin = async () => {
+    try{
+      const userData = {
+        email,
+        password,
+        collegeCode,
+        selectedRole
+      }
+      const url = "http://localhost:3000/login"
+      const response = await fetch(url,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({userData})
+      });
+      if(! response.ok){
+        throw new Error ("Faild to load");
+      }
+      const result = await response.json();
+      if(result){
+        if(result.status == 200){
+          router.push('/(auth-screen)/principal-home')
+        }
+      }
     }
+    catch(error){
+      console.log(error);
+    }
+    // if (selectedRole === 'staff') {
+    //   router.push('/staff-home');
+    // } else if (selectedRole === 'principal') {
+    //   router.push('/principal-home');
+    // } else {
+    //   Alert.alert('Select Role', 'Please select a role to proceed.');
+    // }
   };
 
   return (
@@ -64,7 +90,6 @@ export default function LoginForm() {
             autoCapitalize="none"
             value={email}
             onChangeText={setEmail}
-            editable={false} // disabled
           />
         </View>
 
@@ -79,7 +104,6 @@ export default function LoginForm() {
               style={[loginStyles.input, { flex: 1 }]}
               value={password}
               onChangeText={setPassword}
-              editable={false} // disabled
             />
             <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
               <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={20} color="#ccc" />

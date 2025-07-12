@@ -52,7 +52,24 @@ async function createStaff(data) {
     }
 }
 
+async function loginPrincipal(data){
+    const collectionName = data.collegeCode
+    const schema = mongoose.models[collectionName] || mongoose.model(collectionName,registerSchema);
+    const user = await schema.findOne({'principal.mailId':data.email})
+    if(user){
+
+        if(user.principal.password == data.password){
+            console.log('correct password')
+            return 200;
+        }
+        else{
+            console.log('wrong password');
+            return 401;
+        }
+    }
+}
 module.exports = { 
     createPrincipal,
-    createStaff
+    createStaff,
+    loginPrincipal
 }
