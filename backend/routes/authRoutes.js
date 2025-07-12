@@ -22,6 +22,7 @@ router.post('/register',async (req,res)=>{
     else{
       try{
         const result = await createStaff(data.userData)
+        if(result) res.json("Registed Successfully");
       }
       catch(error){
         console.log(error);

@@ -41,7 +41,7 @@ export default function PersonalInfoForm() {
         password,
         role: selectedRole,
       };
-
+      console.log(userData)
       const url = "http://localhost:3000/register";
       const response = await fetch(url,{
         method: "POST",

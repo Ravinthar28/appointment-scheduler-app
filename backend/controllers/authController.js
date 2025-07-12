@@ -4,18 +4,18 @@ const registerSchema = require('../models/registerModel');
 
 async function createPrincipal(data){
     const collectionName = data["collegeCode"]
-    register = mongoose.model(collectionName,registerSchema);
+    const register = mongoose.model(collectionName,registerSchema);
     
     const newUser = new register({
         code:data["collegeCode"],
         principal:{
             name:data["fullName"],
             phoneNo:data["phone"],
-            mailId:data["ravinthar2022@gmail.com"],
+            mailId:data["email"],
             password:data["password"],
             messages:[]
         },
-        staffs:{}
+        staffs:[]
     })
 
     await newUser.save();
@@ -25,12 +25,27 @@ async function createPrincipal(data){
 async function createStaff(data) {
     const collectionName = data["collegeCode"]
     try{
-        const schema = mongoose.model(collectionName,registerSchema);
-
-        const model = await schema.findOne({code: collectionName});
-        if(model){
-            // ADD STAFF CODE
+        const schema = mongoose.models[collectionName] || mongoose.model(collectionName,registerSchema)
+        const newStaff = {
+            name:data['fullName'],
+            phoneNo:data['phone'],
+            mailId:data['email'],
+            password:data['password'],
+            messages:[]
         }
+        const model = await schema.findOneAndUpdate(
+            {},
+            {$push:{staffs:newStaff}},
+            {new:true,upsert:false}
+        );
+        if(! model){
+            console.log("console errror");
+            return null
+        }
+
+        return model;
+        
+        
     }
     catch(error){
         console.log(error);
