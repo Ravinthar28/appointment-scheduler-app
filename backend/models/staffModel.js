@@ -9,7 +9,8 @@ const staffSchema = new mongoose.Schema({
         unique:true
     },
     password:String,
-    messages:[Object]
+    upcomingAppointments:Object,
+    pastAppointments:Object
 });
 
 module.exports = staffSchema;
