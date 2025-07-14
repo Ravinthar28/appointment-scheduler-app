@@ -9,8 +9,10 @@ import {
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { appointmentStyles } from './style';
+import { useRouter } from 'expo-router'; // ✅ Import router
 
 export default function RequestAppointmentScreen() {
+  const router = useRouter(); // ✅ Initialize router
   const [description, setDescription] = useState('');
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -31,8 +33,16 @@ export default function RequestAppointmentScreen() {
       Alert.alert('Validation Error', 'Please enter appointment details.');
       return;
     }
-    Alert.alert('Appointment Scheduled', `On ${date.toLocaleString()}`);
-    // You can send to backend here
+
+    Alert.alert('Appointment Scheduled', `On ${date.toLocaleString()}`, [
+      {
+        text: 'OK',
+        onPress: () => {
+          // ✅ Navigate to staff home after scheduling
+          router.push('/(staff-screen)/home');
+        },
+      },
+    ]);
   };
 
   return (
@@ -66,6 +76,7 @@ export default function RequestAppointmentScreen() {
           mode="date"
           value={date}
           onChange={onChangeDate}
+          minimumDate={new Date()} 
         />
       )}
 

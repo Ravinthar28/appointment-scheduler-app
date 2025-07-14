@@ -53,14 +53,15 @@ export default function LoginForm() {
       console.log(error);
       alert("Check the email and password");
     }
-    // if (selectedRole === 'staff') {
-    //   router.push('/staff-home');
-    // } else if (selectedRole === 'principal') {
-    //   router.push('/principal-home');
-    // } else {
-    //   Alert.alert('Select Role', 'Please select a role to proceed.');
-    // }
-  };
+
+    /* if (selectedRole === 'staff') {
+       router.push('/(staff-screen)/home');
+     } else if (selectedRole === 'principal') {
+       router.push('/(auth-screen)/principal-home');
+     } else {
+       Alert.alert('Select Role', 'Please select a role to proceed.');
+    }
+  };*/
 
   return (
     <KeyboardAvoidingView
