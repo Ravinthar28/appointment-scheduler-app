@@ -35,6 +35,7 @@ router.post('/register',async (req,res)=>{
 router.post('/login',async (req,res)=>{
   const data = req.body;
   const role = data.userData.selectedRole;
+  console.log(role);
   try{
     if(role == 'principal'){
       const result = await loginPrincipal(data.userData);

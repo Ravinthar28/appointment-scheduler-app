@@ -25,41 +25,42 @@ export default function LoginForm() {
 
   const handleLogin = async () => {
 
-    //try{
-    //   const userData = {
-    //     email,
-    //     password,
-    //     collegeCode,
-    //     selectedRole
-    //   };
-    //   const url = "http://localhost:3000/login"
-    //   const response = await fetch(url,{
-    //     method:'POST',
-    //     headers:{'Content-Type':'application/json'},
-    //     body:JSON.stringify({userData})
-    //   });
-    //   if(! response.ok){
-    //     throw new Error ("Faild to load");
-    //   }
-    //   if(response.status){
-    //     if(response.status == 200){
-    //       if(selectedRole == 'principal') router.push('/(auth-screen)/principal-home')
+    try{
+      const userData = {
+        email,
+        password,
+        collegeCode,
+        selectedRole
+      };
+      console.log(userData);
+      const url = "http://192.168.43.246:3000/login"
+      const response = await fetch(url,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({userData})
+      });
+      if(! response.ok){
+        throw new Error ("Faild to load");
+      }
+      if(response.status){
+        if(response.status == 200){
+          if(selectedRole == 'principal') router.push('/(auth-screen)/principal-home')
 
-    //       if(selectedRole == 'staff') router.push('/(auth-screen)/staff-home');
-    //     }
-    //     else alert('hai')
-    //   }
-    // }
-    // catch(error){
-    //   alert("Check the email and password");
-    // }
-    if (selectedRole === 'staff') {
-      router.push('/staff-home');
-    } else if (selectedRole === 'principal') {
-      router.push('/principal-home');
-    } else {
-      Alert.alert('Select Role', 'Please select a role to proceed.');
+          if(selectedRole == 'staff') router.push('/(auth-screen)/staff-home');
+        }
+      }
     }
+    catch(error){
+      console.log(error);
+      alert("Check the email and password");
+    }
+    // if (selectedRole === 'staff') {
+    //   router.push('/staff-home');
+    // } else if (selectedRole === 'principal') {
+    //   router.push('/principal-home');
+    // } else {
+    //   Alert.alert('Select Role', 'Please select a role to proceed.');
+    // }
   };
 
   return (

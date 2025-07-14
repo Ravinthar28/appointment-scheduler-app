@@ -68,13 +68,19 @@ async function loginPrincipal(data){
 }
 
 async function loginStaff(data){
-    const collectionName = data.collegeCode;
-    const schema = mongoose.models[collectionName] || mongoose.model(collectionName,registerSchema);
-    const user = await schema.findOne({'staffs.mailId':data.email});
-    if(user){
-        if(user.staffs[0].password == data.password) return 200;
-        else return 401
+    try{
+        const collectionName = data.collegeCode;
+        const schema = mongoose.models[collectionName] || mongoose.model(collectionName,registerSchema);
+        const user = await schema.findOne({'staffs.mailId':data.email});
+        if(user){
+            if(user.staffs[0].password == data.password) return 200;
+            else return 401;
+        }
     }
+    catch(error){
+        return 401;
+    }
+    
 }
 module.exports = { 
     createPrincipal,
