@@ -16,7 +16,7 @@ app.use(express.json());
 
 // ROUTES
 app.use('/',authRoutes);
-app.use('/staff',staffRoutes);
+app.use('/',staffRoutes);
 
 connectDB().then(()=>{
     app.listen(port,()=>{

@@ -12,6 +12,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from './style';
 
+
 interface Meeting {
   id: number;
   name: string;

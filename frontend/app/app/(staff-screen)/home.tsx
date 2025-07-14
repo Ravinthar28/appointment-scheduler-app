@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -7,13 +7,40 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router'; // ✅ Added for navigation
+import { useLocalSearchParams } from 'expo-router';
 
 // STYLES
 import { homeScreenStyles } from './style';
 
+
 export default function StaffHomePage() {
   const [selectedTab, setSelectedTab] = useState<'upcoming' | 'past'>('upcoming');
   const router = useRouter(); // ✅ Initialize router
+  const {email,collegeCode} = useLocalSearchParams();
+
+  async function fetchData() {
+    const userData = {
+      email,
+      collegeCode
+    }
+    try{
+      const url = "http://localhost:3000/fetch-staff-data"
+      const response = await fetch(url,{
+        method:'POST',
+        headers:{'Content-Type' : 'application/json'},
+        body:JSON.stringify(userData)
+      });
+      
+
+    }
+    catch(error){
+      console.log(error);
+    }
+  }
+
+  useEffect(()=>{
+    fetchData()
+  },[]);
 
   return (
     <View style={homeScreenStyles.container}>

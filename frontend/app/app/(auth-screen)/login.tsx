@@ -43,9 +43,21 @@ export default function LoginForm() {
       }
       if(response.status){
         if(response.status == 200){
-          if(selectedRole == 'principal') router.push('/(auth-screen)/principal-home')
+          if(selectedRole == 'principal') router.push({
+            pathname:'/(auth-screen)/principal-home',
+            params: {
+              email,
+              collegeCode
+            }
+          })
 
-          if(selectedRole == 'staff') router.push('/(staff-screen)/home');
+          if(selectedRole == 'staff') router.push({
+            pathname:'/(staff-screen)/home',
+            params:{
+              email,
+              collegeCode
+            }
+          });
         }
       }
     }
