@@ -37,7 +37,7 @@ export default function StaffHomePage() {
       {/* Request Button */}
       <TouchableOpacity
         style={homeScreenStyles.appointmentButton}
-        onPress={() => router.push('/requestPage')} // ✅ Navigate to Request Appointment screen
+        onPress={() => router.push('./requestPage')} // ✅ Navigate to Request Appointment screen
       >
         <Ionicons name="add" size={18} color="white" style={{ marginRight: 6 }} />
         <Text style={homeScreenStyles.appointmentText}>Request Appointment</Text>
