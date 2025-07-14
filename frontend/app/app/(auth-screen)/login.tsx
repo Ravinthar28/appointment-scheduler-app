@@ -32,7 +32,6 @@ export default function LoginForm() {
         collegeCode,
         selectedRole
       };
-      console.log(userData);
       const url = "http://192.168.43.246:3000/login"
       const response = await fetch(url,{
         method:'POST',
@@ -46,7 +45,7 @@ export default function LoginForm() {
         if(response.status == 200){
           if(selectedRole == 'principal') router.push('/(auth-screen)/principal-home')
 
-          if(selectedRole == 'staff') router.push('/(auth-screen)/staff-home');
+          if(selectedRole == 'staff') router.push('/(staff-screen)/home');
         }
       }
     }

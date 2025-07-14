@@ -7,52 +7,56 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router'; // ✅ Added for navigation
-import { staffhomepageStyles } from './style'; 
+
+// STYLES
+import { homeScreenStyles } from './style';
 
 export default function StaffHomePage() {
   const [selectedTab, setSelectedTab] = useState<'upcoming' | 'past'>('upcoming');
   const router = useRouter(); // ✅ Initialize router
 
   return (
-    <View style={staffhomepageStyles.container}>
+    <View style={homeScreenStyles.container}>
       {/* Header */}
-      <TouchableOpacity style={staffhomepageStyles.backButton}>
+      
+      {/* <TouchableOpacity style={homeScreenStyles.backButton}>
         <Ionicons name="arrow-back" size={24} color="white" />
-      </TouchableOpacity>
-      <Text style={staffhomepageStyles.profileTitle}>Principal Profile</Text>
+      </TouchableOpacity> */}
+
+      <Text style={homeScreenStyles.profileTitle}>Principal Profile</Text>
 
       {/* Profile */}
       <Image
         source={require('../../assets/images/Principal.jpg')}
-        style={staffhomepageStyles.avatar}
+        style={homeScreenStyles.avatar}
       />
-      <Text style={staffhomepageStyles.name}>Dr. C. Mathalai Sundaram</Text>
-      <Text style={staffhomepageStyles.role}>Principal</Text>
-      <Text style={staffhomepageStyles.email}>principal@nscet.org</Text>
+      <Text style={homeScreenStyles.name}>Dr. C. Mathalai Sundaram</Text>
+      <Text style={homeScreenStyles.role}>Principal</Text>
+      <Text style={homeScreenStyles.email}>principal@nscet.org</Text>
 
       {/* Request Button */}
       <TouchableOpacity
-        style={staffhomepageStyles.appointmentButton}
-        onPress={() => router.push('/requestpage')} // ✅ Navigate to Request Appointment screen
+        style={homeScreenStyles.appointmentButton}
+        onPress={() => router.push('/requestPage')} // ✅ Navigate to Request Appointment screen
       >
         <Ionicons name="add" size={18} color="white" style={{ marginRight: 6 }} />
-        <Text style={staffhomepageStyles.appointmentText}>Request Appointment</Text>
+        <Text style={homeScreenStyles.appointmentText}>Request Appointment</Text>
       </TouchableOpacity>
 
       {/* Tabs */}
-      <View style={staffhomepageStyles.tabs}>
+      <View style={homeScreenStyles.tabs}>
         <TouchableOpacity
           onPress={() => setSelectedTab('upcoming')}
           style={[
-            staffhomepageStyles.tabButton,
-            selectedTab === 'upcoming' && staffhomepageStyles.tabSelected,
+            homeScreenStyles.tabButton,
+            selectedTab === 'upcoming' && homeScreenStyles.tabSelected,
           ]}
         >
           <Text
             style={
               selectedTab === 'upcoming'
-                ? staffhomepageStyles.tabTextSelected
-                : staffhomepageStyles.tabText
+                ? homeScreenStyles.tabTextSelected
+                : homeScreenStyles.tabText
             }
           >
             Upcoming Appointments
@@ -62,15 +66,15 @@ export default function StaffHomePage() {
         <TouchableOpacity
           onPress={() => setSelectedTab('past')}
           style={[
-            staffhomepageStyles.tabButton,
-            selectedTab === 'past' && staffhomepageStyles.tabSelected,
+            homeScreenStyles.tabButton,
+            selectedTab === 'past' && homeScreenStyles.tabSelected,
           ]}
         >
           <Text
             style={
               selectedTab === 'past'
-                ? staffhomepageStyles.tabTextSelected
-                : staffhomepageStyles.tabText
+                ? homeScreenStyles.tabTextSelected
+                : homeScreenStyles.tabText
             }
           >
             Past Appointments
@@ -80,16 +84,16 @@ export default function StaffHomePage() {
 
       {/* Appointment Card */}
       {selectedTab === 'upcoming' && (
-        <View style={staffhomepageStyles.card}>
+        <View style={homeScreenStyles.card}>
           <Image
             source={require('../../assets/images/calendar.jpeg')}
-            style={staffhomepageStyles.cardImage}
+            style={homeScreenStyles.cardImage}
           />
-          <View style={staffhomepageStyles.cardContent}>
-            <Text style={staffhomepageStyles.cardTitle}>
+          <View style={homeScreenStyles.cardContent}>
+            <Text style={homeScreenStyles.cardTitle}>
               Appointment with Dr. C. Mathalai Sundaram
             </Text>
-            <Text style={staffhomepageStyles.cardSubtitle}>10:00 AM - 11:00 AM</Text>
+            <Text style={homeScreenStyles.cardSubtitle}>10:00 AM - 11:00 AM</Text>
           </View>
         </View>
       )}

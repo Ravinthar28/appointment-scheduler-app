@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
 import {
-  View,
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
   ScrollView,
   Platform,
   Alert,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { appointmentstyles } from './style';
+import { appointmentStyles } from './style';
 
 export default function RequestAppointmentScreen() {
   const [description, setDescription] = useState('');
@@ -38,13 +36,13 @@ export default function RequestAppointmentScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={appointmentstyles.container}>
+    <ScrollView contentContainerStyle={appointmentStyles.container}>
       {/* Header */}
-      <Text style={appointmentstyles.heading}>New Appointment</Text>
+      <Text style={appointmentStyles.heading}>New Appointment</Text>
 
       {/* Description Box */}
       <TextInput
-        style={appointmentstyles.input}
+        style={appointmentStyles.input}
         placeholder="Enter appointment details"
         placeholderTextColor="#888"
         multiline
@@ -54,12 +52,12 @@ export default function RequestAppointmentScreen() {
       />
 
       {/* Date Picker */}
-      <Text style={appointmentstyles.label}>Date</Text>
+      <Text style={appointmentStyles.label}>Date</Text>
       <TouchableOpacity
-        style={appointmentstyles.selector}
+        style={appointmentStyles.selector}
         onPress={() => setShowDatePicker(true)}
       >
-        <Text style={appointmentstyles.selectorText}>
+        <Text style={appointmentStyles.selectorText}>
           {date.toDateString()}
         </Text>
       </TouchableOpacity>
@@ -72,12 +70,12 @@ export default function RequestAppointmentScreen() {
       )}
 
       {/* Time Picker */}
-      <Text style={appointmentstyles.label}>Time</Text>
+      <Text style={appointmentStyles.label}>Time</Text>
       <TouchableOpacity
-        style={appointmentstyles.selector}
+        style={appointmentStyles.selector}
         onPress={() => setShowTimePicker(true)}
       >
-        <Text style={appointmentstyles.selectorText}>
+        <Text style={appointmentStyles.selectorText}>
           {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </Text>
       </TouchableOpacity>
@@ -90,8 +88,8 @@ export default function RequestAppointmentScreen() {
       )}
 
       {/* Submit Button */}
-      <TouchableOpacity style={appointmentstyles.button} onPress={handleSchedule}>
-        <Text style={appointmentstyles.buttonText}>Schedule</Text>
+      <TouchableOpacity style={appointmentStyles.button} onPress={handleSchedule}>
+        <Text style={appointmentStyles.buttonText}>Schedule</Text>
       </TouchableOpacity>
     </ScrollView>
   );
