@@ -1,7 +1,10 @@
 
 const express = require('express');
 const cors = require('cors');
+// ROUTES
 const authRoutes = require('./routes/authRoutes');
+const staffRoutes = require('./routes/staffRoutes');
+// DB
 const connectDB = require('./config/db');
 
 const app = express();
@@ -13,6 +16,7 @@ app.use(express.json());
 
 // ROUTES
 app.use('/',authRoutes);
+app.use('/staff',staffRoutes);
 
 connectDB().then(()=>{
     app.listen(port,()=>{
