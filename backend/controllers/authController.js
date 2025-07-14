@@ -53,17 +53,22 @@ async function createStaff(data) {
 }
 
 async function loginPrincipal(data){
-    const collectionName = data.collegeCode
-    const schema = mongoose.models[collectionName] || mongoose.model(collectionName,registerSchema);
-    const user = await schema.findOne({'principal.mailId':data.email});
-    if(user){
+    try{
+        const collectionName = data.collegeCode
+        const schema = mongoose.models[collectionName] || mongoose.model(collectionName,registerSchema);
+        const user = await schema.findOne({'principal.mailId':data.email});
+        if(user){
 
-        if(user.principal.password == data.password){
-            return 200;
+            if(user.principal.password == data.password){
+                return 200;
+            }
+            else{
+                return 401;
+            }
         }
-        else{
-            return 401;
-        }
+    }
+    catch(error){
+        return 401;
     }
 }
 
@@ -75,6 +80,9 @@ async function loginStaff(data){
         if(user){
             if(user.staffs[0].password == data.password) return 200;
             else return 401;
+        }
+        else{
+            return 401;
         }
     }
     catch(error){
