@@ -60,8 +60,8 @@ export default function LoginForm() {
        router.push('/(auth-screen)/principal-home');
      } else {
        Alert.alert('Select Role', 'Please select a role to proceed.');
-    }
-  };*/
+    }*/
+  };
 
   return (
     <KeyboardAvoidingView

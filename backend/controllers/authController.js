@@ -66,6 +66,9 @@ async function loginPrincipal(data){
                 return 401;
             }
         }
+        else{
+            return 401;
+        }
     }
     catch(error){
         return 401;
