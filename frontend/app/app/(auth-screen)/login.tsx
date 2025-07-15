@@ -32,7 +32,7 @@ export default function LoginForm() {
         collegeCode,
         selectedRole
       };
-      const url = "http://192.168.48.146:3000/auth/login"
+      const url = "http://localhost:3000/auth/login"
       const response = await fetch(url,{
         method:'POST',
         headers:{'Content-Type':'application/json'},
@@ -72,8 +72,8 @@ export default function LoginForm() {
        router.push('/(auth-screen)/principal-home');
      } else {
        Alert.alert('Select Role', 'Please select a role to proceed.');
-    }
-  };*/
+    }*/
+  };
 
   return (
     <KeyboardAvoidingView
@@ -201,4 +201,4 @@ export default function LoginForm() {
     </KeyboardAvoidingView>
   );
 }
-}
+
