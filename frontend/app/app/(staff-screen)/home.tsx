@@ -27,7 +27,6 @@ export default function StaffHomePage() {
   const [upcomingAppointments, setUpcomingAppointments] = useState<Appointment[]>([]);
   const [pastAppointments, setPastAppointments] = useState<Appointment[]>([]);
 
-<<<<<<< Updated upstream
   const router = useRouter(); // ✅ Initialize router
   const userData = useLocalSearchParams();
 
@@ -52,10 +51,6 @@ export default function StaffHomePage() {
     useEffect(()=>{
       fetchAppointmentData;
     });
-=======
-  const router = useRouter();
-  const { email, collegeCode } = useLocalSearchParams();
->>>>>>> Stashed changes
 
   // ✅ For demo: simulate scheduled appointment when screen opens
   useEffect(() => {
@@ -114,19 +109,10 @@ export default function StaffHomePage() {
       {/* Request Appointment */}
       <TouchableOpacity
         style={homeScreenStyles.appointmentButton}
-<<<<<<< Updated upstream
         onPress={() => router.push({
           pathname:'./requestPage',
           params:userData
         })} // ✅ Navigate to Request Appointment screen
-=======
-        onPress={() =>
-          router.push({
-            pathname: './requestPage',
-            params: { email, collegeCode },
-          })
-        }
->>>>>>> Stashed changes
       >
         <Ionicons name="add" size={18} color="white" style={{ marginRight: 6 }} />
         <Text style={homeScreenStyles.appointmentText}>Request Appointment</Text>
