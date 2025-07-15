@@ -22,31 +22,31 @@ export default function StaffHomePage() {
   const router = useRouter(); // ✅ Initialize router
   const {email,collegeCode} = useLocalSearchParams();
 
-  async function fetchData() {
-    const userData = {
-      email,
-      collegeCode
-    }
-    try{
-      const url = "http://localhost:3000/staff/fetch-staff-data"
-      const response = await fetch(url,{
-        method:'POST',
-        headers:{'Content-Type' : 'application/json'},
-        body:JSON.stringify(userData)
-      });
-      if(! response.ok) throw new Error ("Faild to Load");
-      const responseData = await(response.json());
-      setUserName(responseData.response);
+  // async function fetchData() {
+  //   const userData = {
+  //     email,
+  //     collegeCode
+  //   }
+  //   try{
+  //     const url = "http://localhost:3000/staff/fetch-staff-data"
+  //     const response = await fetch(url,{
+  //       method:'POST',
+  //       headers:{'Content-Type' : 'application/json'},
+  //       body:JSON.stringify(userData)
+  //     });
+  //     if(! response.ok) throw new Error ("Faild to Load");
+  //     const responseData = await(response.json());
+  //     setUserName(responseData.response);
 
-    }
-    catch(error){
-      console.log(error);
-    }
-  }
+  //   }
+  //   catch(error){
+  //     console.log(error);
+  //   }
+  // }
 
-  useEffect(()=>{
-    fetchData()
-  },[]);
+  // useEffect(()=>{
+  //   fetchData()
+  // },[]);
 
   return (
     <View style={homeScreenStyles.container}>

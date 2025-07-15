@@ -28,7 +28,8 @@ export default function RequestAppointmentScreen() {
     if (selectedTime) setDate(selectedTime);
   };
 
-  const handleSchedule = () => {
+  const handleSchedule = async () => {
+
     if (!description.trim()) {
       Alert.alert('Validation Error', 'Please enter appointment details.');
       return;
@@ -43,6 +44,24 @@ export default function RequestAppointmentScreen() {
         },
       },
     ]);
+
+    try{
+      const message = {
+        desc:description,
+        date_time:date.toLocaleString()
+      }
+      console.log(message);
+      const response = await fetch("http://192.168.48.146:3000/staff/request-appointment",{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(message)
+      });
+      if(! response.ok) throw new Error("Faild to save the message");
+    }
+    catch(error){
+      console.log(error);
+    }
+    
   };
 
   return (

@@ -18,7 +18,7 @@ const router = express.Router();
 //     }
 // });
 
-router.post('/request-appointment',(req,res)=>{
+router.post('/request-appointment',async (req,res)=>{
 
 })
 
