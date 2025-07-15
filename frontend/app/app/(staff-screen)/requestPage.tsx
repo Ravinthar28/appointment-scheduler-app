@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Text,
   TextInput,
@@ -19,7 +19,7 @@ export default function RequestAppointmentScreen() {
   const [showTimePicker, setShowTimePicker] = useState(false);
 
   // PARAMETERS
-  const {email,collegeCode} = useLocalSearchParams();
+  const userData = useLocalSearchParams();
 
   const onChangeDate = (event: any, selectedDate?: Date) => {
     setShowDatePicker(Platform.OS === 'ios');
@@ -34,10 +34,7 @@ export default function RequestAppointmentScreen() {
 
   // FUNCTION TO VALIDATE THE APPOINTMENT FORM AND TO STORE IT IN THE DB
   const handleSchedule = async () => {
-    const userData = {
-      email,
-      collegeCode
-    }
+    
     if (!description.trim()) {
       Alert.alert('Validation Error', 'Please enter appointment details.');
       return;
@@ -58,8 +55,8 @@ export default function RequestAppointmentScreen() {
 
     try{
       const messageData = {
-        email,
-        collegeCode,
+        email:userData.email,
+        collegeCode:userData.collegeCode,
         desc:description,
         dateTime:date.toLocaleString()
       }

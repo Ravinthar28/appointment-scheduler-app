@@ -20,7 +20,29 @@ export default function StaffHomePage() {
   const [userName,setUserName] = useState('');
 
   const router = useRouter(); // ✅ Initialize router
-  const {email,collegeCode} = useLocalSearchParams();
+  const userData = useLocalSearchParams();
+
+
+  // FUNCTION TO FETCH THE APPOINTMENT DATAS FROM DB
+    const fetchAppointmentData = async ()=>{
+      try{
+        const url = "http://192.168.48.146:3000/staff/fetch-appointments";
+        const response = await fetch(url,{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(userData)
+        });
+        if(! response.ok) throw new Error("Faild to load data");
+        console.log(response);
+      }
+      catch(error){
+        console.log(error);
+      }
+    }
+  
+    useEffect(()=>{
+      fetchAppointmentData;
+    });
 
   // async function fetchData() {
   //   const userData = {
@@ -72,10 +94,7 @@ export default function StaffHomePage() {
         style={homeScreenStyles.appointmentButton}
         onPress={() => router.push({
           pathname:'./requestPage',
-          params:{
-            email,
-            collegeCode
-          }
+          params:userData
         })} // ✅ Navigate to Request Appointment screen
       >
         <Ionicons name="add" size={18} color="white" style={{ marginRight: 6 }} />

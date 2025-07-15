@@ -4,7 +4,10 @@ const router = express.Router();
 
 
 // STAFF CONTROLLER
-const {requestAppointmentController} = require('../controllers/staffController');
+const {
+    requestAppointmentController,
+    fetchAppointmentsController
+    } = require('../controllers/staffController');
 
 // const { fetchDataController } = require('../controllers/staffController');
 
@@ -20,6 +23,17 @@ const {requestAppointmentController} = require('../controllers/staffController')
 //         console.log(error);
 //     }
 // });
+
+router.post('/fetch-appointments',async (req,res)=>{
+    try{
+        const userData = req.body;
+        console.log(userData);
+        const response = await fetchAppointmentsController(userData)
+    }
+    catch(error){
+        console.log(error);
+    }
+});
 
 router.post('/request-appointment',async (req,res)=>{
     try{

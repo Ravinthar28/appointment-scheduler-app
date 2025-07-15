@@ -19,6 +19,10 @@ const registerSchema = require('../models/registerModel');
 //     }
 // }
 
+async function fetchAppointmentsController(userData){
+
+}
+
 async function requestAppointmentController(messageData){
     try{
         const collectionName = messageData.collegeCode;
@@ -42,5 +46,6 @@ async function requestAppointmentController(messageData){
 }
 
 module.exports = {
+    fetchAppointmentsController,
     requestAppointmentController
 }
