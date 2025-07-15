@@ -31,7 +31,8 @@ async function createStaff(data) {
             phoneNo:data['phone'],
             mailId:data['email'],
             password:data['password'],
-            messages:[]
+            upcomingAppointments:[],
+            pastAppointments:[]
         }
         const model = await schema.findOneAndUpdate(
             {},

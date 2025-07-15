@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { appointmentStyles } from './style';
-import { useRouter } from 'expo-router'; // ✅ Import router
+import { useLocalSearchParams, useRouter } from 'expo-router'; // ✅ Import router
 
 export default function RequestAppointmentScreen() {
   const router = useRouter(); // ✅ Initialize router
@@ -17,6 +17,9 @@ export default function RequestAppointmentScreen() {
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
+
+  // PARAMETERS
+  const {email,collegeCode} = useLocalSearchParams();
 
   const onChangeDate = (event: any, selectedDate?: Date) => {
     setShowDatePicker(Platform.OS === 'ios');
@@ -28,8 +31,13 @@ export default function RequestAppointmentScreen() {
     if (selectedTime) setDate(selectedTime);
   };
 
-  const handleSchedule = async () => {
 
+  // FUNCTION TO VALIDATE THE APPOINTMENT FORM AND TO STORE IT IN THE DB
+  const handleSchedule = async () => {
+    const userData = {
+      email,
+      collegeCode
+    }
     if (!description.trim()) {
       Alert.alert('Validation Error', 'Please enter appointment details.');
       return;
@@ -40,21 +48,26 @@ export default function RequestAppointmentScreen() {
         text: 'OK',
         onPress: () => {
           // ✅ Navigate to staff home after scheduling
-          router.push('/(staff-screen)/home');
+          router.push({
+            pathname:'/(staff-screen)/home',
+            params:userData
+          });
         },
       },
     ]);
 
     try{
-      const message = {
+      const messageData = {
+        email,
+        collegeCode,
         desc:description,
-        date_time:date.toLocaleString()
+        dateTime:date.toLocaleString()
       }
-      console.log(message);
-      const response = await fetch("http://192.168.48.146:3000/staff/request-appointment",{
+      const url = "http://192.168.48.146:3000/staff/request-appointment";
+      const response = await fetch(url,{
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(message)
+        body:JSON.stringify(messageData)
       });
       if(! response.ok) throw new Error("Faild to save the message");
     }

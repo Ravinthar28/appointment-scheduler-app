@@ -18,3 +18,29 @@ const registerSchema = require('../models/registerModel');
 //         return 404;
 //     }
 // }
+
+async function requestAppointmentController(messageData){
+    try{
+        const collectionName = messageData.collegeCode;
+        const newMessage = {
+            desc:messageData.desc,
+            dateTime:messageData.dateTime
+        }
+        const schema = mongoose.models[collectionName] || mongoose.model(collectionName,registerSchema);
+        const model = await schema.findOneAndUpdate(
+            {'staffs.mailId':messageData.email},
+            {$push:{'staffs.$.upcomingAppointments':newMessage}},
+            {new:true,upsert:false}
+        );
+        if(!model) console.log("error in model");
+        return model;
+        
+    }
+    catch(error){
+        console.log(error);
+    }
+}
+
+module.exports = {
+    requestAppointmentController
+}

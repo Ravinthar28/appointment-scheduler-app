@@ -2,7 +2,10 @@
 const express = require('express')
 const router = express.Router();
 
+
 // STAFF CONTROLLER
+const {requestAppointmentController} = require('../controllers/staffController');
+
 // const { fetchDataController } = require('../controllers/staffController');
 
 // router.post('/fetch-staff-data',async (req,res)=>{
@@ -19,7 +22,14 @@ const router = express.Router();
 // });
 
 router.post('/request-appointment',async (req,res)=>{
-
+    try{
+        const messageData = req.body;
+        const response = await requestAppointmentController(messageData);
+        if(response) console.log("message Stored");
+    }
+    catch(error){
+        console.log(error);
+    }
 })
 
 module.exports = router
