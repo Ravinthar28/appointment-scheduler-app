@@ -107,6 +107,49 @@ export const homeScreenStyles = StyleSheet.create({
     color: '#ccc',
     fontSize: 13,
   },
+  modalOverlay: {
+  flex: 1,
+  backgroundColor: 'rgba(0,0,0,0.5)',
+  justifyContent: 'flex-end',
+},
+
+modalContainer: {
+  backgroundColor: '#fff',
+  padding: 20,
+  borderTopLeftRadius: 20,
+  borderTopRightRadius: 20,
+  elevation: 5,
+},
+
+modalTitle: {
+  fontSize: 18,
+  fontWeight: 'bold',
+  marginBottom: 10,
+},
+
+modalLabel: {
+  fontWeight: '600',
+  marginTop: 10,
+},
+
+modalText: {
+  fontSize: 16,
+  color: '#444',
+},
+
+modalCloseButton: {
+  marginTop: 20,
+  backgroundColor: '#1e90ff',
+  padding: 10,
+  borderRadius: 8,
+  alignItems: 'center',
+},
+
+modalCloseText: {
+  color: '#fff',
+  fontWeight: '600',
+},
+
 });
 
 export const appointmentStyles = StyleSheet.create({

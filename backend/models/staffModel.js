@@ -6,10 +6,10 @@ const staffSchema = new mongoose.Schema({
     name:String,
     phoneNo:Number,
     mailId:{
-        type:String,
+        type:String,    
         unique:true
     },
-    password:String,
+    password:String,   
     upcomingAppointments:[requestModel],
     pastAppointments:[requestModel]
 });
