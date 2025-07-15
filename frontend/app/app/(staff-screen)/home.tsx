@@ -14,7 +14,11 @@ import { homeScreenStyles } from './style';
 
 
 export default function StaffHomePage() {
+
+  // STATES
   const [selectedTab, setSelectedTab] = useState<'upcoming' | 'past'>('upcoming');
+  const [userName,setUserName] = useState('');
+
   const router = useRouter(); // ✅ Initialize router
   const {email,collegeCode} = useLocalSearchParams();
 
@@ -24,13 +28,15 @@ export default function StaffHomePage() {
       collegeCode
     }
     try{
-      const url = "http://localhost:3000/fetch-staff-data"
+      const url = "http://localhost:3000/staff/fetch-staff-data"
       const response = await fetch(url,{
         method:'POST',
         headers:{'Content-Type' : 'application/json'},
         body:JSON.stringify(userData)
       });
-      
+      if(! response.ok) throw new Error ("Faild to Load");
+      const responseData = await(response.json());
+      setUserName(responseData.response);
 
     }
     catch(error){

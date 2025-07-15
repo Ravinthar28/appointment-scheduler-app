@@ -32,7 +32,7 @@ export default function LoginForm() {
         collegeCode,
         selectedRole
       };
-      const url = "http://localhost:3000/login"
+      const url = "http://localhost:3000/auth/login"
       const response = await fetch(url,{
         method:'POST',
         headers:{'Content-Type':'application/json'},
