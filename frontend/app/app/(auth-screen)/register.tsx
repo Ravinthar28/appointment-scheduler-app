@@ -50,8 +50,8 @@ export default function PersonalInfoForm() {
       if(! response.ok){
         throw new Error("Failed to fetch teh data");
       }
-      const result =  await response.json()
-      if(result) router.push('/(auth-screen)/login')
+      alert("Registerd Successfully");
+      router.push('/(auth-screen)/login')
     //   const usersData = await AsyncStorage.getItem('registeredUsers');
     //   const users = usersData ? JSON.parse(usersData) : [];
 
@@ -75,6 +75,7 @@ export default function PersonalInfoForm() {
     //   Alert.alert('Error', 'Failed to register. Please try again.');
     }
     catch (error){
+      alert('Make sure the college code you provided is correct')
       console.log(error);
     }
     

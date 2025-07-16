@@ -14,7 +14,7 @@ router.post('/register',async (req,res)=>{
       // FOR PRINCIPAL REGISTER
       if(role == 'principal'){
         const result = await createPrincipal(data.userData)
-          if(result) res.json("Registerd Successfully");
+        if(result) res.sendStatus(result);
       }
       // FOR STAFF REGISTER
       else if(role == 'staff'){

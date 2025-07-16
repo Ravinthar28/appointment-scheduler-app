@@ -3,23 +3,29 @@ const mongoose = require('mongoose');
 const registerSchema = require('../models/registerModel');
 
 async function createPrincipal(data){
-    const collectionName = data["collegeCode"]
-    const register = mongoose.model(collectionName,registerSchema);
-    
-    const newUser = new register({
-        code:data["collegeCode"],
-        principal:{
-            name:data["fullName"],
-            phoneNo:data["phone"],
-            mailId:data["email"],
-            password:data["password"],
-            messages:[]
-        },
-        staffs:[]
-    })
+    try{
+        const collectionName = data["collegeCode"]
+        const register = mongoose.model(collectionName,registerSchema);
+        const newUser = new register({
+            code:data["collegeCode"],
+            principal:{
+                name:data["fullName"],
+                phoneNo:data["phone"],
+                mailId:data["email"],
+                password:data["password"],
+                messages:[]
+            },
+            staffs:[]
+        });
 
-    await newUser.save();
-    return true;
+        await newUser.save();
+        return 200;
+    }
+    catch(error){
+        if(error.code == 11000){
+            return 500;
+        }
+    }
 }
 
 async function createStaff(data) {

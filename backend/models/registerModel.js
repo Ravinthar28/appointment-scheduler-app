@@ -5,7 +5,10 @@ const staffSchema  = require('./staffModel');
 
 const registerSchema = new mongoose.Schema({
   code:String,
-  principal:principalSchema,
+  principal:{
+    type:principalSchema,
+    unique:true
+  },
   staffs:[staffSchema]
 });
 
