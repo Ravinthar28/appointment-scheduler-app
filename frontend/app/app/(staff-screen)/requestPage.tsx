@@ -60,7 +60,7 @@ export default function RequestAppointmentScreen() {
         desc:description,
         dateTime:date.toLocaleString()
       }
-      const url = "http://192.168.48.146:3000/staff/request-appointment";
+      const url = "http://localhost:3000/staff/request-appointment";
       const response = await fetch(url,{
         method:'POST',
         headers:{'Content-Type':'application/json'},

@@ -27,10 +27,12 @@ const {
 router.post('/fetch-appointments',async (req,res)=>{
     try{
         const userData = req.body;
-        console.log(userData);
-        const response = await fetchAppointmentsController(userData)
+        const response = await fetchAppointmentsController(userData);
+        if(response) res.send(response.json());
+        else sendStatus(500);
     }
     catch(error){
+        res.sendStatus(500);
         console.log(error);
     }
 });

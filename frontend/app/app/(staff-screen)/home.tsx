@@ -34,7 +34,7 @@ export default function StaffHomePage() {
   // FUNCTION TO FETCH THE APPOINTMENT DATAS FROM DB
     const fetchAppointmentData = async ()=>{
       try{
-        const url = "http://192.168.48.146:3000/staff/fetch-appointments";
+        const url = "http://localhost:3000/staff/fetch-appointments";
         const response = await fetch(url,{
           method:'POST',
           headers:{'Content-Type':'application/json'},
@@ -49,8 +49,8 @@ export default function StaffHomePage() {
     }
   
     useEffect(()=>{
-      fetchAppointmentData;
-    });
+      fetchAppointmentData();
+    },[]);
 
   // ✅ For demo: simulate scheduled appointment when screen opens
   useEffect(() => {
