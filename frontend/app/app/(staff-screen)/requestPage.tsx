@@ -68,7 +68,10 @@ export default function RequestAppointmentScreen() {
       });
       if(! response.ok) throw new Error("Faild to save the message");
       alert('Request sent to the principal successfully');
-      router.push('/(staff-screen)/home');
+      router.push({
+        pathname:'/(staff-screen)/home',
+        params:userData
+      });
     }
     catch(error){
       alert('Error in requesting');

@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 // SCHEMA
 const registerSchema = require('../models/registerModel')
 
+// FUNCTION TO APPEND APPOINTMENT REQUESTS FROM THE STAFF
 const newAppointment = async (userData)=>{
     try{
         const messageData = {
@@ -26,4 +27,24 @@ const newAppointment = async (userData)=>{
     }
 }
 
-module.exports = { newAppointment }
+// FUNCTION TO SEND THE PENDING APPOINTMENTS DATA FROM DB
+const pendingAppointments = async (userData)=>{
+    try{
+        const collectionName = userData.collegeCode;
+        const schema = mongoose.models[collectionName] || mongoose.model(collectionName,registerSchema);
+        const user = await schema.findOne({});
+        const responseData = {
+            pendingAppointments:user.principal.pendingAppointments,
+            confirmedAppointments:user.principal.confirmedAppointments,
+            pastAppointments:user.principal.pastAppointments
+        }
+        if(user) return responseData;
+        else return 500;
+    }
+    catch(error){
+        return 500;
+        console.log(error);
+    }
+}
+
+module.exports = { newAppointment, pendingAppointments }

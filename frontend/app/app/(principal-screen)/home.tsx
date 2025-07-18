@@ -11,100 +11,139 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
 import { principalHome } from './style';
+import { useLocalSearchParams } from 'expo-router';
 
 
-interface Meeting {
-  id: number;
-  name: string;
-  date: Date;
-  status: 'pending' | 'confirmed' | 'past';
-  message?: string;
-}
+// interface Meeting {
+//   id: number;
+//   name: string;
+//   date: Date;
+//   status: 'pending' | 'confirmed' | 'past';
+//   message?: string;
+// }
 
 export default function PrincipalHomePage() {
   const [selectedTab, setSelectedTab] = useState<'pending' | 'confirmed' | 'past'>('pending');
-  const [meetings, setMeetings] = useState<Meeting[]>([
-    {
-      id: 1,
-      name: 'Dr. Anya Sharma',
-      date: new Date(new Date().getTime() + 3600000), // 1hr from now
-      status: 'pending',
-    },
-    {
-      id: 2,
-      name: 'Mr. Ethan',
-      date: new Date(new Date().getTime() + 7200000), // 2hr from now
-      status: 'confirmed',
-    },
-    {
-      id: 3,
-      name: 'Ms. Olivia Bennett',
-      date: new Date(new Date().getTime() - 3600000), // 1hr ago
-      status: 'confirmed',
-    },
-  ]);
+  // const [meetings, setMeetings] = useState<Meeting[]>([
+  //   {
+  //     id: 1,
+  //     name: 'Dr. Anya Sharma',
+  //     date: new Date(new Date().getTime() + 3600000), // 1hr from now
+  //     status: 'pending',
+  //   },
+  //   {
+  //     id: 2,
+  //     name: 'Mr. Ethan',
+  //     date: new Date(new Date().getTime() + 7200000), // 2hr from now
+  //     status: 'confirmed',
+  //   },
+  //   {
+  //     id: 3,
+  //     name: 'Ms. Olivia Bennett',
+  //     date: new Date(new Date().getTime() - 3600000), // 1hr ago
+  //     status: 'confirmed',
+  //   },
+  // ]);
 
-  const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null);
+  // const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [tempDate, setTempDate] = useState(new Date());
   const [message, setMessage] = useState('');
 
-  // Automatically move confirmed to past
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const now = new Date();
-      setMeetings((prev) =>
-        prev.map((meeting) =>
-          meeting.status === 'confirmed' && meeting.date < now
-            ? { ...meeting, status: 'past' }
-            : meeting
-        )
-      );
-    }, 60000); // every minute
+  // PARAMETER VALUES
+  const userData = useLocalSearchParams();
 
-    return () => clearInterval(interval);
-  }, []);
+  interface appointments {
+    desc:string,
+    dateTime:string
+  }
+  // STATES TO STORE THE APPOINTMENTS
+  const [pendingAppointments,setPendingAppointments] = useState([])
+  const [confirmedAppointments,setConfirmedAppointments] = useState([])
+  const [pastAppointments,setPastAppointments] = useState([])
 
-  const handleConfirm = () => {
-    if (!selectedMeeting) return;
-    const updated = meetings.map((m) =>
-      m.id === selectedMeeting.id
-        ? {
-            ...m,
-            date: tempDate,
-            status: 'confirmed',
-            message,
-          }
-        : m
-    );
-    Alert.alert('Appointment Allocated', 'The appointment has been confirmed.');
-    setSelectedMeeting(null);
-    setMessage('');
-  };
+  // FUNCTION TO FETCH THE REQUESTS DATA FROM THE DB
+  const pendingRequest = async ()=>{
+    try{
+      const url = "http://localhost:3000/principal/pending-appointments";
+      const response = await fetch(url,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(userData)
+      });
+      const result = await response.json();
+      setPendingAppointments(result.pendingAppointments);
+      setConfirmedAppointments(result.confirmedAppointments);
+      setPastAppointments(result.pastAppointments);
+    }
+    catch(error){
+      console.log(error);
+    }
+  }
+  {/* ----- Working ------- */}
+  // FUNCTION TO GENERATE APPOINTMENTS CARD
+  const GenerateAppointmentsCard = ()=>{
 
-  const toggleStatusWithEmoji = (id: number) => {
-    setMeetings((prev) =>
-      prev.map((m) =>
-        m.id === id && m.status !== 'past'
-          ? {
-              ...m,
-              status: m.status === 'pending' ? 'confirmed' : 'pending',
-            }
-          : m
-      )
-    );
-  };
+  }
+  useEffect(()=>{
+    pendingRequest();
+  },[]);
+  // // Automatically move confirmed to past
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     const now = new Date();
+  //     setMeetings((prev) =>
+  //       prev.map((meeting) =>
+  //         meeting.status === 'confirmed' && meeting.date < now
+  //           ? { ...meeting, status: 'past' }
+  //           : meeting
+  //       )
+  //     );
+  //   }, 60000); // every minute
+
+  //   return () => clearInterval(interval);
+  // }, []);
+
+  // const handleConfirm = () => {
+  //   if (!selectedMeeting) return;
+  //   const updated = meetings.map((m) =>
+  //     m.id === selectedMeeting.id
+  //       ? {
+  //           ...m,
+  //           date: tempDate,
+  //           status: 'confirmed',
+  //           message,
+  //         }
+  //       : m
+  //   );
+  //   Alert.alert('Appointment Allocated', 'The appointment has been confirmed.');
+  //   setSelectedMeeting(null);
+  //   setMessage('');
+  // };
+
+  // const toggleStatusWithEmoji = (id: number) => {
+  //   setMeetings((prev) =>
+  //     prev.map((m) =>
+  //       m.id === id && m.status !== 'past'
+  //         ? {
+  //             ...m,
+  //             status: m.status === 'pending' ? 'confirmed' : 'pending',
+  //           }
+  //         : m
+  //     )
+  //   );
+  // };
 
   return (
     <ScrollView contentContainerStyle={principalHome.container}>
       {/* Header */}
-      <View style={principalHome.header}>
+      {/* <View style={principalHome.header}>
         <TouchableOpacity>
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={principalHome.title}>Appointments</Text>
-      </View>
+      </View> */}
 
       {/* Tabs */}
       <View style={principalHome.tabs}>
@@ -122,7 +161,7 @@ export default function PrincipalHomePage() {
       </View>
 
       {/* Meeting Cards */}
-      {meetings
+      {/* {meetings
         .filter((m) => m.status === selectedTab)
         .map((meeting) => (
           <TouchableOpacity
@@ -152,10 +191,10 @@ export default function PrincipalHomePage() {
               </TouchableOpacity>
             )}
           </TouchableOpacity>
-        ))}
+        ))} */}
 
       {/* Modal */}
-      <Modal visible={!!selectedMeeting} animationType="slide" transparent>
+      {/* <Modal visible={!!selectedMeeting} animationType="slide" transparent>
         <View style={principalHome.modalBackground}>
           <View style={principalHome.modalContainer}>
             <Text style={principalHome.formHeading}>Select Available Time</Text>
@@ -211,7 +250,7 @@ export default function PrincipalHomePage() {
             </TouchableOpacity>
           </View>
         </View>
-      </Modal>
+      </Modal> */}
     </ScrollView>
   );
 }

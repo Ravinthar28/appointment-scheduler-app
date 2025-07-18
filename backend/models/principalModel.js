@@ -12,7 +12,7 @@ const principalSchema = new mongoose.Schema({
     password:String,
     pendingAppointments:[appointmentModel],
     confirmedAppointments:[appointmentModel],
-    pastAppointment:[appointmentModel]
+    pastAppointments:[appointmentModel]
 });
 
 module.exports = principalSchema;
