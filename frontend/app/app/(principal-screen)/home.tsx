@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
-import { styles } from './style';
+import { principalHome } from './style';
 
 
 interface Meeting {
@@ -97,24 +97,24 @@ export default function PrincipalHomePage() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={principalHome.container}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={principalHome.header}>
         <TouchableOpacity>
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.title}>Appointments</Text>
+        <Text style={principalHome.title}>Appointments</Text>
       </View>
 
       {/* Tabs */}
-      <View style={styles.tabs}>
+      <View style={principalHome.tabs}>
         {['pending', 'confirmed', 'past'].map((tab) => (
           <TouchableOpacity
             key={tab}
-            style={[styles.tabButton, selectedTab === tab && styles.tabSelected]}
+            style={[principalHome.tabButton, selectedTab === tab && principalHome.tabSelected]}
             onPress={() => setSelectedTab(tab as typeof selectedTab)}
           >
-            <Text style={[styles.tabText, selectedTab === tab && styles.tabTextSelected]}>
+            <Text style={[principalHome.tabText, selectedTab === tab && principalHome.tabTextSelected]}>
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </Text>
           </TouchableOpacity>
@@ -127,7 +127,7 @@ export default function PrincipalHomePage() {
         .map((meeting) => (
           <TouchableOpacity
             key={meeting.id}
-            style={styles.card}
+            style={principalHome.card}
             onPress={() => {
               if (meeting.status !== 'past') {
                 setSelectedMeeting(meeting);
@@ -135,14 +135,14 @@ export default function PrincipalHomePage() {
               }
             }}
           >
-            <View style={styles.avatar} />
+            <View style={principalHome.avatar} />
             <View style={{ flex: 1 }}>
-              <Text style={styles.cardName}>Meeting with {meeting.name}</Text>
-              <Text style={styles.cardTime}>
+              <Text style={principalHome.cardName}>Meeting with {meeting.name}</Text>
+              <Text style={principalHome.cardTime}>
                 {meeting.date.toLocaleDateString()} –{' '}
                 {meeting.date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </Text>
-              {meeting.message && <Text style={styles.cardMessage}>{meeting.message}</Text>}
+              {meeting.message && <Text style={principalHome.cardMessage}>{meeting.message}</Text>}
             </View>
             {meeting.status !== 'past' && (
               <TouchableOpacity onPress={() => toggleStatusWithEmoji(meeting.id)}>
@@ -156,11 +156,11 @@ export default function PrincipalHomePage() {
 
       {/* Modal */}
       <Modal visible={!!selectedMeeting} animationType="slide" transparent>
-        <View style={styles.modalBackground}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.formHeading}>Select Available Time</Text>
+        <View style={principalHome.modalBackground}>
+          <View style={principalHome.modalContainer}>
+            <Text style={principalHome.formHeading}>Select Available Time</Text>
 
-            <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.input}>
+            <TouchableOpacity onPress={() => setShowDatePicker(true)} style={principalHome.input}>
               <Text>{tempDate.toDateString()}</Text>
             </TouchableOpacity>
             {showDatePicker && (
@@ -175,7 +175,7 @@ export default function PrincipalHomePage() {
               />
             )}
 
-            <TouchableOpacity onPress={() => setShowTimePicker(true)} style={styles.input}>
+            <TouchableOpacity onPress={() => setShowTimePicker(true)} style={principalHome.input}>
               <Text>
                 {tempDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </Text>
@@ -198,16 +198,16 @@ export default function PrincipalHomePage() {
               placeholder="Optional Message"
               value={message}
               onChangeText={setMessage}
-              style={[styles.input, { height: 80 }]}
+              style={[principalHome.input, { height: 80 }]}
               multiline
             />
 
-            <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
-              <Text style={styles.confirmText}>Confirm</Text>
+            <TouchableOpacity style={principalHome.confirmButton} onPress={handleConfirm}>
+              <Text style={principalHome.confirmText}>Confirm</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => setSelectedMeeting(null)} style={styles.cancelButton}>
-              <Text style={styles.cancelText}>Cancel</Text>
+            <TouchableOpacity onPress={() => setSelectedMeeting(null)} style={principalHome.cancelButton}>
+              <Text style={principalHome.cancelText}>Cancel</Text>
             </TouchableOpacity>
           </View>
         </View>

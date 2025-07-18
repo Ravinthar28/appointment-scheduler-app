@@ -44,7 +44,7 @@ export default function LoginForm() {
       if(response.status){
         if(response.status == 200){
           if(selectedRole == 'principal') router.push({
-            pathname:'/(auth-screen)/principal-home',
+            pathname:'/(principal-screen)/home',
             params: {
               email,
               collegeCode
