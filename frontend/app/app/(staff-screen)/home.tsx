@@ -10,22 +10,41 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useLocalSearchParams } from 'expo-router';
 import { homeScreenStyles } from './style';
+import { ColorSpace } from 'react-native-reanimated';
 
 // ✅ Define appointment type
-interface Appointment {
-  title: string;
-  time: string;
-  date: string;
-  message?: string;
-  datetime: Date;
-}
+// interface Appointment {
+//   data:{
+//         desc:string,
+//         dateTime:string
+//       }
+// }
+
+interface GenerateAppointmentsProps {
+      data:{
+        desc:string,
+        dateTime:string
+      }
+    }
 
 export default function StaffHomePage() {
   const [selectedTab, setSelectedTab] = useState<'upcoming' | 'past'>('upcoming');
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
-  const [upcomingAppointments, setUpcomingAppointments] = useState<Appointment[]>([]);
-  const [pastAppointments, setPastAppointments] = useState<Appointment[]>([]);
+  const [selectedAppointment, setSelectedAppointment] = useState<GenerateAppointmentsProps | null>(null);
+  const [upcomingAppointments, setUpcomingAppointments] = useState([{
+    desc:"Appointments",
+    "dateTime":"10:00 Am"
+  }]);
+  const [pastAppointments, setPastAppointments] = useState([{
+    desc:"Appointments",
+    "dateTime":"10:00 Am"
+  }]);;
+
+  // APPOINTMENT DATA 
+  const [appointmentData,setAppointmentData] = useState([{
+    "desc":"Appointments",
+    "dateTime":"10:00 Am"
+  }]);
 
   const router = useRouter(); // ✅ Initialize router
   const userData = useLocalSearchParams();
@@ -41,11 +60,32 @@ export default function StaffHomePage() {
           body:JSON.stringify(userData)
         });
         if(! response.ok) throw new Error("Faild to load data");
-        console.log(response);
+        const data = await response.json();
+        setUpcomingAppointments(data);
       }
       catch(error){
         console.log(error);
       }
+    }
+
+    
+    const GenerateAppointments = (props:GenerateAppointmentsProps)=>{
+      console.log(props)
+      return(
+        <TouchableOpacity
+          style={homeScreenStyles.card}
+          // onPress={() => handleOpenModal()}
+        >
+          <Image
+            source={require('../../assets/images/calendar.jpeg')}
+            style={homeScreenStyles.cardImage}
+          />
+          <View style={homeScreenStyles.cardContent}>
+            <Text style={homeScreenStyles.cardTitle}>{"Appointment with principal"}</Text>
+            <Text style={homeScreenStyles.cardSubtitle}>{props.data.dateTime}</Text>
+          </View>
+        </TouchableOpacity>
+      )
     }
   
     useEffect(()=>{
@@ -53,43 +93,43 @@ export default function StaffHomePage() {
     },[]);
 
   // ✅ For demo: simulate scheduled appointment when screen opens
-  useEffect(() => {
-    const sample: Appointment = {
-      title: 'Appointment with Dr. C. Mathalai Sundaram',
-      time: '10:00 AM - 11:00 AM',
-      date: 'July 18, 2025',
-      message: 'Please bring the project proposal.',
-      datetime: new Date(new Date().getTime() + 5 * 60 * 1000), // 5 minutes from now
-    };
-    setUpcomingAppointments([sample]);
-  }, []);
+  // useEffect(() => {
+  //   const sample: Appointment = {
+  //     title: 'Appointment with Dr. C. Mathalai Sundaram',
+  //     time: '10:00 AM - 11:00 AM',
+  //     date: 'July 18, 2025',
+  //     message: 'Please bring the project proposal.',
+  //     datetime: new Date(new Date().getTime() + 5 * 60 * 1000), // 5 minutes from now
+  //   };
+  //   setUpcomingAppointments([sample]);
+  // }, []);
 
   // ✅ Automatically move finished appointments to 'past'
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const now = new Date();
-      const stillUpcoming: Appointment[] = [];
-      const newlyPast: Appointment[] = [];
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     const now = new Date();
+  //     const stillUpcoming: Appointment[] = [];
+  //     const newlyPast: Appointment[] = [];
 
-      upcomingAppointments.forEach((appt) => {
-        const apptTime = new Date(appt.datetime);
-        if (apptTime <= now) {
-          newlyPast.push(appt);
-        } else {
-          stillUpcoming.push(appt);
-        }
-      });
+  //     upcomingAppointments.forEach((appt) => {
+  //       const apptTime = new Date(appt.datetime);
+  //       if (apptTime <= now) {
+  //         newlyPast.push(appt);
+  //       } else {
+  //         stillUpcoming.push(appt);
+  //       }
+  //     });
 
-      if (newlyPast.length > 0) {
-        setPastAppointments((prev) => [...prev, ...newlyPast]);
-        setUpcomingAppointments(stillUpcoming);
-      }
-    }, 60000); // Check every 60 seconds
+  //     if (newlyPast.length > 0) {
+  //       setPastAppointments((prev) => [...prev, ...newlyPast]);
+  //       setUpcomingAppointments(stillUpcoming);
+  //     }
+  //   }, 60000); // Check every 60 seconds
 
-    return () => clearInterval(interval);
-  }, [upcomingAppointments]);
+  //   return () => clearInterval(interval);
+  // }, [upcomingAppointments]);
 
-  const handleOpenModal = (appointment: Appointment) => {
+  const handleOpenModal = (appointment: GenerateAppointmentsProps) => {
     setSelectedAppointment(appointment);
     setModalVisible(true);
   };
@@ -119,6 +159,7 @@ export default function StaffHomePage() {
       </TouchableOpacity>
 
       {/* Tabs */}
+
       <View style={homeScreenStyles.tabs}>
         <TouchableOpacity
           onPress={() => setSelectedTab('upcoming')}
@@ -158,25 +199,27 @@ export default function StaffHomePage() {
       </View>
 
       {/* Appointment Cards */}
-      {(selectedTab === 'upcoming' ? upcomingAppointments : pastAppointments).map((appt, index) => (
-        <TouchableOpacity
-          key={index}
-          style={homeScreenStyles.card}
-          onPress={() => handleOpenModal(appt)}
-        >
-          <Image
-            source={require('../../assets/images/calendar.jpeg')}
-            style={homeScreenStyles.cardImage}
-          />
-          <View style={homeScreenStyles.cardContent}>
-            <Text style={homeScreenStyles.cardTitle}>{appt.title}</Text>
-            <Text style={homeScreenStyles.cardSubtitle}>{appt.time}</Text>
-          </View>
-        </TouchableOpacity>
+      
+      {(selectedTab === 'upcoming' ? upcomingAppointments : pastAppointments).map((data, index) => (
+        <GenerateAppointments data={data} />
+        // <TouchableOpacity
+        //   key={index}
+        //   style={homeScreenStyles.card}
+        //   onPress={() => handleOpenModal(appt)}
+        // >
+        //   <Image
+        //     source={require('../../assets/images/calendar.jpeg')}
+        //     style={homeScreenStyles.cardImage}
+        //   />
+        //   <View style={homeScreenStyles.cardContent}>
+        //     <Text style={homeScreenStyles.cardTitle}>{appt.title}</Text>
+        //     <Text style={homeScreenStyles.cardSubtitle}>{appt.time}</Text>
+        //   </View>
+        // </TouchableOpacity>
       ))}
 
       {/* Modal */}
-      <Modal
+      {/* <Modal
         visible={modalVisible}
         animationType="slide"
         transparent
@@ -202,7 +245,7 @@ export default function StaffHomePage() {
             </TouchableOpacity>
           </View>
         </View>
-      </Modal>
+      </Modal> */}
     </View>
   );
 }

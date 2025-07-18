@@ -86,6 +86,7 @@ export const homeScreenStyles = StyleSheet.create({
     backgroundColor: '#1e1e1e',
     borderRadius: 12,
     padding: 10,
+    marginTop:2,
     alignItems: 'center',
   },
   cardImage: {
