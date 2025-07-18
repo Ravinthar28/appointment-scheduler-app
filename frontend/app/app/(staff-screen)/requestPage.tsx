@@ -60,15 +60,18 @@ export default function RequestAppointmentScreen() {
         desc:description,
         dateTime:date.toLocaleString()
       }
-      const url = "http://localhost:3000/staff/request-appointment";
+      const url = "http://localhost:3000/principal/appointment-request";
       const response = await fetch(url,{
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify(messageData)
       });
       if(! response.ok) throw new Error("Faild to save the message");
+      alert('Request sent to the principal successfully');
+      router.push('/(staff-screen)/home');
     }
     catch(error){
+      alert('Error in requesting');
       console.log(error);
     }
     

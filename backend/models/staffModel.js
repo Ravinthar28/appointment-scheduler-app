@@ -1,7 +1,7 @@
 
 const mongoose = require('mongoose');
 
-const requestModel = require('./requestModel')
+const appointmentModel = require('./requestModel')
 const staffSchema = new mongoose.Schema({
     name:String,
     phoneNo:Number,
@@ -10,8 +10,8 @@ const staffSchema = new mongoose.Schema({
         unique:true
     },
     password:String,   
-    upcomingAppointments:[requestModel],
-    pastAppointments:[requestModel]
+    upcomingAppointments:[appointmentModel],
+    pastAppointments:[appointmentModel]
 });
 
 module.exports = staffSchema;
