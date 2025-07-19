@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,12 +7,11 @@ import {
   Alert,
   TextInput,
   Modal,
-} from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { Ionicons } from '@expo/vector-icons';
-import { principalHome } from './style';
-import { useLocalSearchParams } from 'expo-router';
-
+} from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { Ionicons } from "@expo/vector-icons";
+import { principalHome } from "./style";
+import { useLocalSearchParams } from "expo-router";
 
 // interface Meeting {
 //   id: number;
@@ -23,7 +22,9 @@ import { useLocalSearchParams } from 'expo-router';
 // }
 
 export default function PrincipalHomePage() {
-  const [selectedTab, setSelectedTab] = useState<'pending' | 'confirmed' | 'past'>('pending');
+  const [selectedTab, setSelectedTab] = useState<
+    "pending" | "confirmed" | "past"
+  >("pending");
   // const [meetings, setMeetings] = useState<Meeting[]>([
   //   {
   //     id: 1,
@@ -49,46 +50,64 @@ export default function PrincipalHomePage() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [tempDate, setTempDate] = useState(new Date());
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
   // PARAMETER VALUES
   const userData = useLocalSearchParams();
 
   interface appointments {
-    desc:string,
-    dateTime:string
+    desc: string;
+    dateTime: string;
   }
   // STATES TO STORE THE APPOINTMENTS
-  const [pendingAppointments,setPendingAppointments] = useState([])
-  const [confirmedAppointments,setConfirmedAppointments] = useState([])
-  const [pastAppointments,setPastAppointments] = useState([])
+  const [pendingAppointments, setPendingAppointments] = useState([]);
+  const [confirmedAppointments, setConfirmedAppointments] = useState([]);
+  const [pastAppointments, setPastAppointments] = useState([]);
 
   // FUNCTION TO FETCH THE REQUESTS DATA FROM THE DB
-  const pendingRequest = async ()=>{
-    try{
+  const pendingRequest = async () => {
+    try {
       const url = "http://localhost:3000/principal/pending-appointments";
-      const response = await fetch(url,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(userData)
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userData),
       });
       const result = await response.json();
       setPendingAppointments(result.pendingAppointments);
       setConfirmedAppointments(result.confirmedAppointments);
       setPastAppointments(result.pastAppointments);
-    }
-    catch(error){
+    } catch (error) {
       console.log(error);
     }
-  }
-  {/* ----- Working ------- */}
-  // FUNCTION TO GENERATE APPOINTMENTS CARD
-  const GenerateAppointmentsCard = ()=>{
+  };
 
-  }
-  useEffect(()=>{
+  // FUNCTION TO GENERATE APPOINTMENTS CARD
+  const GenerateAppointmentsCard = () => {
+    <TouchableOpacity
+      // key={}
+      style={principalHome.card}
+      // onPress={() => {
+      //   if (meeting.status !== 'past') {
+      //     setSelectedMeeting(meeting);
+      //     setTempDate(meeting.date);
+      //   }
+      // }}
+    >
+      <View style={principalHome.avatar} />
+      <View style={{ flex: 1 }}>
+        <Text style={principalHome.cardName}>Meeting with {}</Text>
+        <Text style={principalHome.cardTime}>{}</Text>
+        {/* {meeting.message && <Text style={principalHome.cardMessage}>{meeting.message}</Text>} */}
+      </View>
+      <TouchableOpacity>
+        <Text style={{ fontSize: 22 }}>{"⏳"}</Text>
+      </TouchableOpacity>
+    </TouchableOpacity>;
+  };
+  useEffect(() => {
     pendingRequest();
-  },[]);
+  }, []);
   // // Automatically move confirmed to past
   // useEffect(() => {
   //   const interval = setInterval(() => {
@@ -147,13 +166,21 @@ export default function PrincipalHomePage() {
 
       {/* Tabs */}
       <View style={principalHome.tabs}>
-        {['pending', 'confirmed', 'past'].map((tab) => (
+        {["pending", "confirmed", "past"].map((tab) => (
           <TouchableOpacity
             key={tab}
-            style={[principalHome.tabButton, selectedTab === tab && principalHome.tabSelected]}
+            style={[
+              principalHome.tabButton,
+              selectedTab === tab && principalHome.tabSelected,
+            ]}
             onPress={() => setSelectedTab(tab as typeof selectedTab)}
           >
-            <Text style={[principalHome.tabText, selectedTab === tab && principalHome.tabTextSelected]}>
+            <Text
+              style={[
+                principalHome.tabText,
+                selectedTab === tab && principalHome.tabTextSelected,
+              ]}
+            >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </Text>
           </TouchableOpacity>
