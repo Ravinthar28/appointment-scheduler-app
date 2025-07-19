@@ -119,4 +119,21 @@ export const principalHome = StyleSheet.create({
     borderRadius: 12,
     padding: 20,
   },
+  modelMsg: {
+    backgroundColor:"#333",
+    padding:10,
+    borderRadius:10
+  },
+  modelUserName: {
+    color:"#fff",
+    fontWeight:"bold",
+    fontSize:18
+  },
+  modelDesc: {
+    color:"#fff",
+    marginVertical:5
+  },
+  modelDateTime: {
+    color:"#fff"
+  }
 });

@@ -46,7 +46,9 @@ export default function PrincipalHomePage() {
   //   },
   // ]);
 
-  const [selectedMeeting, setSelectedMeeting] = useState<appointments | null>(null);
+  const [selectedMeeting, setSelectedMeeting] = useState<appointments | null>(
+    null
+  );
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [tempDate, setTempDate] = useState(new Date());
@@ -56,27 +58,32 @@ export default function PrincipalHomePage() {
   const userData = useLocalSearchParams();
 
   interface appointments {
-    userName:string,
+    userName: string;
     desc: string;
     dateTime: string;
-
   }
   // STATES TO STORE THE APPOINTMENTS
-  const [pendingAppointments, setPendingAppointments] = useState([{
-    userName:"",
-    desc:"",
-    dateTime:""
-  }]);
-  const [confirmedAppointments, setConfirmedAppointments] = useState([{
-    userName:"",
-    desc:"",
-    dateTime:""
-  }]);
-  const [pastAppointments, setPastAppointments] = useState([{
-    userName:"",
-    desc:"",
-    dateTime:""
-  }]);
+  const [pendingAppointments, setPendingAppointments] = useState([
+    {
+      userName: "",
+      desc: "",
+      dateTime: "",
+    },
+  ]);
+  const [confirmedAppointments, setConfirmedAppointments] = useState([
+    {
+      userName: "",
+      desc: "",
+      dateTime: "",
+    },
+  ]);
+  const [pastAppointments, setPastAppointments] = useState([
+    {
+      userName: "",
+      desc: "",
+      dateTime: "",
+    },
+  ]);
 
   // FUNCTION TO FETCH THE REQUESTS DATA FROM THE DB
   const pendingRequest = async () => {
@@ -97,30 +104,43 @@ export default function PrincipalHomePage() {
   };
 
   // FUNCTION TO GENERATE APPOINTMENTS CARD
-  const GenerateAppointmentsCard = ({userName,desc,dateTime}:appointments) => {
-    return(
+  const GenerateAppointmentsCard = ({
+    userName,
+    desc,
+    dateTime,
+  }: appointments) => {
+    const dateObject: Date = new Date(dateTime);
+    console.log(dateObject.getHours(), dateObject.getMinutes());
+    return (
       <TouchableOpacity
-      // key={}
-      style={principalHome.card}
-      onPress={() => {
-        setSelectedMeeting({userName,desc,dateTime});
-      }}
-    >
-      <View style={principalHome.avatar} />
-      <View style={{ flex: 1 }}>
-        <Text style={principalHome.cardName}>Meeting with {userName}</Text>
-        <Text style={principalHome.cardTime}>{}</Text>
-        {/* {meeting.message && <Text style={principalHome.cardMessage}>{meeting.message}</Text>} */}
-      </View>
-      <TouchableOpacity>
-        <Text style={{ fontSize: 22 }}>{"⏳"}</Text>
+        // key={}
+        style={principalHome.card}
+        onPress={() => {
+          setSelectedMeeting({ userName, desc, dateTime });
+        }}
+      >
+        <View style={principalHome.avatar} />
+        <View style={{ flex: 1 }}>
+          <Text style={principalHome.cardName}>Meeting with {userName}</Text>
+          <Text style={principalHome.cardTime}>{}</Text>
+          {/* {meeting.message && <Text style={principalHome.cardMessage}>{meeting.message}</Text>} */}
+        </View>
+        <TouchableOpacity>
+          <Text style={{ fontSize: 22 }}>{"⏳"}</Text>
+        </TouchableOpacity>
       </TouchableOpacity>
-    </TouchableOpacity>
-    )
+    );
   };
   useEffect(() => {
     pendingRequest();
   }, []);
+
+  const extractDateTime = (dateTime: string) => {
+    const dateObject = new Date(dateTime);
+    const date = dateObject.toLocaleDateString('en-US',{year:"numeric",month:"long",day:"numeric"});
+    const time = `${dateObject.getHours()}:${dateObject.getMinutes()}`;
+    return `${date},${time}`;
+  };
   // // Automatically move confirmed to past
   // useEffect(() => {
   //   const interval = setInterval(() => {
@@ -201,11 +221,14 @@ export default function PrincipalHomePage() {
       </View>
 
       {/* Meeting Cards */}
-      {
-        (selectedTab === 'pending') && pendingAppointments.map((appointments)=>(
-          <GenerateAppointmentsCard userName={appointments.userName} desc={appointments.desc} dateTime={appointments.dateTime}  />
-        ))
-      }
+      {selectedTab === "pending" &&
+        pendingAppointments.map((appointments) => (
+          <GenerateAppointmentsCard
+            userName={appointments.userName}
+            desc={appointments.desc}
+            dateTime={appointments.dateTime}
+          />
+        ))}
       {/* {meetings
         .filter((m) => m.status === selectedTab)
         .map((meeting) => (
@@ -242,9 +265,23 @@ export default function PrincipalHomePage() {
       <Modal visible={!!selectedMeeting} animationType="slide" transparent>
         <View style={principalHome.modalBackground}>
           <View style={principalHome.modalContainer}>
+            <View style = {principalHome.modelMsg}>
+              <Text style={principalHome.modelUserName}>
+                {selectedMeeting?.userName}
+              </Text>
+              <Text style={principalHome.modelDesc}>
+                {selectedMeeting?.desc}
+              </Text>
+              <Text style={principalHome.modelDateTime}>
+                {extractDateTime(selectedMeeting?.dateTime || String(tempDate))}
+              </Text>
+            </View>
             <Text style={principalHome.formHeading}>Select Available Time</Text>
 
-            <TouchableOpacity onPress={() => setShowDatePicker(true)} style={principalHome.input}>
+            <TouchableOpacity
+              onPress={() => setShowDatePicker(true)}
+              style={principalHome.input}
+            >
               <Text>{tempDate.toDateString()}</Text>
             </TouchableOpacity>
             {showDatePicker && (
@@ -259,9 +296,15 @@ export default function PrincipalHomePage() {
               />
             )}
 
-            <TouchableOpacity onPress={() => setShowTimePicker(true)} style={principalHome.input}>
+            <TouchableOpacity
+              onPress={() => setShowTimePicker(true)}
+              style={principalHome.input}
+            >
               <Text>
-                {tempDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                {tempDate.toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </Text>
             </TouchableOpacity>
             {showTimePicker && (
@@ -272,7 +315,9 @@ export default function PrincipalHomePage() {
                   setShowTimePicker(false);
                   if (time)
                     setTempDate(
-                      new Date(tempDate.setHours(time.getHours(), time.getMinutes()))
+                      new Date(
+                        tempDate.setHours(time.getHours(), time.getMinutes())
+                      )
                     );
                 }}
               />
@@ -286,11 +331,14 @@ export default function PrincipalHomePage() {
               multiline
             />
 
-            <TouchableOpacity style={principalHome.confirmButton} >
+            <TouchableOpacity style={principalHome.confirmButton}>
               <Text style={principalHome.confirmText}>Confirm</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => setSelectedMeeting(null)} style={principalHome.cancelButton}>
+            <TouchableOpacity
+              onPress={() => setSelectedMeeting(null)}
+              style={principalHome.cancelButton}
+            >
               <Text style={principalHome.cancelText}>Cancel</Text>
             </TouchableOpacity>
           </View>
