@@ -46,7 +46,7 @@ export default function PrincipalHomePage() {
   //   },
   // ]);
 
-  // const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null);
+  const [selectedMeeting, setSelectedMeeting] = useState<appointments | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [tempDate, setTempDate] = useState(new Date());
@@ -56,13 +56,27 @@ export default function PrincipalHomePage() {
   const userData = useLocalSearchParams();
 
   interface appointments {
+    userName:string,
     desc: string;
     dateTime: string;
+
   }
   // STATES TO STORE THE APPOINTMENTS
-  const [pendingAppointments, setPendingAppointments] = useState([]);
-  const [confirmedAppointments, setConfirmedAppointments] = useState([]);
-  const [pastAppointments, setPastAppointments] = useState([]);
+  const [pendingAppointments, setPendingAppointments] = useState([{
+    userName:"",
+    desc:"",
+    dateTime:""
+  }]);
+  const [confirmedAppointments, setConfirmedAppointments] = useState([{
+    userName:"",
+    desc:"",
+    dateTime:""
+  }]);
+  const [pastAppointments, setPastAppointments] = useState([{
+    userName:"",
+    desc:"",
+    dateTime:""
+  }]);
 
   // FUNCTION TO FETCH THE REQUESTS DATA FROM THE DB
   const pendingRequest = async () => {
@@ -83,27 +97,26 @@ export default function PrincipalHomePage() {
   };
 
   // FUNCTION TO GENERATE APPOINTMENTS CARD
-  const GenerateAppointmentsCard = () => {
-    <TouchableOpacity
+  const GenerateAppointmentsCard = ({userName,desc,dateTime}:appointments) => {
+    return(
+      <TouchableOpacity
       // key={}
       style={principalHome.card}
-      // onPress={() => {
-      //   if (meeting.status !== 'past') {
-      //     setSelectedMeeting(meeting);
-      //     setTempDate(meeting.date);
-      //   }
-      // }}
+      onPress={() => {
+        setSelectedMeeting({userName,desc,dateTime});
+      }}
     >
       <View style={principalHome.avatar} />
       <View style={{ flex: 1 }}>
-        <Text style={principalHome.cardName}>Meeting with {}</Text>
+        <Text style={principalHome.cardName}>Meeting with {userName}</Text>
         <Text style={principalHome.cardTime}>{}</Text>
         {/* {meeting.message && <Text style={principalHome.cardMessage}>{meeting.message}</Text>} */}
       </View>
       <TouchableOpacity>
         <Text style={{ fontSize: 22 }}>{"⏳"}</Text>
       </TouchableOpacity>
-    </TouchableOpacity>;
+    </TouchableOpacity>
+    )
   };
   useEffect(() => {
     pendingRequest();
@@ -188,6 +201,11 @@ export default function PrincipalHomePage() {
       </View>
 
       {/* Meeting Cards */}
+      {
+        (selectedTab === 'pending') && pendingAppointments.map((appointments)=>(
+          <GenerateAppointmentsCard userName={appointments.userName} desc={appointments.desc} dateTime={appointments.dateTime}  />
+        ))
+      }
       {/* {meetings
         .filter((m) => m.status === selectedTab)
         .map((meeting) => (
@@ -221,7 +239,7 @@ export default function PrincipalHomePage() {
         ))} */}
 
       {/* Modal */}
-      {/* <Modal visible={!!selectedMeeting} animationType="slide" transparent>
+      <Modal visible={!!selectedMeeting} animationType="slide" transparent>
         <View style={principalHome.modalBackground}>
           <View style={principalHome.modalContainer}>
             <Text style={principalHome.formHeading}>Select Available Time</Text>
@@ -268,7 +286,7 @@ export default function PrincipalHomePage() {
               multiline
             />
 
-            <TouchableOpacity style={principalHome.confirmButton} onPress={handleConfirm}>
+            <TouchableOpacity style={principalHome.confirmButton} >
               <Text style={principalHome.confirmText}>Confirm</Text>
             </TouchableOpacity>
 
@@ -277,7 +295,7 @@ export default function PrincipalHomePage() {
             </TouchableOpacity>
           </View>
         </View>
-      </Modal> */}
+      </Modal>
     </ScrollView>
   );
 }
