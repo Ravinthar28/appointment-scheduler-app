@@ -19,6 +19,7 @@ const newAppointment = async (userData)=>{
             {},
             {$push:{"principal.pendingAppointments":{
                 userName:user.staffs[0].name,
+                userEmail:user.staffs[0].mailId,
                 desc:userData.desc,
                 dateTime:userData.dateTime
             }}},

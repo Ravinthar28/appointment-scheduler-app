@@ -60,6 +60,7 @@ export default function PrincipalHomePage() {
 
   interface appointments {
     userName: string;
+    userEmail:string
     desc: string;
     dateTime: string;
   }
@@ -67,6 +68,7 @@ export default function PrincipalHomePage() {
   const [pendingAppointments, setPendingAppointments] = useState([
     {
       userName: "",
+      userEmail:"",
       desc: "",
       dateTime: "",
     },
@@ -74,6 +76,7 @@ export default function PrincipalHomePage() {
   const [confirmedAppointments, setConfirmedAppointments] = useState([
     {
       userName: "",
+      userEmail:"",
       desc: "",
       dateTime: "",
     },
@@ -81,6 +84,7 @@ export default function PrincipalHomePage() {
   const [pastAppointments, setPastAppointments] = useState([
     {
       userName: "",
+      userEmail:"",
       desc: "",
       dateTime: "",
     },
@@ -107,6 +111,7 @@ export default function PrincipalHomePage() {
   // FUNCTION TO GENERATE APPOINTMENTS CARD
   const GenerateAppointmentsCard = ({
     userName,
+    userEmail,
     desc,
     dateTime,
   }: appointments) => {
@@ -117,7 +122,7 @@ export default function PrincipalHomePage() {
         // key={}
         style={principalHome.card}
         onPress={() => {
-          setSelectedMeeting({ userName, desc, dateTime });
+          setSelectedMeeting({ userName, userEmail, desc, dateTime });
         }}
       >
         <View style={principalHome.avatar} />
@@ -146,6 +151,10 @@ export default function PrincipalHomePage() {
     const time = `${dateObject.getHours()}:${dateObject.getMinutes()}`;
     return `${date},${time}`;
   };
+  // ------- WORKING --------
+  const acceptAppointment = ()=> {
+    console.log(selectedMeeting);
+  }
   // // Automatically move confirmed to past
   // useEffect(() => {
   //   const interval = setInterval(() => {
@@ -230,6 +239,7 @@ export default function PrincipalHomePage() {
         pendingAppointments.map((appointments) => (
           <GenerateAppointmentsCard
             userName={appointments.userName}
+            userEmail = {appointments.userEmail}
             desc={appointments.desc}
             dateTime={appointments.dateTime}
           />
@@ -285,7 +295,7 @@ export default function PrincipalHomePage() {
                 </Text>
               </View>
               <View style= {principalHome.modelAcceptBtnContainer}>
-                <TouchableOpacity style = {principalHome.modelMsgAcceptBtn}>
+                <TouchableOpacity style = {principalHome.modelMsgAcceptBtn} onPress={()=>acceptAppointment()}>
                   <Text style = {{color:"#fff"}}>
                     Accept
                   </Text>
