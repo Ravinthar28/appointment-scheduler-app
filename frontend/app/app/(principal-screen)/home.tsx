@@ -12,6 +12,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { Ionicons } from "@expo/vector-icons";
 import { principalHome } from "./style";
 import { useLocalSearchParams } from "expo-router";
+import { Button } from "@react-navigation/elements";
 
 // interface Meeting {
 //   id: number;
@@ -137,7 +138,11 @@ export default function PrincipalHomePage() {
 
   const extractDateTime = (dateTime: string) => {
     const dateObject = new Date(dateTime);
-    const date = dateObject.toLocaleDateString('en-US',{year:"numeric",month:"long",day:"numeric"});
+    const date = dateObject.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
     const time = `${dateObject.getHours()}:${dateObject.getMinutes()}`;
     return `${date},${time}`;
   };
@@ -265,17 +270,29 @@ export default function PrincipalHomePage() {
       <Modal visible={!!selectedMeeting} animationType="slide" transparent>
         <View style={principalHome.modalBackground}>
           <View style={principalHome.modalContainer}>
-            <View style = {principalHome.modelMsg}>
-              <Text style={principalHome.modelUserName}>
-                {selectedMeeting?.userName}
-              </Text>
-              <Text style={principalHome.modelDesc}>
-                {selectedMeeting?.desc}
-              </Text>
-              <Text style={principalHome.modelDateTime}>
-                {extractDateTime(selectedMeeting?.dateTime || String(tempDate))}
-              </Text>
+            <View style={principalHome.modelMsgBox}>
+              <View style={principalHome.modelMsg}>
+                <Text style={principalHome.modelUserName}>
+                  {selectedMeeting?.userName}
+                </Text>
+                <Text style={principalHome.modelDesc}>
+                  {selectedMeeting?.desc}
+                </Text>
+                <Text style={principalHome.modelDateTime}>
+                  {extractDateTime(
+                    selectedMeeting?.dateTime || String(tempDate)
+                  )}
+                </Text>
+              </View>
+              <View style= {principalHome.modelAcceptBtnContainer}>
+                <TouchableOpacity style = {principalHome.modelMsgAcceptBtn}>
+                  <Text style = {{color:"#fff"}}>
+                    Accept
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
+
             <Text style={principalHome.formHeading}>Select Available Time</Text>
 
             <TouchableOpacity
@@ -332,7 +349,7 @@ export default function PrincipalHomePage() {
             />
 
             <TouchableOpacity style={principalHome.confirmButton}>
-              <Text style={principalHome.confirmText}>Confirm</Text>
+              <Text style={principalHome.confirmText}>Reschedule</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
