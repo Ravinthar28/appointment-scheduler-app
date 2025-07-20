@@ -362,6 +362,13 @@ export default function PrincipalHomePage() {
               <Text style={principalHome.confirmText}>Reschedule</Text>
             </TouchableOpacity>
 
+            <TouchableOpacity 
+            onPress={() => setSelectedMeeting(null)}
+            style={principalHome.okButton}>
+              <Text style={principalHome.confirmText}>OK with time ✅</Text>
+              </TouchableOpacity>
+
+
             <TouchableOpacity
               onPress={() => setSelectedMeeting(null)}
               style={principalHome.cancelButton}

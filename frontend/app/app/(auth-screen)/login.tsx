@@ -69,7 +69,7 @@ export default function LoginForm() {
      /*if (selectedRole === 'staff') {
        router.push('/(staff-screen)/home');
      } else if (selectedRole === 'principal') {
-       router.push('/(auth-screen)/principal-home');
+       router.push('/(principal-screen)/home');
      } else {
        Alert.alert('Select Role', 'Please select a role to proceed.');
     }*/
