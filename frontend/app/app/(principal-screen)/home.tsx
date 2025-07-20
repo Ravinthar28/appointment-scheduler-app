@@ -67,34 +67,17 @@ export default function PrincipalHomePage() {
     dateTime: string;
   }
   // STATES TO STORE THE APPOINTMENTS
-  const [pendingAppointments, setPendingAppointments] = useState([
-    {
+  const dataTemplate = {
       _id:"",
       collegeCode:"",
       userName: "",
       userEmail:"",
       desc: "",
       dateTime: "",
-    },
-  ]);
-  const [confirmedAppointments, setConfirmedAppointments] = useState([
-    {
-      _id:"",
-      userName: "",
-      userEmail:"",
-      desc: "",
-      dateTime: "",
-    },
-  ]);
-  const [pastAppointments, setPastAppointments] = useState([
-    {
-      _id:"",
-      userName: "",
-      userEmail:"",
-      desc: "",
-      dateTime: "",
-    },
-  ]);
+    }
+  const [pendingAppointments, setPendingAppointments] = useState([dataTemplate]);
+  const [confirmedAppointments, setConfirmedAppointments] = useState([dataTemplate]);
+  const [pastAppointments, setPastAppointments] = useState([dataTemplate]);
 
   // FUNCTION TO FETCH THE REQUESTS DATA FROM THE DB
   const pendingRequest = async () => {
@@ -149,6 +132,8 @@ export default function PrincipalHomePage() {
   useEffect(() => {
     pendingRequest();
   }, []);
+
+// FUNCTION TO EXTRACT THE DATE AND TIME FORMAT
   const extractDateTime = (dateTime : string) => {
     const dateObject = new Date(dateTime);
     const date = dateObject.toLocaleDateString("en-US", {
@@ -159,9 +144,14 @@ export default function PrincipalHomePage() {
     const time = `${(dateObject.getHours() > 12)? dateObject.getHours()-12: dateObject.getHours()}:${dateObject.getMinutes()} ${(dateObject.getHours() > 12) ? 'PM' : 'AM'}`;
     return `${date}, ${time}`;
   };
-  // ------- WORKING --------
 
-  const acceptAppointment = async ()=> {
+  // ---------WORKING----------
+
+  // FUNCTION FOR ACCEPTING THE APPOINTMENT BASED ON THE STAFF ASSIGNED TIME AND RESCHEDULED TIME BY THE PRINCIPAL
+  const acceptAppointment = async (btn:String)=> {
+    if(btn === 'reschedule' && selectedMeeting){
+      selectedMeeting.dateTime = String(tempDate)
+    }
     try{
       const url = "http://localhost:3000/principal/accept-appointment"
       const response = await fetch(url,{
@@ -181,6 +171,8 @@ export default function PrincipalHomePage() {
       alert(error);
     }
   }
+
+  // FUNCTION FOR RESCHEDULING THE APPOINTMENT BY THE PRINCIPAL
   // // Automatically move confirmed to past
   // useEffect(() => {
   //   const interval = setInterval(() => {
@@ -353,7 +345,7 @@ export default function PrincipalHomePage() {
               {
                 selectedTab == 'pending' && 
                 <View style= {principalHome.modelAcceptBtnContainer}>
-                <TouchableOpacity style = {principalHome.modelMsgAcceptBtn} onPress={()=>acceptAppointment()}>
+                <TouchableOpacity style = {principalHome.modelMsgAcceptBtn} onPress={()=>acceptAppointment('accept')}>
                   <Text style = {{color:"#fff"}}>
                     Accept
                   </Text>
@@ -417,7 +409,8 @@ export default function PrincipalHomePage() {
               multiline
             />
 
-            <TouchableOpacity style={principalHome.confirmButton}>
+            <TouchableOpacity style={principalHome.confirmButton}
+              onPress={()=>acceptAppointment('reschedule')}>
               <Text style={principalHome.confirmText}>Reschedule</Text>
             </TouchableOpacity>
 
