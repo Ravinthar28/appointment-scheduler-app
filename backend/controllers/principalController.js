@@ -55,7 +55,31 @@ const pendingAppointments = async (userData)=>{
 // FUNCTION FOR ACCEPTING THE PENDING APPOINTMENTS BASED ON THE TIME ASIGNED BY THE STAFF
 const acceptAppointment = async (userData)=>{
     try{
-        console.log(userData);
+        const msgData = {
+            userName:userData.userName,
+            userEmail:userData.userEmail,
+            desc:userData.desc,
+            dateTime:userData.dateTime
+        }
+        const collectionName = userData.collegeCode;
+        const schema = mongoose.models[collectionName] || mongoose.model(collectionName,registerSchema);
+
+        // STORES THE ACCEPTED APPOINTMENT IN STAFF'S UPCOMMING APPOINTMENTS
+        const staffUpdate = await schema.findOneAndUpdate(
+            {"staffs.mailId":userData.userEmail},
+            {$push:{"staffs.$.upcomingAppointments":msgData}},
+            {new:true,upsert:false}
+        );
+
+        // STORE THE ACCEPTED APPOINTMENT IN PRINCIPALS CONFIRMEND APPOINTMENTS
+        const principalUpdate = await schema.findOneAndUpdate({},
+            {$push:{"principal.confirmedAppointments":msgData}},
+            {new:true,upsert:false}
+        )
+
+        // REMOVES THE ACCEPTED APPOINTMENT FROM THE PRINCIPALS PENDING APPOINTMENTS
+         if(staffUpdate && principalUpdate) return 200;
+         else return 500;
     }
     catch(error){
         console.log(error);

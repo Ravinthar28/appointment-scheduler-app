@@ -17,7 +17,7 @@ router.post('/appointment-request',async (req,res)=>{
 })
 
 // ROUTE FOR FETCHING THE PENDING APPOINTMENTS DATA FROM THE DB FOR PRINCIPAL PENDING TAB
-router.post('/pending-appointments',async (req,res)=>{
+router.post('/appointments-data',async (req,res)=>{
     try{
         const userData = req.body;
         const response = await pendingAppointments(userData);

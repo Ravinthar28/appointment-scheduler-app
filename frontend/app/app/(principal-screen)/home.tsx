@@ -95,7 +95,7 @@ export default function PrincipalHomePage() {
   // FUNCTION TO FETCH THE REQUESTS DATA FROM THE DB
   const pendingRequest = async () => {
     try {
-      const url = "http://localhost:3000/principal/pending-appointments";
+      const url = "http://localhost:3000/principal/appointments-data";
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -153,6 +153,7 @@ export default function PrincipalHomePage() {
     return `${date}, ${time}`;
   };
   // ------- WORKING --------
+  console.log(selectedMeeting);
   const acceptAppointment = async ()=> {
     try{
       const url = "http://localhost:3000/principal/accept-appointment"
@@ -257,6 +258,7 @@ export default function PrincipalHomePage() {
         pendingAppointments.map((appointments) => (
           <GenerateAppointmentsCard
             collegeCode={String(userData.collegeCode)}
+            // id={appointments.id}
             userName={appointments.userName}
             userEmail = {appointments.userEmail}
             desc={appointments.desc}
