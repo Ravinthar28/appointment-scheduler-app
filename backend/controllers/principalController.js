@@ -4,13 +4,9 @@ const mongoose = require('mongoose');
 // SCHEMA
 const registerSchema = require('../models/registerModel')
 
-// FUNCTION TO APPEND APPOINTMENT REQUESTS FROM THE STAFF
+// FUNCTION TO APPEND APPOINTMENT REQUESTS FROM THE STAFF TO THE PRINCIPAL'S PENDING APPOINTMNETS TAB
 const newAppointment = async (userData)=>{
     try{
-        // const messageData = {
-        //     desc:userData.desc,
-        //     dateTime:userData.dateTime
-        // }
         const collectionName = userData.collegeCode;
         const schema = mongoose.models[collectionName] || mongoose.model(collectionName,registerSchema);
         const user = await schema.findOne({"staffs.mailId":userData.email});
@@ -36,7 +32,7 @@ const newAppointment = async (userData)=>{
     }
 }
 
-// FUNCTION TO SEND THE PENDING APPOINTMENTS DATA FROM DB
+// FUNCTION TO SEND THE PENDING APPOINTMENTS DATA FROM DB TO THE PRINCIPAL'S PENDING APPOINTMENTS TAB
 const pendingAppointments = async (userData)=>{
     try{
         const collectionName = userData.collegeCode;
@@ -51,9 +47,18 @@ const pendingAppointments = async (userData)=>{
         else return 500;
     }
     catch(error){
-        return 500;
         console.log(error);
+        return 500;   
     }
 }
 
-module.exports = { newAppointment, pendingAppointments }
+// FUNCTION FOR ACCEPTING THE PENDING APPOINTMENTS BASED ON THE TIME ASIGNED BY THE STAFF
+const acceptAppointment = async (userData)=>{
+    try{
+        console.log(userData);
+    }
+    catch(error){
+        console.log(error);
+    }
+}
+module.exports = { newAppointment, pendingAppointments, acceptAppointment }

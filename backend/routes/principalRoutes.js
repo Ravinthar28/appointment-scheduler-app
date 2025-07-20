@@ -2,8 +2,9 @@
 const express = require('express');
 const router = express.Router();
 
-const { newAppointment, pendingAppointments } = require('../controllers/principalController');
+const { newAppointment, pendingAppointments, acceptAppointment } = require('../controllers/principalController');
 
+// ROUTE FOR REQUESTING NEW APPOINTMENT FROM STAFF TO THE PRINCIPAL
 router.post('/appointment-request',async (req,res)=>{
     try{
         const userData = req.body;
@@ -15,6 +16,7 @@ router.post('/appointment-request',async (req,res)=>{
     }
 })
 
+// ROUTE FOR FETCHING THE PENDING APPOINTMENTS DATA FROM THE DB FOR PRINCIPAL PENDING TAB
 router.post('/pending-appointments',async (req,res)=>{
     try{
         const userData = req.body;
@@ -27,5 +29,17 @@ router.post('/pending-appointments',async (req,res)=>{
         console.log(error);
     }
 })
+
+// ROUTE FOR ACCEPTING THE APPOINTMENT BASED ON THE STAFF ASSIGNED TIME IN THE PRINCIPAL PENDING TAB
+router.post('/accept-appointment',async (req,res)=>{
+    try{
+        const userData = req.body;
+        const response = acceptAppointment(userData);
+        res.send();
+    }
+    catch(error){
+        console.log(error);
+    }
+});
 
 module.exports = router

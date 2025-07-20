@@ -11,7 +11,7 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Ionicons } from "@expo/vector-icons";
 import { principalHome } from "./style";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Button } from "@react-navigation/elements";
 
 // interface Meeting {
@@ -57,8 +57,9 @@ export default function PrincipalHomePage() {
 
   // PARAMETER VALUES
   const userData = useLocalSearchParams();
-
+  
   interface appointments {
+    collegeCode:string,
     userName: string;
     userEmail:string
     desc: string;
@@ -67,6 +68,7 @@ export default function PrincipalHomePage() {
   // STATES TO STORE THE APPOINTMENTS
   const [pendingAppointments, setPendingAppointments] = useState([
     {
+      collegeCode:"",
       userName: "",
       userEmail:"",
       desc: "",
@@ -110,19 +112,18 @@ export default function PrincipalHomePage() {
 
   // FUNCTION TO GENERATE APPOINTMENTS CARD
   const GenerateAppointmentsCard = ({
+    collegeCode,
     userName,
     userEmail,
     desc,
     dateTime,
   }: appointments) => {
-    const dateObject: Date = new Date(dateTime);
-    console.log(dateObject.getHours(), dateObject.getMinutes());
     return (
       <TouchableOpacity
         // key={}
         style={principalHome.card}
         onPress={() => {
-          setSelectedMeeting({ userName, userEmail, desc, dateTime });
+          setSelectedMeeting({ collegeCode,userName, userEmail, desc, dateTime });
         }}
       >
         <View style={principalHome.avatar} />
@@ -141,19 +142,36 @@ export default function PrincipalHomePage() {
     pendingRequest();
   }, []);
 
-  const extractDateTime = (dateTime: string) => {
+  const extractDateTime = (dateTime : string) => {
     const dateObject = new Date(dateTime);
     const date = dateObject.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
     });
-    const time = `${dateObject.getHours()}:${dateObject.getMinutes()}`;
-    return `${date},${time}`;
+    const time = `${(dateObject.getHours() > 12)? dateObject.getHours()-12: dateObject.getHours()}:${dateObject.getMinutes()} ${(dateObject.getHours() > 12) ? 'PM' : 'AM'}`;
+    return `${date}, ${time}`;
   };
   // ------- WORKING --------
-  const acceptAppointment = ()=> {
-    console.log(selectedMeeting);
+  const acceptAppointment = async ()=> {
+    try{
+      const url = "http://localhost:3000/principal/accept-appointment"
+      const response = await fetch(url,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(selectedMeeting)
+      });
+      if(! response) throw new Error ("Failed to accept the appiontment by the principal");
+      alert(`Appointment with ${selectedMeeting?.userName} is scheduled on ${extractDateTime(selectedMeeting?.dateTime || String(tempDate))}`);
+      router.push({
+        pathname:'/(principal-screen)/home',
+        params:userData
+      })
+      setSelectedMeeting(null);
+    }
+    catch(error){
+      alert(error);
+    }
   }
   // // Automatically move confirmed to past
   // useEffect(() => {
@@ -238,6 +256,7 @@ export default function PrincipalHomePage() {
       {selectedTab === "pending" &&
         pendingAppointments.map((appointments) => (
           <GenerateAppointmentsCard
+            collegeCode={String(userData.collegeCode)}
             userName={appointments.userName}
             userEmail = {appointments.userEmail}
             desc={appointments.desc}
