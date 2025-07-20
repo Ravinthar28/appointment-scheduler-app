@@ -138,7 +138,10 @@ export default function PrincipalHomePage() {
           {/* {meeting.message && <Text style={principalHome.cardMessage}>{meeting.message}</Text>} */}
         </View>
         <TouchableOpacity>
-          <Text style={{ fontSize: 22 }}>{"⏳"}</Text>
+          <Text style={{ fontSize: 22 }}>
+            {selectedTab == "pending" ? "⏳": ""}
+            {selectedTab == "confirmed" ? "✅":""}
+          </Text>
         </TouchableOpacity>
       </TouchableOpacity>
     );
