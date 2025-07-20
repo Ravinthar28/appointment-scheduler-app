@@ -78,8 +78,19 @@ const acceptAppointment = async (userData)=>{
         )
 
         // REMOVES THE ACCEPTED APPOINTMENT FROM THE PRINCIPALS PENDING APPOINTMENTS
-         if(staffUpdate && principalUpdate) return 200;
+        const removeAppointment = await schema.findOneAndUpdate(
+            {"principal.pendingAppointments._id":userData._id},
+            {
+                $pull: {
+                    "principal.pendingAppointments":{_id:userData._id}
+                }
+            },
+            {new:true}
+        )
+         if(staffUpdate && principalUpdate && removeAppointment) return 200;
          else return 500;
+
+         
     }
     catch(error){
         console.log(error);

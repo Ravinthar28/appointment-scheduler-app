@@ -60,6 +60,7 @@ export default function PrincipalHomePage() {
   
   interface appointments {
     collegeCode:string,
+    _id:string,
     userName: string;
     userEmail:string
     desc: string;
@@ -68,6 +69,7 @@ export default function PrincipalHomePage() {
   // STATES TO STORE THE APPOINTMENTS
   const [pendingAppointments, setPendingAppointments] = useState([
     {
+      _id:"",
       collegeCode:"",
       userName: "",
       userEmail:"",
@@ -77,6 +79,7 @@ export default function PrincipalHomePage() {
   ]);
   const [confirmedAppointments, setConfirmedAppointments] = useState([
     {
+      _id:"",
       userName: "",
       userEmail:"",
       desc: "",
@@ -85,6 +88,7 @@ export default function PrincipalHomePage() {
   ]);
   const [pastAppointments, setPastAppointments] = useState([
     {
+      _id:"",
       userName: "",
       userEmail:"",
       desc: "",
@@ -113,6 +117,7 @@ export default function PrincipalHomePage() {
   // FUNCTION TO GENERATE APPOINTMENTS CARD
   const GenerateAppointmentsCard = ({
     collegeCode,
+    _id,
     userName,
     userEmail,
     desc,
@@ -120,10 +125,10 @@ export default function PrincipalHomePage() {
   }: appointments) => {
     return (
       <TouchableOpacity
-        // key={}
+        key={_id}
         style={principalHome.card}
         onPress={() => {
-          setSelectedMeeting({ collegeCode,userName, userEmail, desc, dateTime });
+          setSelectedMeeting({ collegeCode,_id,userName, userEmail, desc, dateTime });
         }}
       >
         <View style={principalHome.avatar} />
@@ -141,7 +146,6 @@ export default function PrincipalHomePage() {
   useEffect(() => {
     pendingRequest();
   }, []);
-
   const extractDateTime = (dateTime : string) => {
     const dateObject = new Date(dateTime);
     const date = dateObject.toLocaleDateString("en-US", {
@@ -153,7 +157,7 @@ export default function PrincipalHomePage() {
     return `${date}, ${time}`;
   };
   // ------- WORKING --------
-  console.log(selectedMeeting);
+
   const acceptAppointment = async ()=> {
     try{
       const url = "http://localhost:3000/principal/accept-appointment"
@@ -254,17 +258,45 @@ export default function PrincipalHomePage() {
       </View>
 
       {/* Meeting Cards */}
-      {selectedTab === "pending" &&
+      {
+      selectedTab === "pending" &&
         pendingAppointments.map((appointments) => (
           <GenerateAppointmentsCard
             collegeCode={String(userData.collegeCode)}
-            // id={appointments.id}
+            _id={appointments._id}
             userName={appointments.userName}
             userEmail = {appointments.userEmail}
             desc={appointments.desc}
             dateTime={appointments.dateTime}
           />
-        ))}
+        ))
+        }
+        {
+        selectedTab === "confirmed" &&
+          confirmedAppointments.map((appointments) => (
+            <GenerateAppointmentsCard
+              collegeCode={String(userData.collegeCode)}
+              _id={appointments._id}
+              userName={appointments.userName}
+              userEmail = {appointments.userEmail}
+              desc={appointments.desc}
+              dateTime={appointments.dateTime}
+            />
+        ))
+        }
+        {
+        selectedTab === "past" &&
+          pastAppointments.map((appointments) => (
+            <GenerateAppointmentsCard
+              collegeCode={String(userData.collegeCode)}
+              _id={appointments._id}
+              userName={appointments.userName}
+              userEmail = {appointments.userEmail}
+              desc={appointments.desc}
+              dateTime={appointments.dateTime}
+            />
+          ))
+        }
       {/* {meetings
         .filter((m) => m.status === selectedTab)
         .map((meeting) => (
@@ -315,13 +347,16 @@ export default function PrincipalHomePage() {
                   )}
                 </Text>
               </View>
-              <View style= {principalHome.modelAcceptBtnContainer}>
+              {
+                selectedTab == 'pending' && 
+                <View style= {principalHome.modelAcceptBtnContainer}>
                 <TouchableOpacity style = {principalHome.modelMsgAcceptBtn} onPress={()=>acceptAppointment()}>
                   <Text style = {{color:"#fff"}}>
                     Accept
                   </Text>
                 </TouchableOpacity>
               </View>
+              }
             </View>
 
             <Text style={principalHome.formHeading}>Select Available Time</Text>
