@@ -98,13 +98,7 @@ export const principalHome = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
   },
-  okButton:{
-    backgroundColor: '#4CAF50',
-    padding:12,
-    borderRadius:20,
-    alignItems:'center',
-    marginTop:10
-},
+  
   confirmText: {
     color: '#fff',
     fontWeight: 'bold',
