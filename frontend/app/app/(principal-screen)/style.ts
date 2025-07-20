@@ -1,5 +1,6 @@
 
 import { StyleSheet } from "react-native";
+import { green } from "react-native-reanimated/lib/typescript/Colors";
 
 export const principalHome = StyleSheet.create({
   container: {
@@ -92,11 +93,12 @@ export const principalHome = StyleSheet.create({
   },
   confirmButton: {
     backgroundColor: '#4D90FE',
-    padding: 12,
+    padding: 10,
     borderRadius: 20,
     alignItems: 'center',
     marginTop: 10,
   },
+  
   confirmText: {
     color: '#fff',
     fontWeight: 'bold',
