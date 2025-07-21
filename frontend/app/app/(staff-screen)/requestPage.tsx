@@ -35,11 +35,11 @@ export default function RequestAppointmentScreen() {
   // FUNCTION TO VALIDATE THE APPOINTMENT FORM AND TO STORE IT IN THE DB
   const handleSchedule = async () => {
 
-    console.log(date.toLocaleDateString());
     if (!description.trim()) {
       Alert.alert('Validation Error', 'Please enter appointment details.');
       return;
     }
+    console.log(userData);
 
     Alert.alert('Appointment Scheduled', `On ${date.toLocaleString()}`, [
       {

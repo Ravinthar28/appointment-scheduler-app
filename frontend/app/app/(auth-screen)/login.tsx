@@ -41,25 +41,20 @@ export default function LoginForm() {
       if(! response.ok){
         throw new Error ("Faild to load");
       }
-      if(response.status){
-        if(response.status == 200){
-          if(selectedRole == 'principal') router.push({
+      if(selectedRole == 'principal') router.push({
             pathname:'/(principal-screen)/home',
             params: {
               email,
               collegeCode
             }
           })
-
-          if(selectedRole == 'staff') router.push({
-            pathname:'/(staff-screen)/home',
-            params:{
-              email,
-              collegeCode
-            }
-          });
+      if(selectedRole == 'staff') router.push({
+        pathname:'/(staff-screen)/home',
+        params:{
+          email,
+          collegeCode
         }
-      }
+      });
     }
     catch(error){
       console.log(error);

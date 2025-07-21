@@ -10,12 +10,13 @@ const newAppointment = async (userData)=>{
         const collectionName = userData.collegeCode;
         const schema = mongoose.models[collectionName] || mongoose.model(collectionName,registerSchema);
         const user = await schema.findOne({"staffs.mailId":userData.email});
+        const staff = user.staffs.find(data => data.mailId === userData.email);
         if(! user) return 500;
         const model = await schema.findOneAndUpdate(
-            {},
+            {"staffs.mailId":userData.email},
             {$push:{"principal.pendingAppointments":{
-                userName:user.staffs[0].name,
-                userEmail:user.staffs[0].mailId,
+                userName:staff.name,
+                userEmail:staff.mailId,
                 desc:userData.desc,
                 dateTime:userData.dateTime
             }}},

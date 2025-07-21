@@ -23,8 +23,11 @@ async function fetchAppointmentsController(userData){
     try{
         const collectionName = userData.collegeCode;
         const schema = mongoose.models[collectionName] || mongoose.model(collectionName,registerSchema);
-        const user = await schema.find({"staffs.mailId":userData.email});
-        return(user[0].staffs[0].upcomingAppointments)
+        const user = await schema.findOne({"staffs.mailId":userData.email});
+        if (! user) return 404
+        const staff = user.staffs.find(data => data.mailId === userData.email);
+        return staff.upcomingAppointments;
+        
     }
     catch(error){
         console.log("Error from the console",error);

@@ -163,7 +163,9 @@ export default function PrincipalHomePage() {
         body:JSON.stringify(selectedMeeting)
       });
       if(! response) throw new Error ("Failed to accept the appiontment by the principal");
-      alert(`Appointment with ${selectedMeeting?.userName} is scheduled on ${extractDateTime(selectedMeeting?.dateTime || tempDate)}`);
+      alert(`Appointment with ${selectedMeeting?.userName} is scheduled on ${
+        extractDateTime((btn === 'reschedule') ? tempDate : selectedMeeting?.dateTime || tempDate)
+      }`);
       router.push({
         pathname:'/(principal-screen)/home',
         params:userData

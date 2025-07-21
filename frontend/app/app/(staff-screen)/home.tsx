@@ -32,7 +32,6 @@ interface appointments {
 export default function StaffHomePage() {
   const [selectedTab, setSelectedTab] = useState<'upcoming' | 'past'>('upcoming');
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedAppointment, setSelectedAppointment] = useState<appointments | null>(null);
 
   const dataTemplate = {
       _id:"",
@@ -42,12 +41,13 @@ export default function StaffHomePage() {
       desc: "",
       dateTime: new Date(),
     }
+  const [selectedAppointment, setSelectedAppointment] = useState(dataTemplate);
 
   const [upcomingAppointments, setUpcomingAppointments] = useState([dataTemplate]);
   const [pastAppointments, setPastAppointments] = useState([dataTemplate]);;
 
   // APPOINTMENT DATA 
-  const [appointmentData,setAppointmentData] = useState([dataTemplate]);
+  // const [appointmentData,setAppointmentData] = useState([dataTemplate]);
 
   const router = useRouter(); // ✅ Initialize router
   const userData = useLocalSearchParams();
@@ -142,8 +142,8 @@ export default function StaffHomePage() {
   //   return () => clearInterval(interval);
   // }, [upcomingAppointments]);
 
-  const handleOpenModal = (appointment: appointments) => {
-    setSelectedAppointment(appointment);
+  const handleOpenModal = ({collegeCode,_id,userName,userEmail,desc,dateTime}: appointments) => {
+    setSelectedAppointment({collegeCode,_id,userName,userEmail,desc,dateTime});
     setModalVisible(true);
   };
 
@@ -162,10 +162,13 @@ export default function StaffHomePage() {
       {/* Request Appointment */}
       <TouchableOpacity
         style={homeScreenStyles.appointmentButton}
-        onPress={() => router.push({
+        onPress={() => {
+          router.push({
           pathname:'./requestPage',
           params:userData
-        })} // ✅ Navigate to Request Appointment screen
+        });
+        // console.log(userData);
+        }} // ✅ Navigate to Request Appointment screen
       >
         <Ionicons name="add" size={18} color="white" style={{ marginRight: 6 }} />
         <Text style={homeScreenStyles.appointmentText}>Request Appointment</Text>
@@ -213,23 +216,11 @@ export default function StaffHomePage() {
 
       {/* Appointment Cards */}
       
-      {(selectedTab === 'upcoming' ? upcomingAppointments : pastAppointments).map((data) => (
-        <GenerateAppointments collegeCode={data.collegeCode} _id={data._id} userName={data.userName} userEmail={data.userEmail} desc={data.desc} dateTime={data.dateTime}/>
-        // <TouchableOpacity
-        //   key={index}
-        //   style={homeScreenStyles.card}
-        //   onPress={() => handleOpenModal(appt)}
-        // >
-        //   <Image
-        //     source={require('../../assets/images/calendar.jpeg')}
-        //     style={homeScreenStyles.cardImage}
-        //   />
-        //   <View style={homeScreenStyles.cardContent}>
-        //     <Text style={homeScreenStyles.cardTitle}>{appt.title}</Text>
-        //     <Text style={homeScreenStyles.cardSubtitle}>{appt.time}</Text>
-        //   </View>
-        // </TouchableOpacity>
-      ))}
+      {
+      (selectedTab == 'upcoming') && upcomingAppointments.map(appointments =>(
+        <GenerateAppointments collegeCode={appointments.collegeCode} _id={appointments._id} userName={appointments.userName} userEmail={appointments.userEmail} desc={appointments.desc} dateTime={appointments.dateTime} />
+      ))
+      }
 
       {/* Modal */}
       <Modal
