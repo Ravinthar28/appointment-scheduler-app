@@ -34,7 +34,8 @@ export default function RequestAppointmentScreen() {
 
   // FUNCTION TO VALIDATE THE APPOINTMENT FORM AND TO STORE IT IN THE DB
   const handleSchedule = async () => {
-    
+
+    console.log(date.toLocaleDateString());
     if (!description.trim()) {
       Alert.alert('Validation Error', 'Please enter appointment details.');
       return;
@@ -58,7 +59,7 @@ export default function RequestAppointmentScreen() {
         email:userData.email,
         collegeCode:userData.collegeCode,
         desc:description,
-        dateTime:date.toLocaleString()
+        dateTime:date
       }
       const url = "http://localhost:3000/principal/appointment-request";
       const response = await fetch(url,{

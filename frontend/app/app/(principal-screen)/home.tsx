@@ -64,7 +64,7 @@ export default function PrincipalHomePage() {
     userName: string;
     userEmail:string
     desc: string;
-    dateTime: string;
+    dateTime: Date;
   }
   // STATES TO STORE THE APPOINTMENTS
   const dataTemplate = {
@@ -73,7 +73,7 @@ export default function PrincipalHomePage() {
       userName: "",
       userEmail:"",
       desc: "",
-      dateTime: "",
+      dateTime: tempDate,
     }
   const [pendingAppointments, setPendingAppointments] = useState([dataTemplate]);
   const [confirmedAppointments, setConfirmedAppointments] = useState([dataTemplate]);
@@ -134,14 +134,17 @@ export default function PrincipalHomePage() {
   }, []);
 
 // FUNCTION TO EXTRACT THE DATE AND TIME FORMAT
-  const extractDateTime = (dateTime : string) => {
+  const extractDateTime = (dateTime : Date) => {
     const dateObject = new Date(dateTime);
+    console.log(dateTime);
+    console.log(dateObject);
     const date = dateObject.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
     });
     const time = `${(dateObject.getHours() > 12)? dateObject.getHours()-12: dateObject.getHours()}:${dateObject.getMinutes()} ${(dateObject.getHours() > 12) ? 'PM' : 'AM'}`;
+
     return `${date}, ${time}`;
   };
 
@@ -150,7 +153,7 @@ export default function PrincipalHomePage() {
   // FUNCTION FOR ACCEPTING THE APPOINTMENT BASED ON THE STAFF ASSIGNED TIME AND RESCHEDULED TIME BY THE PRINCIPAL
   const acceptAppointment = async (btn:String)=> {
     if(btn === 'reschedule' && selectedMeeting){
-      selectedMeeting.dateTime = String(tempDate)
+      selectedMeeting.dateTime = tempDate
     }
     try{
       const url = "http://localhost:3000/principal/accept-appointment"
@@ -160,7 +163,7 @@ export default function PrincipalHomePage() {
         body:JSON.stringify(selectedMeeting)
       });
       if(! response) throw new Error ("Failed to accept the appiontment by the principal");
-      alert(`Appointment with ${selectedMeeting?.userName} is scheduled on ${extractDateTime(selectedMeeting?.dateTime || String(tempDate))}`);
+      alert(`Appointment with ${selectedMeeting?.userName} is scheduled on ${extractDateTime(selectedMeeting?.dateTime || tempDate)}`);
       router.push({
         pathname:'/(principal-screen)/home',
         params:userData
@@ -338,7 +341,7 @@ export default function PrincipalHomePage() {
                 </Text>
                 <Text style={principalHome.modelDateTime}>
                   {extractDateTime(
-                    selectedMeeting?.dateTime || String(tempDate)
+                    selectedMeeting?.dateTime || tempDate
                   )}
                 </Text>
               </View>

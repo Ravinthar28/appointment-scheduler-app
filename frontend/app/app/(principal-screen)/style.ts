@@ -123,6 +123,7 @@ export const principalHome = StyleSheet.create({
   },
   modelMsgBox: {
     flex:1,
+    height:50,
     marginBottom:10,
     flexDirection:"row",
     backgroundColor:"#333",
@@ -130,7 +131,8 @@ export const principalHome = StyleSheet.create({
     borderRadius:10
   },
   modelMsg:{
-    flex:2
+    flex:2,
+    height:"100%"
   },
   modelUserName: {
     color:"#fff",
