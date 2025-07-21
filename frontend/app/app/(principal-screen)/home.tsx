@@ -116,7 +116,9 @@ export default function PrincipalHomePage() {
       >
         <View style={principalHome.avatar} />
         <View style={{ flex: 1 }}>
-          <Text style={principalHome.cardName}>Meeting with {userName}</Text>
+          <Text style={principalHome.cardName}>
+            Meeting with {userName}
+          </Text>
           <Text style={principalHome.cardTime}>{}</Text>
           {/* {meeting.message && <Text style={principalHome.cardMessage}>{meeting.message}</Text>} */}
         </View>
@@ -136,8 +138,6 @@ export default function PrincipalHomePage() {
 // FUNCTION TO EXTRACT THE DATE AND TIME FORMAT
   const extractDateTime = (dateTime : Date) => {
     const dateObject = new Date(dateTime);
-    console.log(dateTime);
-    console.log(dateObject);
     const date = dateObject.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",

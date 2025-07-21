@@ -20,31 +20,34 @@ import { ColorSpace } from 'react-native-reanimated';
 //       }
 // }
 
-interface GenerateAppointmentsProps {
-      data:{
-        desc:string,
-        dateTime:string
-      }
-    }
+interface appointments {
+    collegeCode:string,
+    _id:string,
+    userName: string;
+    userEmail:string
+    desc: string;
+    dateTime: Date;
+  }
 
 export default function StaffHomePage() {
   const [selectedTab, setSelectedTab] = useState<'upcoming' | 'past'>('upcoming');
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedAppointment, setSelectedAppointment] = useState<GenerateAppointmentsProps | null>(null);
-  const [upcomingAppointments, setUpcomingAppointments] = useState([{
-    desc:"Appointments",
-    "dateTime":"10:00 Am"
-  }]);
-  const [pastAppointments, setPastAppointments] = useState([{
-    desc:"Appointments",
-    "dateTime":"10:00 Am"
-  }]);;
+  const [selectedAppointment, setSelectedAppointment] = useState<appointments | null>(null);
+
+  const dataTemplate = {
+      _id:"",
+      collegeCode:"",
+      userName: "",
+      userEmail:"",
+      desc: "",
+      dateTime: new Date(),
+    }
+
+  const [upcomingAppointments, setUpcomingAppointments] = useState([dataTemplate]);
+  const [pastAppointments, setPastAppointments] = useState([dataTemplate]);;
 
   // APPOINTMENT DATA 
-  const [appointmentData,setAppointmentData] = useState([{
-    "desc":"Appointments",
-    "dateTime":"10:00 Am"
-  }]);
+  const [appointmentData,setAppointmentData] = useState([dataTemplate]);
 
   const router = useRouter(); // ✅ Initialize router
   const userData = useLocalSearchParams();
@@ -67,14 +70,24 @@ export default function StaffHomePage() {
         console.log(error);
       }
     }
+    // FUNCTION TO EXTRACT THE DATE AND TIME FORMAT
+    const extractDateTime = (dateTime : Date) => {
+      const dateObject = new Date(dateTime);
+      const date = dateObject.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+      const time = `${(dateObject.getHours() > 12)? dateObject.getHours()-12: dateObject.getHours()}:${dateObject.getMinutes()} ${(dateObject.getHours() > 12) ? 'PM' : 'AM'}`;
 
+      return `${date}, ${time}`;
+    };
     
-    const GenerateAppointments = (props:GenerateAppointmentsProps)=>{
-      console.log(props)
+    const GenerateAppointments = ({collegeCode,_id,userName,userEmail,desc,dateTime}:appointments)=>{
       return(
         <TouchableOpacity
           style={homeScreenStyles.card}
-          // onPress={() => handleOpenModal()}
+          onPress={() => handleOpenModal({collegeCode,_id,userName,userEmail,desc,dateTime})}
         >
           <Image
             source={require('../../assets/images/calendar.jpeg')}
@@ -82,7 +95,7 @@ export default function StaffHomePage() {
           />
           <View style={homeScreenStyles.cardContent}>
             <Text style={homeScreenStyles.cardTitle}>{"Appointment with principal"}</Text>
-            <Text style={homeScreenStyles.cardSubtitle}>{props.data.dateTime}</Text>
+            <Text style={homeScreenStyles.cardSubtitle}>{extractDateTime(dateTime)}</Text>
           </View>
         </TouchableOpacity>
       )
@@ -129,7 +142,7 @@ export default function StaffHomePage() {
   //   return () => clearInterval(interval);
   // }, [upcomingAppointments]);
 
-  const handleOpenModal = (appointment: GenerateAppointmentsProps) => {
+  const handleOpenModal = (appointment: appointments) => {
     setSelectedAppointment(appointment);
     setModalVisible(true);
   };
@@ -200,8 +213,8 @@ export default function StaffHomePage() {
 
       {/* Appointment Cards */}
       
-      {(selectedTab === 'upcoming' ? upcomingAppointments : pastAppointments).map((data, index) => (
-        <GenerateAppointments data={data} />
+      {(selectedTab === 'upcoming' ? upcomingAppointments : pastAppointments).map((data) => (
+        <GenerateAppointments collegeCode={data.collegeCode} _id={data._id} userName={data.userName} userEmail={data.userEmail} desc={data.desc} dateTime={data.dateTime}/>
         // <TouchableOpacity
         //   key={index}
         //   style={homeScreenStyles.card}
@@ -219,7 +232,7 @@ export default function StaffHomePage() {
       ))}
 
       {/* Modal */}
-      {/* <Modal
+      <Modal
         visible={modalVisible}
         animationType="slide"
         transparent
@@ -228,13 +241,11 @@ export default function StaffHomePage() {
         <View style={homeScreenStyles.modalOverlay}>
           <View style={homeScreenStyles.modalContainer}>
             <Text style={homeScreenStyles.modalTitle}>Appointment Details</Text>
-            <Text style={homeScreenStyles.modalLabel}>Date:</Text>
-            <Text style={homeScreenStyles.modalText}>{selectedAppointment?.date}</Text>
-            <Text style={homeScreenStyles.modalLabel}>Time:</Text>
-            <Text style={homeScreenStyles.modalText}>{selectedAppointment?.time}</Text>
+            <Text style={homeScreenStyles.modalLabel}>Date & Time:</Text>
+            <Text style={homeScreenStyles.modalText}>{extractDateTime(selectedAppointment?.dateTime || new Date())}</Text>
             <Text style={homeScreenStyles.modalLabel}>Message:</Text>
             <Text style={homeScreenStyles.modalText}>
-              {selectedAppointment?.message || 'No message'}
+              {selectedAppointment?.desc || 'No message'}
             </Text>
 
             <TouchableOpacity
@@ -245,7 +256,7 @@ export default function StaffHomePage() {
             </TouchableOpacity>
           </View>
         </View>
-      </Modal> */}
+      </Modal>
     </View>
   );
 }
