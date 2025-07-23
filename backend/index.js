@@ -9,6 +9,8 @@ const pricipalRoutes = require('./routes/principalRoutes');
 const connectDB = require('./config/db');
 
 
+
+
 const app = express();
 const port = 3000;
 
