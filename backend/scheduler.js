@@ -4,7 +4,6 @@ const registerSchema = require('./models/registerModel');
 
 cron.schedule('* * * * *', async () => {
   try {
-    console.log('⏰ Cron job started at', new Date().toLocaleTimeString());
 
     const allCollections = await mongoose.connection.db.listCollections().toArray();
 
