@@ -60,7 +60,7 @@ export default function PrincipalHomePage() {
   
   interface appointments {
     collegeCode:string,
-    _id:string,
+    id:string,
     userName: string;
     userEmail:string
     desc: string;
@@ -68,7 +68,7 @@ export default function PrincipalHomePage() {
   }
   // STATES TO STORE THE APPOINTMENTS
   const dataTemplate = {
-      _id:"",
+      id:"",
       collegeCode:"",
       userName: "",
       userEmail:"",
@@ -100,7 +100,7 @@ export default function PrincipalHomePage() {
   // FUNCTION TO GENERATE APPOINTMENTS CARD
   const GenerateAppointmentsCard = ({
     collegeCode,
-    _id,
+    id,
     userName,
     userEmail,
     desc,
@@ -108,10 +108,10 @@ export default function PrincipalHomePage() {
   }: appointments) => {
     return (
       <TouchableOpacity
-        key={_id}
+        key={id}
         style={principalHome.card}
         onPress={() => {
-          setSelectedMeeting({ collegeCode,_id,userName, userEmail, desc, dateTime });
+          setSelectedMeeting({ collegeCode,id,userName, userEmail, desc, dateTime });
         }}
       >
         <View style={principalHome.avatar} />
@@ -160,7 +160,10 @@ export default function PrincipalHomePage() {
       const response = await fetch(url,{
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(selectedMeeting)
+        body:JSON.stringify({
+          selectedTab,
+          selectedMeeting}
+        )
       });
       if(! response) throw new Error ("Failed to accept the appiontment by the principal");
       alert(`Appointment with ${selectedMeeting?.userName} is scheduled on ${
@@ -263,7 +266,7 @@ export default function PrincipalHomePage() {
         pendingAppointments.map((appointments) => (
           <GenerateAppointmentsCard
             collegeCode={String(userData.collegeCode)}
-            _id={appointments._id}
+            id={appointments.id}
             userName={appointments.userName}
             userEmail = {appointments.userEmail}
             desc={appointments.desc}
@@ -276,7 +279,7 @@ export default function PrincipalHomePage() {
           confirmedAppointments.map((appointments) => (
             <GenerateAppointmentsCard
               collegeCode={String(userData.collegeCode)}
-              _id={appointments._id}
+              id={appointments.id}
               userName={appointments.userName}
               userEmail = {appointments.userEmail}
               desc={appointments.desc}
@@ -289,7 +292,7 @@ export default function PrincipalHomePage() {
           pastAppointments.map((appointments) => (
             <GenerateAppointmentsCard
               collegeCode={String(userData.collegeCode)}
-              _id={appointments._id}
+              id={appointments.id}
               userName={appointments.userName}
               userEmail = {appointments.userEmail}
               desc={appointments.desc}

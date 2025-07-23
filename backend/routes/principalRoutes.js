@@ -35,10 +35,12 @@ router.post('/accept-appointment',async (req,res)=>{
     try{
         const userData = req.body;
         const response = acceptAppointment(userData);
-        res.send();
+        if(response) res.sendStatus(200);
+        else res.sendStatus(500);
     }
     catch(error){
         console.log(error);
+        return 500;
     }
 });
 
