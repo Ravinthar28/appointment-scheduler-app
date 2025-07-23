@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { ScrollView, RefreshControl } from 'react-native';
 import {
   View,
   Text,
@@ -32,6 +33,7 @@ interface appointments {
 export default function StaffHomePage() {
   const [selectedTab, setSelectedTab] = useState<'upcoming' | 'past'>('upcoming');
   const [modalVisible, setModalVisible] = useState(false);
+  const [refreshing,setRefreshing] =  useState(false);
 
   const dataTemplate = {
       _id:"",
@@ -100,7 +102,14 @@ export default function StaffHomePage() {
         </TouchableOpacity>
       )
     }
-  
+
+        const handleRefresh = async () => {
+      setRefreshing(true);
+      await fetchAppointmentData();
+      setRefreshing(false);
+    };
+
+
     useEffect(()=>{
       fetchAppointmentData();
     },[]);
@@ -214,13 +223,26 @@ export default function StaffHomePage() {
         </TouchableOpacity>
       </View>
 
-      {/* Appointment Cards */}
-      
-      {
-      (selectedTab == 'upcoming') && upcomingAppointments.map(appointments =>(
-        <GenerateAppointments collegeCode={appointments.collegeCode} _id={appointments._id} userName={appointments.userName} userEmail={appointments.userEmail} desc={appointments.desc} dateTime={appointments.dateTime} />
-      ))
-      }
+      {/* Appointment Cards refreshing */}
+      <ScrollView
+      style={{ flex: 1 }}
+  refreshControl={
+    <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+  }
+>
+  {selectedTab === 'upcoming' &&
+    upcomingAppointments.map((appointments) => (
+      <GenerateAppointments
+        key={appointments._id}
+        collegeCode={appointments.collegeCode}
+        _id={appointments._id}
+        userName={appointments.userName}
+        userEmail={appointments.userEmail}
+        desc={appointments.desc}
+        dateTime={appointments.dateTime}
+      />
+    ))}
+</ScrollView>
 
       {/* Modal */}
       <Modal

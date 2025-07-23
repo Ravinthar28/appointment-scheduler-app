@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { ScrollView, RefreshControl } from 'react-native';
 import {
   View,
   Text,
   TouchableOpacity,
-  ScrollView,
   Alert,
   TextInput,
   Modal,
@@ -12,7 +12,6 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { Ionicons } from "@expo/vector-icons";
 import { principalHome } from "./style";
 import { router, useLocalSearchParams } from "expo-router";
-import { Button } from "@react-navigation/elements";
 
 // interface Meeting {
 //   id: number;
@@ -54,6 +53,7 @@ export default function PrincipalHomePage() {
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [tempDate, setTempDate] = useState(new Date());
   const [message, setMessage] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
 
   // PARAMETER VALUES
   const userData = useLocalSearchParams();
@@ -67,17 +67,17 @@ export default function PrincipalHomePage() {
     dateTime: Date;
   }
   // STATES TO STORE THE APPOINTMENTS
-  const dataTemplate = {
-      id:"",
-      collegeCode:"",
-      userName: "",
-      userEmail:"",
-      desc: "",
-      dateTime: tempDate,
-    }
-  const [pendingAppointments, setPendingAppointments] = useState([dataTemplate]);
-  const [confirmedAppointments, setConfirmedAppointments] = useState([dataTemplate]);
-  const [pastAppointments, setPastAppointments] = useState([dataTemplate]);
+  // const dataTemplate = {
+  //     id:"",
+  //     collegeCode:"",
+  //     userName: "",
+  //     userEmail:"",
+  //     desc: "",
+  //     dateTime: tempDate,
+  //   }
+  const [pendingAppointments, setPendingAppointments] = useState<appointments[]>([]);
+  const [confirmedAppointments, setConfirmedAppointments] = useState<appointments[]>([]);
+  const [pastAppointments, setPastAppointments] = useState<appointments[]>([]);
 
   // FUNCTION TO FETCH THE REQUESTS DATA FROM THE DB
   const pendingRequest = async () => {
@@ -97,6 +97,13 @@ export default function PrincipalHomePage() {
     }
   };
 
+  // refresh control function
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await pendingRequest();
+    setRefreshing(false);
+  };
+
   // FUNCTION TO GENERATE APPOINTMENTS CARD
   const GenerateAppointmentsCard = ({
     collegeCode,
@@ -111,7 +118,7 @@ export default function PrincipalHomePage() {
         key={id}
         style={principalHome.card}
         onPress={() => {
-          setSelectedMeeting({ collegeCode,id,userName, userEmail, desc, dateTime });
+          setSelectedMeeting({ collegeCode, id, userName, userEmail, desc, dateTime });
         }}
       >
         <View style={principalHome.avatar} />
@@ -119,23 +126,26 @@ export default function PrincipalHomePage() {
           <Text style={principalHome.cardName}>
             Meeting with {userName}
           </Text>
-          <Text style={principalHome.cardTime}>{}</Text>
+          <Text style={principalHome.cardTime}>
+            {extractDateTime(dateTime)}
+          </Text>
           {/* {meeting.message && <Text style={principalHome.cardMessage}>{meeting.message}</Text>} */}
         </View>
         <TouchableOpacity>
           <Text style={{ fontSize: 22 }}>
-            {selectedTab == "pending" ? "⏳": ""}
-            {selectedTab == "confirmed" ? "✅":""}
+            {selectedTab === "pending" && "⏳"}
+            {selectedTab === "confirmed" && "✅"}
           </Text>
         </TouchableOpacity>
       </TouchableOpacity>
     );
   };
+
   useEffect(() => {
     pendingRequest();
   }, []);
 
-// FUNCTION TO EXTRACT THE DATE AND TIME FORMAT
+  // FUNCTION TO EXTRACT THE DATE AND TIME FORMAT
   const extractDateTime = (dateTime : Date) => {
     const dateObject = new Date(dateTime);
     const date = dateObject.toLocaleDateString("en-US", {
@@ -227,8 +237,15 @@ export default function PrincipalHomePage() {
   //   );
   // };
 
+  //refresh in the flat-list components
   return (
-    <ScrollView contentContainerStyle={principalHome.container}>
+    <ScrollView 
+      contentContainerStyle={principalHome.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+      }
+    >
+    
       {/* Header */}
       {/* <View style={principalHome.header}>
         <TouchableOpacity>
@@ -262,44 +279,44 @@ export default function PrincipalHomePage() {
 
       {/* Meeting Cards */}
       {
-      selectedTab === "pending" &&
+        selectedTab === "pending" &&
         pendingAppointments.map((appointments) => (
           <GenerateAppointmentsCard
             collegeCode={String(userData.collegeCode)}
             id={appointments.id}
             userName={appointments.userName}
-            userEmail = {appointments.userEmail}
+            userEmail={appointments.userEmail}
             desc={appointments.desc}
             dateTime={appointments.dateTime}
           />
         ))
-        }
-        {
+      }
+      {
         selectedTab === "confirmed" &&
-          confirmedAppointments.map((appointments) => (
-            <GenerateAppointmentsCard
-              collegeCode={String(userData.collegeCode)}
-              id={appointments.id}
-              userName={appointments.userName}
-              userEmail = {appointments.userEmail}
-              desc={appointments.desc}
-              dateTime={appointments.dateTime}
-            />
+        confirmedAppointments.map((appointments) => (
+          <GenerateAppointmentsCard
+            collegeCode={String(userData.collegeCode)}
+            id={appointments.id}
+            userName={appointments.userName}
+            userEmail={appointments.userEmail}
+            desc={appointments.desc}
+            dateTime={appointments.dateTime}
+          />
         ))
-        }
-        {
+      }
+      {
         selectedTab === "past" &&
-          pastAppointments.map((appointments) => (
-            <GenerateAppointmentsCard
-              collegeCode={String(userData.collegeCode)}
-              id={appointments.id}
-              userName={appointments.userName}
-              userEmail = {appointments.userEmail}
-              desc={appointments.desc}
-              dateTime={appointments.dateTime}
-            />
-          ))
-        }
+        pastAppointments.map((appointments) => (
+          <GenerateAppointmentsCard
+            collegeCode={String(userData.collegeCode)}
+            id={appointments.id}
+            userName={appointments.userName}
+            userEmail={appointments.userEmail}
+            desc={appointments.desc}
+            dateTime={appointments.dateTime}
+          />
+        ))
+      }
       {/* {meetings
         .filter((m) => m.status === selectedTab)
         .map((meeting) => (
@@ -399,12 +416,11 @@ export default function PrincipalHomePage() {
                 value={tempDate}
                 onChange={(e, time) => {
                   setShowTimePicker(false);
-                  if (time)
-                    setTempDate(
-                      new Date(
-                        tempDate.setHours(time.getHours(), time.getMinutes())
-                      )
-                    );
+                  if (time) {
+                    const newDate = new Date(tempDate);
+                    newDate.setHours(time.getHours(), time.getMinutes());
+                    setTempDate(newDate);
+                  }
                 }}
               />
             )}
