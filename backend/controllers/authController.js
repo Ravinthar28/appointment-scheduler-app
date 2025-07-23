@@ -17,7 +17,6 @@ async function createPrincipal(data){
             },
             staffs:[]
         });
-
         await newUser.save();
         return 200;
     }

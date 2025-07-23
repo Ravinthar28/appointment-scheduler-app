@@ -8,6 +8,8 @@ const pricipalRoutes = require('./routes/principalRoutes');
 // DB
 const connectDB = require('./config/db');
 
+require('./scheduler');
+
 
 
 
