@@ -13,7 +13,6 @@ const principalSchema = new mongoose.Schema({
     pendingAppointments:[appointmentModel],
     confirmedAppointments:[appointmentModel],
     pastAppointments:[appointmentModel],
-    pushToken:String
 });
 
 module.exports = principalSchema;
