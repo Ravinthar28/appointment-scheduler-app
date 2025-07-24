@@ -5,7 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
-  Dimensions,
   Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -83,6 +82,8 @@ export default function PersonalInfoForm() {
         collegeCode,
         password,
         role: selectedRole,
+        // ------ working -----------
+        expoPushToken
       };
       const url = "http://localhost:3000/auth/register";
       const response = await fetch(url,{

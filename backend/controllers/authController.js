@@ -13,7 +13,10 @@ async function createPrincipal(data){
                 phoneNo:data["phone"],
                 mailId:data["email"],
                 password:data["password"],
-                messages:[]
+                pendingAppointments:[],
+                confirmedAppointments:[],
+                pastAppointments:[],
+                pushToken:data["expoPushToken"]
             },
             staffs:[]
         });
@@ -37,7 +40,8 @@ async function createStaff(data) {
             mailId:data['email'],
             password:data['password'],
             upcomingAppointments:[],
-            pastAppointments:[]
+            pastAppointments:[],
+            pushToken:data["expoPushToken"]
         }
         const model = await schema.findOneAndUpdate(
             {},

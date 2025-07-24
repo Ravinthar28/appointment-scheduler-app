@@ -11,7 +11,8 @@ const staffSchema = new mongoose.Schema({
     },
     password:String,   
     upcomingAppointments:[appointmentModel],
-    pastAppointments:[appointmentModel]
+    pastAppointments:[appointmentModel],
+    pushToken:String
 });
 
 module.exports = staffSchema;
