@@ -1,4 +1,4 @@
-import React, { useState,useEffect, useRef, } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -12,21 +12,6 @@ import { useRouter } from 'expo-router';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 import { registerStyles } from './style';
 
-// NOTIFICATION
-import * as Notifications from 'expo-notifications';
-import * as Device from 'expo-device';
-
-
-// TO HANDLE NOTIFICATIONS
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
 
 
 export default function PersonalInfoForm() {
@@ -40,33 +25,6 @@ export default function PersonalInfoForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [selectedRole, setSelectedRole] = useState<'staff' | 'principal' | ''>('');
 
-  // NOTIFICATION
-  const [expoPushToken, setExpoPushToken] = useState<string | undefined>();
-  const notificationListener = useRef<any>(null);
-  const responseListener = useRef<any>(null);
-
-  useEffect(() => {
-    registerForPushNotificationsAsync().then(token => {
-      if (token) {
-        setExpoPushToken(token);
-        // 👉 Send this token to your backend to save it per user
-        console.log("Expo Push Token:", token);
-      }
-    });
-
-    notificationListener.current = Notifications.addNotificationReceivedListener((notification: any) => {
-      console.log("Notification Received: ", notification);
-    });
-
-    responseListener.current = Notifications.addNotificationResponseReceivedListener((response: any) => {
-      console.log("Notification Response: ", response);
-    });
-
-    return () => {
-      Notifications.removeNotificationSubscription(notificationListener.current);
-      Notifications.removeNotificationSubscription(responseListener.current);
-    };
-  }, []);
 
   const handleNext = async () => {
     if (!fullName || !email || !phone || !collegeCode || !password || !selectedRole) {
@@ -82,8 +40,6 @@ export default function PersonalInfoForm() {
         collegeCode,
         password,
         role: selectedRole,
-        // ------ working -----------
-        expoPushToken
       };
       const url = "http://localhost:3000/auth/register";
       const response = await fetch(url,{
@@ -255,25 +211,3 @@ export default function PersonalInfoForm() {
   );
 }
 
-async function registerForPushNotificationsAsync(): Promise<string | undefined> {
-  if (!Device.isDevice) {
-    alert('Must use physical device for Push Notifications');
-    return;
-  }
-
-  const { status: existingStatus } = await Notifications.getPermissionsAsync();
-  let finalStatus = existingStatus;
-
-  if (existingStatus !== 'granted') {
-    const { status } = await Notifications.requestPermissionsAsync();
-    finalStatus = status;
-  }
-
-  if (finalStatus !== 'granted') {
-    alert('Failed to get push token for push notification!');
-    return;
-  }
-
-  const tokenData = await Notifications.getExpoPushTokenAsync();
-  return tokenData.data;
-}

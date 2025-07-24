@@ -1,7 +1,7 @@
 
 const mongoose = require('mongoose');
 const registerSchema = require('../models/registerModel');
-const sendPushNotification = require('../utils/sendPushNotification');
+
 
 // async function fetchDataController(userData) {
 //     try{
@@ -49,12 +49,6 @@ async function requestAppointmentController(messageData){
             {new:true,upsert:false}
         );
         if(!model) console.log("error in model");
-        
-        // ----------WORKING----------
-        const staff_token = await schema.find({'staffs.mailId':messageData.email});
-        console.log(staff_token)
-        // await sendPushNotification()
-
         return model;
         
     }
