@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "506349757736",
+    "project_id": "appointment-scheduler-ap-975d8",
+    "storage_bucket": "appointment-scheduler-ap-975d8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:506349757736:android:7c41239af38b9829485c1d",
+        "android_client_info": {
+          "package_name": "com.ravinthar.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBn0OFYlfxEmZg1_fTuHKOE_NHKdbBatis"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
