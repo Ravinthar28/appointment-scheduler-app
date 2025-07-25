@@ -128,7 +128,7 @@ export default function PersonalInfoForm() {
         role: selectedRole,
         expoPushToken
       };
-      const url = "http://192.168.48.146:3000/auth/register";
+      const url = "http://localhost:3000/auth/register";
       const response = await fetch(url,{
         method: "POST",
         headers: { "Content-Type":"application/json"},

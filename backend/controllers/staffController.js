@@ -20,6 +20,28 @@ const registerSchema = require('../models/registerModel');
 //     }
 // }
 
+// FUNCION TO SEND THE PRINCIPAL DETAILS TO THE STAFF SCREEN
+const fetchPrincipal = async (userData)=>{
+    try{
+        const collectionName = userData.collegeCode;
+        const schema = mongoose.models[collectionName] || mongoose.model(collectionName,registerSchema);
+
+        const users = await schema.findOne({});
+        const principal = users.principal
+        if(users){
+            return {
+            name:principal.name,
+            email:principal.mailId
+        }
+        }
+        
+    }
+    catch(error){
+        console.log(error);
+        return "Error in fetching";
+    }
+}
+
 async function fetchAppointmentsController(userData){
     try{
         const collectionName = userData.collegeCode;
@@ -27,7 +49,10 @@ async function fetchAppointmentsController(userData){
         const user = await schema.findOne({"staffs.mailId":userData.email});
         if (! user) return 404
         const staff = user.staffs.find(data => data.mailId === userData.email);
-        return staff.upcomingAppointments;
+        return {
+            upcomingAppointments:staff.upcomingAppointments,
+            pastAppointments:staff.pastAppointments
+        };
         
     }
     catch(error){
@@ -58,6 +83,7 @@ async function requestAppointmentController(messageData){
 }
 
 module.exports = {
+    fetchPrincipal,
     fetchAppointmentsController,
     requestAppointmentController
 }

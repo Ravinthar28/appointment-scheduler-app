@@ -3,6 +3,9 @@ const mongoose = require("mongoose");
 // SCHEMA
 const registerSchema = require("../models/registerModel");
 
+// NOTIFICATION
+const sendPushNotification = require('../utils/sendPushNotification');
+
 // FUNCTION TO APPEND APPOINTMENT REQUESTS FROM THE STAFF TO THE PRINCIPAL'S PENDING APPOINTMNETS TAB
 const newAppointment = async (userData) => {
   try {
@@ -27,6 +30,14 @@ const newAppointment = async (userData) => {
       },
       { new: true, upsert: false }
     );
+
+
+    const users = await schema.findOne({})
+    const principalToken = users.principal.expoPushToken;
+
+    // -------------- working --------------
+    // await sendPushNotification(principalToken,"Appointment Request",`You have a new appointment request from ${staff.name}`)
+    // ---------------------------
 
     if (model) return 200;
     else return 500;
@@ -57,8 +68,22 @@ const pendingAppointments = async (userData) => {
   }
 };
 
-// FUNCTION FOR ACCEPTING THE PENDING APPOINTMENTS BASED ON THE TIME ASIGNED BY THE STAFF
+// FUNCTION FOR ACCEPTING THE PENDING APPOINTMENTS BASED ON THE TIME ASIGNED BY THE STAFF AND RESCHEDULING THE APPOINTMENT BY THE PRINCIPAL
 const acceptAppointment = async (userData) => {
+
+    // FUNCTION TO EXTRACT THE DATE AND TIME FORMAT
+  const extractDateTime = (dateTime) => {
+    const dateObject = new Date(dateTime);
+    const date = dateObject.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+    const time = `${(dateObject.getHours() > 12)? dateObject.getHours()-12: dateObject.getHours()}:${dateObject.getMinutes()} ${(dateObject.getHours() > 12) ? 'PM' : 'AM'}`;
+
+    return `${date}, ${time}`;
+  };
+
   try {
     const msgData = {
       id: userData.selectedMeeting.id,
@@ -135,6 +160,13 @@ const acceptAppointment = async (userData) => {
       if (principal && staff) return 200;
       else return 500;
     }
+    // -------------------------------------------
+    const users = await schema.findOne({"staffs.mailId":userData.selectedMeeting.userEmail});
+    const staff = users.staffs.find(data => data.mailId == userData.selectedMeeting.userEmail);
+    const staffToken = staff.expoPushToken;
+
+    // await sendPushNotification(staffToken,"Appointment Scheduled",`Your appointment with the principal is scheduled on ${extractDateTime(userData.selectedMeeting.dateTime)}`);
+    // ------------------------------------
   } catch (error) {
     console.log(error);
   }

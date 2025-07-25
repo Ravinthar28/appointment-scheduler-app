@@ -5,6 +5,7 @@ const router = express.Router();
 
 // STAFF CONTROLLER
 const {
+    fetchPrincipal,
     requestAppointmentController,
     fetchAppointmentsController
     } = require('../controllers/staffController');
@@ -23,6 +24,18 @@ const {
 //         console.log(error);
 //     }
 // });
+
+router.post('/fetch-principal',async (req,res)=>{
+    try{
+        const userData = req.body;
+        const response = await fetchPrincipal(userData);
+        if(response) res.json(response);
+        else res.sendStatus(500);
+    }
+    catch(error){
+        console.log(error);
+    }
+})
 
 router.post('/fetch-appointments',async (req,res)=>{
     try{

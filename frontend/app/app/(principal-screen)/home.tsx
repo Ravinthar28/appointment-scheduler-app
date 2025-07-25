@@ -82,7 +82,7 @@ export default function PrincipalHomePage() {
   // FUNCTION TO FETCH THE REQUESTS DATA FROM THE DB
   const pendingRequest = async () => {
     try {
-      const url = "http://192.168.48.146:3000/principal/appointments-data";
+      const url = "http://localhost:3000/principal/appointments-data";
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -166,7 +166,7 @@ export default function PrincipalHomePage() {
       selectedMeeting.dateTime = tempDate
     }
     try{
-      const url = "http://192.168.48.146:3000/principal/accept-appointment"
+      const url = "http://localhost:3000/principal/accept-appointment"
       const response = await fetch(url,{
         method:'POST',
         headers:{'Content-Type':'application/json'},

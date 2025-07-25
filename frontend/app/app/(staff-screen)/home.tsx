@@ -54,11 +54,38 @@ export default function StaffHomePage() {
   const router = useRouter(); // ✅ Initialize router
   const userData = useLocalSearchParams();
 
+  // FUNCTION AND HOOK TO FETCH AND STORE THE PRINCIPAL DETAILS
+    const [principal,setPrincipal] = useState({
+      name:"Principal",
+      email:"principal@gmail.com"
+    })
+
+    const fetchPricipal = async ()=>{
+      try{
+        const url = "http://localhost:3000/staff/fetch-principal";
+        const response = await fetch(url,{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(userData)
+        })
+        if(! response) throw new Error ("Faild to load the data");
+        const data = await response.json();
+        setPrincipal(data);
+      }
+      catch(error){
+        console.log(error);
+      }
+    }
+
+    useEffect(()=>{
+      fetchPricipal();
+    },[])
+
 
   // FUNCTION TO FETCH THE APPOINTMENT DATAS FROM DB
     const fetchAppointmentData = async ()=>{
       try{
-        const url = "http://192.168.48.146:3000/staff/fetch-appointments";
+        const url = "http://localhost:3000/staff/fetch-appointments";
         const response = await fetch(url,{
           method:'POST',
           headers:{'Content-Type':'application/json'},
@@ -66,7 +93,9 @@ export default function StaffHomePage() {
         });
         if(! response.ok) throw new Error("Faild to load data");
         const data = await response.json();
-        setUpcomingAppointments(data);
+
+        setUpcomingAppointments(data.upcomingAppointments);
+        setPastAppointments(data.pastAppointments);
       }
       catch(error){
         console.log(error);
@@ -164,9 +193,9 @@ export default function StaffHomePage() {
         source={require('../../assets/images/Principal.jpg')}
         style={homeScreenStyles.avatar}
       />
-      <Text style={homeScreenStyles.name}>Dr. C. Mathalai Sundaram</Text>
+      <Text style={homeScreenStyles.name}>{principal.name}</Text>
       <Text style={homeScreenStyles.role}>Principal</Text>
-      <Text style={homeScreenStyles.email}>principal@nscet.org</Text>
+      <Text style={homeScreenStyles.email}>{principal.email}</Text>
 
       {/* Request Appointment */}
       <TouchableOpacity
@@ -232,6 +261,19 @@ export default function StaffHomePage() {
 >
   {selectedTab === 'upcoming' &&
     upcomingAppointments.map((appointments) => (
+      <GenerateAppointments
+        key={appointments._id}
+        collegeCode={appointments.collegeCode}
+        _id={appointments._id}
+        userName={appointments.userName}
+        userEmail={appointments.userEmail}
+        desc={appointments.desc}
+        dateTime={appointments.dateTime}
+      />
+    ))}
+
+    {selectedTab === 'past' &&
+    pastAppointments.map((appointments) => (
       <GenerateAppointments
         key={appointments._id}
         collegeCode={appointments.collegeCode}
