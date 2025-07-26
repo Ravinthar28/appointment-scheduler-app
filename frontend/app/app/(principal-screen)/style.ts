@@ -150,18 +150,31 @@ export const principalHome = StyleSheet.create({
   modelDateTime: {
     color:"#fff"
   },
-  modelAcceptBtnContainer: {
+  modelBtnOuterContainer:{
     width:"100%",
     height:"auto",
+    display:"flex",
+    flexDirection:"row",
     alignItems:"center",
-    justifyContent:"center"
+    justifyContent:"space-around"
+  },
+  modelBtnContainer: {
+    height:"auto",
+    alignItems:"center",
+    justifyContent:"center",
   },
   modelMsgAcceptBtn: {
-    color:"white",
     backgroundColor:"#5cb85c",
     paddingVertical:4,
     paddingHorizontal:30,
     borderRadius:5,
-    borderWidth:0
+    borderWidth:0,
+  },
+  modelMsgCancelBtn: {
+    backgroundColor:"#ED2B00",
+    paddingVertical:4,
+    paddingHorizontal:30,
+    borderRadius:5,
+    borderWidth:0,
   }
 });

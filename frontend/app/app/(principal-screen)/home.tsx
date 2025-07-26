@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, RefreshControl } from 'react-native';
+import { ScrollView, RefreshControl } from "react-native";
 import {
   View,
   Text,
@@ -60,12 +60,12 @@ export default function PrincipalHomePage() {
 
   // PARAMETER VALUES
   const userData = useLocalSearchParams();
-  
+
   interface appointments {
-    collegeCode:string,
-    id:string,
+    collegeCode: string;
+    id: string;
     userName: string;
-    userEmail:string
+    userEmail: string;
     desc: string;
     dateTime: Date;
   }
@@ -78,8 +78,12 @@ export default function PrincipalHomePage() {
   //     desc: "",
   //     dateTime: tempDate,
   //   }
-  const [pendingAppointments, setPendingAppointments] = useState<appointments[]>([]);
-  const [confirmedAppointments, setConfirmedAppointments] = useState<appointments[]>([]);
+  const [pendingAppointments, setPendingAppointments] = useState<
+    appointments[]
+  >([]);
+  const [confirmedAppointments, setConfirmedAppointments] = useState<
+    appointments[]
+  >([]);
   const [pastAppointments, setPastAppointments] = useState<appointments[]>([]);
 
   // FUNCTION TO FETCH THE REQUESTS DATA FROM THE DB
@@ -121,14 +125,19 @@ export default function PrincipalHomePage() {
         key={id}
         style={principalHome.card}
         onPress={() => {
-          setSelectedMeeting({ collegeCode, id, userName, userEmail, desc, dateTime });
+          setSelectedMeeting({
+            collegeCode,
+            id,
+            userName,
+            userEmail,
+            desc,
+            dateTime,
+          });
         }}
       >
         <View style={principalHome.avatar} />
         <View style={{ flex: 1 }}>
-          <Text style={principalHome.cardName}>
-            Meeting with {userName}
-          </Text>
+          <Text style={principalHome.cardName}>Meeting with {userName}</Text>
           <Text style={principalHome.cardTime}>
             {extractDateTime(dateTime)}
           </Text>
@@ -149,14 +158,18 @@ export default function PrincipalHomePage() {
   }, []);
 
   // FUNCTION TO EXTRACT THE DATE AND TIME FORMAT
-  const extractDateTime = (dateTime : Date) => {
+  const extractDateTime = (dateTime: Date) => {
     const dateObject = new Date(dateTime);
     const date = dateObject.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
     });
-    const time = `${(dateObject.getHours() > 12)? dateObject.getHours()-12: dateObject.getHours()}:${dateObject.getMinutes()} ${(dateObject.getHours() > 12) ? 'PM' : 'AM'}`;
+    const time = `${
+      dateObject.getHours() > 12
+        ? dateObject.getHours() - 12
+        : dateObject.getHours()
+    }:${dateObject.getMinutes()} ${dateObject.getHours() > 12 ? "PM" : "AM"}`;
 
     return `${date}, ${time}`;
   };
@@ -164,34 +177,40 @@ export default function PrincipalHomePage() {
   // ---------WORKING----------
 
   // FUNCTION FOR ACCEPTING THE APPOINTMENT BASED ON THE STAFF ASSIGNED TIME AND RESCHEDULED TIME BY THE PRINCIPAL
-  const acceptAppointment = async (btn:String)=> {
-    if(btn === 'reschedule' && selectedMeeting){
-      selectedMeeting.dateTime = tempDate
+  const acceptAppointment = async (btn: String) => {
+    if (btn === "reschedule" && selectedMeeting) {
+      selectedMeeting.dateTime = tempDate;
     }
-    try{
+    try {
       const url = `${baseUrl}/principal/accept-appointment`;
-      const response = await fetch(url,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           selectedTab,
-          selectedMeeting}
-        )
+          selectedMeeting,
+        }),
       });
-      if(! response) throw new Error ("Failed to accept the appiontment by the principal");
-      alert(`Appointment with ${selectedMeeting?.userName} is scheduled on ${
-        extractDateTime((btn === 'reschedule') ? tempDate : selectedMeeting?.dateTime || tempDate)
-      }`);
+      if (!response)
+        throw new Error("Failed to accept the appiontment by the principal");
+      alert(
+        `Appointment with ${
+          selectedMeeting?.userName
+        } is scheduled on ${extractDateTime(
+          btn === "reschedule"
+            ? tempDate
+            : selectedMeeting?.dateTime || tempDate
+        )}`
+      );
       router.push({
-        pathname:'/(principal-screen)/home',
-        params:userData
-      })
+        pathname: "/(principal-screen)/home",
+        params: userData,
+      });
       setSelectedMeeting(null);
-    }
-    catch(error){
+    } catch (error) {
       alert(error);
     }
-  }
+  };
 
   // FUNCTION FOR RESCHEDULING THE APPOINTMENT BY THE PRINCIPAL
   // // Automatically move confirmed to past
@@ -242,13 +261,12 @@ export default function PrincipalHomePage() {
 
   //refresh in the flat-list components
   return (
-    <ScrollView 
+    <ScrollView
       contentContainerStyle={principalHome.container}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
       }
     >
-    
       {/* Header */}
       {/* <View style={principalHome.header}>
         <TouchableOpacity>
@@ -281,8 +299,7 @@ export default function PrincipalHomePage() {
       </View>
 
       {/* Meeting Cards */}
-      {
-        selectedTab === "pending" &&
+      {selectedTab === "pending" &&
         pendingAppointments.map((appointments) => (
           <GenerateAppointmentsCard
             collegeCode={String(userData.collegeCode)}
@@ -292,10 +309,8 @@ export default function PrincipalHomePage() {
             desc={appointments.desc}
             dateTime={appointments.dateTime}
           />
-        ))
-      }
-      {
-        selectedTab === "confirmed" &&
+        ))}
+      {selectedTab === "confirmed" &&
         confirmedAppointments.map((appointments) => (
           <GenerateAppointmentsCard
             collegeCode={String(userData.collegeCode)}
@@ -305,10 +320,8 @@ export default function PrincipalHomePage() {
             desc={appointments.desc}
             dateTime={appointments.dateTime}
           />
-        ))
-      }
-      {
-        selectedTab === "past" &&
+        ))}
+      {selectedTab === "past" &&
         pastAppointments.map((appointments) => (
           <GenerateAppointmentsCard
             collegeCode={String(userData.collegeCode)}
@@ -318,8 +331,7 @@ export default function PrincipalHomePage() {
             desc={appointments.desc}
             dateTime={appointments.dateTime}
           />
-        ))
-      }
+        ))}
       {/* {meetings
         .filter((m) => m.status === selectedTab)
         .map((meeting) => (
@@ -356,35 +368,41 @@ export default function PrincipalHomePage() {
       <Modal visible={!!selectedMeeting} animationType="slide" transparent>
         <View style={principalHome.modalBackground}>
           <View style={principalHome.modalContainer}>
-            <View style = {principalHome.modelMsgOuterBox}>
-              
+            <View style={principalHome.modelMsgOuterBox}>
               <View style={principalHome.modelMsgBox}>
-              <View style={principalHome.modelMsg}>
-                <Text style={principalHome.modelUserName}>
-                  {selectedMeeting?.userName}
-                </Text>
-                <Text style={principalHome.modelDesc}>
-                  {selectedMeeting?.desc}
-                </Text>
-                <Text style={principalHome.modelDateTime}>
-                  {extractDateTime(
-                    selectedMeeting?.dateTime || tempDate
-                  )}
-                </Text>
-              </View>
-            </View>
-                  {
-                selectedTab == 'pending' && 
-                <View style= {principalHome.modelAcceptBtnContainer}>
-                <TouchableOpacity style = {principalHome.modelMsgAcceptBtn} onPress={()=>acceptAppointment('accept')}>
-                  <Text style = {{color:"#fff"}}>
-                    Accept
+                <View style={principalHome.modelMsg}>
+                  <Text style={principalHome.modelUserName}>
+                    {selectedMeeting?.userName}
                   </Text>
-                </TouchableOpacity>
+                  <Text style={principalHome.modelDesc}>
+                    {selectedMeeting?.desc}
+                  </Text>
+                  <Text style={principalHome.modelDateTime}>
+                    {extractDateTime(selectedMeeting?.dateTime || tempDate)}
+                  </Text>
+                </View>
               </View>
-              }
+              <View style= {principalHome.modelBtnOuterContainer}>
+                {selectedTab == "pending" && (
+                  <View style= {principalHome.modelBtnContainer}>
+                    <TouchableOpacity
+                      style={principalHome.modelMsgAcceptBtn}
+                      onPress={() => acceptAppointment("accept")}
+                    >
+                      <Text style={{ color: "#fff" }}>Accept</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+                <View style = {principalHome.modelBtnContainer}>
+                  <TouchableOpacity
+                    style={principalHome.modelMsgCancelBtn}
+                    onPress={() => acceptAppointment("accept")}
+                  >
+                    <Text style={{ color: "#fff" }}>Cancel</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
-            
 
             <Text style={principalHome.formHeading}>Select Available Time</Text>
 
@@ -440,8 +458,10 @@ export default function PrincipalHomePage() {
               multiline
             />
 
-            <TouchableOpacity style={principalHome.confirmButton}
-              onPress={()=>acceptAppointment('reschedule')}>
+            <TouchableOpacity
+              style={principalHome.confirmButton}
+              onPress={() => acceptAppointment("reschedule")}
+            >
               <Text style={principalHome.confirmText}>Reschedule</Text>
             </TouchableOpacity>
 
