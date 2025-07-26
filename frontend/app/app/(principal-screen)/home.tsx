@@ -4,12 +4,10 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Alert,
   TextInput,
   Modal,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { Ionicons } from "@expo/vector-icons";
 import { principalHome } from "./style";
 import { router, useLocalSearchParams } from "expo-router";
 
@@ -174,7 +172,6 @@ export default function PrincipalHomePage() {
     return `${date}, ${time}`;
   };
 
-  // ---------WORKING----------
 
   // FUNCTION FOR ACCEPTING THE APPOINTMENT BASED ON THE STAFF ASSIGNED TIME AND RESCHEDULED TIME BY THE PRINCIPAL
   const acceptAppointment = async (btn: String) => {
@@ -211,6 +208,29 @@ export default function PrincipalHomePage() {
       alert(error);
     }
   };
+
+  // FUNCTION FOR CANCELING THE APPOINTMENT
+  const cancelAppointment = async ()=>{
+    try{
+      const url = `${baseUrl}/principal/cancel-appointment`;
+      const response = await fetch(url,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          selectedTab,
+          selectedMeeting
+        })
+      });
+      if(! response) throw new Error('Error in canceling the appointment');
+      const result = await response.json();
+      console.log(result);
+      alert("Appointment Canceled");
+      setSelectedMeeting(null);
+    }
+    catch(error){
+      console.log(error);
+    }
+  }
 
   // FUNCTION FOR RESCHEDULING THE APPOINTMENT BY THE PRINCIPAL
   // // Automatically move confirmed to past
@@ -396,7 +416,7 @@ export default function PrincipalHomePage() {
                 <View style = {principalHome.modelBtnContainer}>
                   <TouchableOpacity
                     style={principalHome.modelMsgCancelBtn}
-                    onPress={() => acceptAppointment("accept")}
+                    onPress={() => cancelAppointment()}
                   >
                     <Text style={{ color: "#fff" }}>Cancel</Text>
                   </TouchableOpacity>

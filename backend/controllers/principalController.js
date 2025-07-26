@@ -169,12 +169,49 @@ const acceptAppointment = async (userData) => {
       if (principal && staff) return 200;
       else return 500;
     }
-    // -------------------------------------------
-
-    
-    // ------------------------------------
   } catch (error) {
     console.log(error);
   }
 };
-module.exports = { newAppointment, pendingAppointments, acceptAppointment };
+
+// FUNCTION TO CANCEL THE APPOINTMENT BY THE PRINCIPAL
+const cancelAppointment = async (userData)=>{
+  try{
+    const collectionName = userData.selectedMeeting.collegeCode;
+    const schema = mongoose.models[collectionName] || mongoose.model(collectionName,registerSchema);
+
+    // TO CANCEL THE APPOINTMENT FROM CONFIRMED TAB
+    if(userData.selectedTab == 'confirmed'){
+      const updatePrincipal = await schema.findOneAndUpdate(
+      {'principal.confirmedAppointments.id':userData.selectedMeeting.id},
+      {$pull:{'principal.confirmedAppointments':{id:userData.selectedMeeting.id}}},
+      {new:true,upsert:false}
+    );
+    if(updatePrincipal) return true;
+    }
+
+    // TO CANCEL THE APPOINTMENT FROM PAST TAB
+    if(userData.selectedTab == 'pending'){
+      const updatePrincipal = await schema.findOneAndUpdate(
+      {'principal.pendingAppointments.id':userData.selectedMeeting.id},
+      {$pull:{'principal.pendingAppointments':{id:userData.selectedMeeting.id}}},
+      {new:true,upsert:false}
+    );
+    if(updatePrincipal) return true;
+    }
+    
+
+
+    // const updatePrincipal = await schema.findOneAndUpdate(
+    //   {'principal.pendingAppointments.id':userData.id},
+    //   {$pull:{'pendingAppointments.$.id':userData.id}},
+    //   {new:true,upsert:false}
+    // );
+
+    // if(updatePrincipal) return;
+  }
+  catch(error){
+    console.log(error);
+  }
+}
+module.exports = { newAppointment, pendingAppointments, acceptAppointment,cancelAppointment };

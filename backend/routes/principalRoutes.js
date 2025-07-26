@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { newAppointment, pendingAppointments, acceptAppointment } = require('../controllers/principalController');
+const { newAppointment, pendingAppointments, acceptAppointment, cancelAppointment } = require('../controllers/principalController');
 
 // ROUTE FOR REQUESTING NEW APPOINTMENT FROM STAFF TO THE PRINCIPAL
 router.post('/appointment-request',async (req,res)=>{
@@ -43,5 +43,17 @@ router.post('/accept-appointment',async (req,res)=>{
         return 500;
     }
 });
+
+// ROUTE FOR CANCELING THE APPOINTMENTS FROM APPOINTMENT REQUEST AND CONFIRMED APPOINTMENT TAB BY THE PRINCIPAL
+router.post('/cancel-appointment',async (req,res)=>{
+    try{
+        const userData = req.body;
+        const response = await cancelAppointment(userData);
+        if(response) res.json({'response':'Appointment Canceled'});
+    }
+    catch(error){
+        console.log(error);
+    }
+})
 
 module.exports = router

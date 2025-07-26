@@ -37,7 +37,7 @@ export default function RequestAppointmentScreen() {
   const handleSchedule = async () => {
 
     if (!description.trim()) {
-      Alert.alert('Validation Error', 'Please enter appointment details.');
+      alert(`Validation Error Please enter appointment details`);
       return;
     }
     console.log(userData);
