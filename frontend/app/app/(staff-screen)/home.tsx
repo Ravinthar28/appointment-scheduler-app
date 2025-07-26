@@ -187,9 +187,15 @@ export default function StaffHomePage() {
     setSelectedAppointment({collegeCode,_id,userName,userEmail,desc,dateTime});
     setModalVisible(true);
   };
+  
 
   return (
     <View style={homeScreenStyles.container}>
+        <View style={{ position: 'absolute', top: 10, right: 10, zIndex: 1 }}>
+        <TouchableOpacity onPress={() => router.push('/(auth-screen)/login')}>
+          <Text>Logout</Text>
+        </TouchableOpacity>
+      </View>
       <Text style={homeScreenStyles.profileTitle}>Principal Profile</Text>
 
       <Image
