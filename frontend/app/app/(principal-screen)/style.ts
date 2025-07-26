@@ -121,18 +121,22 @@ export const principalHome = StyleSheet.create({
     borderRadius: 12,
     padding: 20,
   },
-  modelMsgBox: {
-    flex:1,
-    height:50,
-    marginBottom:10,
-    flexDirection:"row",
+  modelMsgOuterBox: {
     backgroundColor:"#333",
+    width:"100%",
+    height:"auto",
+    borderRadius:10,
     padding:10,
-    borderRadius:10
+    marginBottom:10,
+  },
+  modelMsgBox: {
+    width:"100%",
+    height:"auto",
+    marginBottom:10,
   },
   modelMsg:{
-    flex:2,
-    height:"100%"
+    width:"100%",
+    height:"auto",
   },
   modelUserName: {
     color:"#fff",
@@ -147,7 +151,8 @@ export const principalHome = StyleSheet.create({
     color:"#fff"
   },
   modelAcceptBtnContainer: {
-    flex:1,
+    width:"100%",
+    height:"auto",
     alignItems:"center",
     justifyContent:"center"
   },

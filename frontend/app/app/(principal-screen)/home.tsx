@@ -356,7 +356,9 @@ export default function PrincipalHomePage() {
       <Modal visible={!!selectedMeeting} animationType="slide" transparent>
         <View style={principalHome.modalBackground}>
           <View style={principalHome.modalContainer}>
-            <View style={principalHome.modelMsgBox}>
+            <View style = {principalHome.modelMsgOuterBox}>
+              
+              <View style={principalHome.modelMsgBox}>
               <View style={principalHome.modelMsg}>
                 <Text style={principalHome.modelUserName}>
                   {selectedMeeting?.userName}
@@ -370,7 +372,8 @@ export default function PrincipalHomePage() {
                   )}
                 </Text>
               </View>
-              {
+            </View>
+                  {
                 selectedTab == 'pending' && 
                 <View style= {principalHome.modelAcceptBtnContainer}>
                 <TouchableOpacity style = {principalHome.modelMsgAcceptBtn} onPress={()=>acceptAppointment('accept')}>
@@ -381,6 +384,7 @@ export default function PrincipalHomePage() {
               </View>
               }
             </View>
+            
 
             <Text style={principalHome.formHeading}>Select Available Time</Text>
 

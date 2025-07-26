@@ -25,7 +25,6 @@ export default function LoginForm() {
   const [password, setPassword] = useState('');
   const [collegeCode, setCollegeCode] = useState('');
 
-  console.log(baseUrl);
 
   const handleLogin = async () => {
 
