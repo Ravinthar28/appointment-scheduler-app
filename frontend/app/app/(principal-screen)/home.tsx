@@ -13,6 +13,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { principalHome } from "./style";
 import { router, useLocalSearchParams } from "expo-router";
 
+// BASE URL
+import { baseUrl } from "../apiUrl";
+
 // interface Meeting {
 //   id: number;
 //   name: string;
@@ -82,7 +85,7 @@ export default function PrincipalHomePage() {
   // FUNCTION TO FETCH THE REQUESTS DATA FROM THE DB
   const pendingRequest = async () => {
     try {
-      const url = "http://localhost:3000/principal/appointments-data";
+      const url = `${baseUrl}/principal/appointments-data`;
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -166,7 +169,7 @@ export default function PrincipalHomePage() {
       selectedMeeting.dateTime = tempDate
     }
     try{
-      const url = "http://localhost:3000/principal/accept-appointment"
+      const url = `${baseUrl}/principal/accept-appointment`;
       const response = await fetch(url,{
         method:'POST',
         headers:{'Content-Type':'application/json'},

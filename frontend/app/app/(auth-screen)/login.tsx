@@ -14,6 +14,9 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { loginStyles } from './style';
 
+// BASE URL
+import { baseUrl } from "../apiUrl";
+
 export default function LoginForm() {
   const router = useRouter();
   const [selectedRole, setSelectedRole] = useState<'staff' | 'principal'>('staff');
@@ -22,6 +25,7 @@ export default function LoginForm() {
   const [password, setPassword] = useState('');
   const [collegeCode, setCollegeCode] = useState('');
 
+  console.log(baseUrl);
 
   const handleLogin = async () => {
 
@@ -32,7 +36,7 @@ export default function LoginForm() {
         collegeCode,
         selectedRole
       };
-      const url = "http://localhost:3000/auth/login"
+      const url = `${baseUrl}/auth/login`
       const response = await fetch(url,{
         method:'POST',
         headers:{'Content-Type':'application/json'},

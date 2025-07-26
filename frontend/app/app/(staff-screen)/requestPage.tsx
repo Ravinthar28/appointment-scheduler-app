@@ -10,6 +10,7 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { appointmentStyles } from './style';
 import { useLocalSearchParams, useRouter } from 'expo-router'; // ✅ Import router
+import { baseUrl } from '../apiUrl';
 
 export default function RequestAppointmentScreen() {
   const router = useRouter(); // ✅ Initialize router
@@ -61,7 +62,7 @@ export default function RequestAppointmentScreen() {
         desc:description,
         dateTime:date
       }
-      const url = "http://localhost:3000/principal/appointment-request";
+      const url = `${baseUrl}/principal/appointment-request`;
       const response = await fetch(url,{
         method:'POST',
         headers:{'Content-Type':'application/json'},

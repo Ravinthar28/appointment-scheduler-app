@@ -10,6 +10,9 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+
+// BASE URL
+import { baseUrl } from '../apiUrl';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 import { registerStyles } from './style';
 
@@ -128,7 +131,7 @@ export default function PersonalInfoForm() {
         role: selectedRole,
         expoPushToken
       };
-      const url = "http://localhost:3000/auth/register";
+      const url = `${baseUrl}/auth/register`;
       const response = await fetch(url,{
         method: "POST",
         headers: { "Content-Type":"application/json"},

@@ -13,6 +13,9 @@ import { useLocalSearchParams } from 'expo-router';
 import { homeScreenStyles } from './style';
 import { ColorSpace } from 'react-native-reanimated';
 
+// BASE URL
+import { baseUrl } from '../apiUrl';
+
 // ✅ Define appointment type
 // interface Appointment {
 //   data:{
@@ -62,7 +65,7 @@ export default function StaffHomePage() {
 
     const fetchPricipal = async ()=>{
       try{
-        const url = "http://localhost:3000/staff/fetch-principal";
+        const url = `${baseUrl}/staff/fetch-principal`;
         const response = await fetch(url,{
           method:'POST',
           headers:{'Content-Type':'application/json'},
@@ -85,7 +88,7 @@ export default function StaffHomePage() {
   // FUNCTION TO FETCH THE APPOINTMENT DATAS FROM DB
     const fetchAppointmentData = async ()=>{
       try{
-        const url = "http://localhost:3000/staff/fetch-appointments";
+        const url = `${baseUrl}/staff/fetch-appointments`;
         const response = await fetch(url,{
           method:'POST',
           headers:{'Content-Type':'application/json'},
