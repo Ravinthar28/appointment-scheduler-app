@@ -177,9 +177,19 @@ const acceptAppointment = async (userData) => {
 // FUNCTION TO CANCEL THE APPOINTMENT BY THE PRINCIPAL
 const cancelAppointment = async (userData)=>{
   try{
+
+    const msgData = {
+      id: userData.selectedMeeting.id,
+      userName: userData.selectedMeeting.userName,
+      userEmail: userData.selectedMeeting.userEmail,
+      desc: userData.selectedMeeting.desc,
+      dateTime: userData.selectedMeeting.dateTime,
+    };
+
     const collectionName = userData.selectedMeeting.collegeCode;
     const schema = mongoose.models[collectionName] || mongoose.model(collectionName,registerSchema);
 
+    let removed = false;
     // TO CANCEL THE APPOINTMENT FROM CONFIRMED TAB
     if(userData.selectedTab == 'confirmed'){
       const updatePrincipal = await schema.findOneAndUpdate(
@@ -187,7 +197,7 @@ const cancelAppointment = async (userData)=>{
       {$pull:{'principal.confirmedAppointments':{id:userData.selectedMeeting.id}}},
       {new:true,upsert:false}
     );
-    if(updatePrincipal) return true;
+    if(updatePrincipal) removed = true;
     }
 
     // TO CANCEL THE APPOINTMENT FROM PAST TAB
@@ -197,18 +207,27 @@ const cancelAppointment = async (userData)=>{
       {$pull:{'principal.pendingAppointments':{id:userData.selectedMeeting.id}}},
       {new:true,upsert:false}
     );
-    if(updatePrincipal) return true;
+    if(updatePrincipal) removed = true;
     }
     
+    const updatePrincipalCanceled = await schema.findOneAndUpdate(
+      {},
+      {$push:{'principal.canceledAppointments':msgData}},
+      {new:true,upsert:false}
+    );
 
+    const updateStaffCanceled = await schema.findOneAndUpdate(
+      {'staffs.mailId':msgData.userEmail},
+      {$push:{'staffs.$.canceledAppointments':msgData}},
+      {new:true,upsert:false}
+    );
 
-    // const updatePrincipal = await schema.findOneAndUpdate(
-    //   {'principal.pendingAppointments.id':userData.id},
-    //   {$pull:{'pendingAppointments.$.id':userData.id}},
-    //   {new:true,upsert:false}
-    // );
-
-    // if(updatePrincipal) return;
+    // const users = await schema.findOne({'staffs.mailId':msgData.userEmail});
+    // const staff = users.staffs.find(data => data.mailId === msgData.userEmail);
+    // const expoPushToken = staff.expoPushToken;
+    // await sendPushNotification(expoPushToken,'Appointment Canceled','Your Appointment was canceled by the principal');
+    
+    if(removed && updatePrincipalCanceled && updateStaffCanceled) return true;
   }
   catch(error){
     console.log(error);

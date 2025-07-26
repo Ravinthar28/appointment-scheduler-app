@@ -85,7 +85,7 @@ export default function PrincipalHomePage() {
   const [pastAppointments, setPastAppointments] = useState<appointments[]>([]);
 
   // FUNCTION TO FETCH THE REQUESTS DATA FROM THE DB
-  const pendingRequest = async () => {
+  const fetchRequest = async () => {
     try {
       const url = `${baseUrl}/principal/appointments-data`;
       const response = await fetch(url, {
@@ -105,7 +105,7 @@ export default function PrincipalHomePage() {
   // refresh control function
   const handleRefresh = async () => {
     setRefreshing(true);
-    await pendingRequest();
+    await fetchRequest();
     setRefreshing(false);
   };
 
@@ -152,7 +152,7 @@ export default function PrincipalHomePage() {
   };
 
   useEffect(() => {
-    pendingRequest();
+    fetchRequest();
   }, []);
 
   // FUNCTION TO EXTRACT THE DATE AND TIME FORMAT
