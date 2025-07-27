@@ -7,12 +7,14 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Alert,
 } from 'react-native';
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { loginStyles } from './style';
+
+// LOCAL STORAGE
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // BASE URL
 import { baseUrl } from "../apiUrl";
@@ -24,6 +26,26 @@ export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [collegeCode, setCollegeCode] = useState('');
+
+  interface data {
+    isLogin:string,
+    email:string,
+    collegeCode:string,
+    selectedRole:string
+  }
+  const storeData = async (data:data) =>{
+    try{
+      await AsyncStorage.setItem('isLogin',data.isLogin);
+      await AsyncStorage.setItem('email',data.email);
+      await AsyncStorage.setItem('collegeCode',data.collegeCode);
+      await AsyncStorage.setItem('selectedRole',data.selectedRole);
+
+      console.log("data stroed");
+    }
+    catch(error){
+      console.log("Error in storing the data in local storage");
+    }
+  }
 
 
   const handleLogin = async () => {
@@ -44,6 +66,12 @@ export default function LoginForm() {
       if(! response.ok){
         throw new Error ("Faild to load");
       }
+      storeData({
+        isLogin:"true",
+        email:email,
+        collegeCode:collegeCode,
+        selectedRole:selectedRole
+      });
       if(selectedRole == 'principal') router.push({
             pathname:'/(principal-screen)/home',
             params: {
