@@ -324,7 +324,12 @@ export default function PrincipalHomePage() {
       </View>
 
       {/* Meeting Cards */}
-      {selectedTab === "pending" &&
+      {selectedTab === "pending" && (
+        pendingAppointments.length === 0 ? (
+          <Text style={{ textAlign: 'center', marginVertical: 20 }}>
+            there are no pending appointments
+          </Text>
+        ) : (
         pendingAppointments.map((appointments) => (
           <GenerateAppointmentsCard
             collegeCode={String(userData.collegeCode)}
@@ -334,8 +339,15 @@ export default function PrincipalHomePage() {
             desc={appointments.desc}
             dateTime={appointments.dateTime}
           />
-        ))}
-      {selectedTab === "confirmed" &&
+        
+        ))
+      ))}
+      {selectedTab === "confirmed" && (
+        confirmedAppointments.length === 0 ? (
+          <Text style={{ textAlign: 'center', marginVertical: 20 }}>
+            there are no confirmed appointments
+          </Text>
+        ) : (
         confirmedAppointments.map((appointments) => (
           <GenerateAppointmentsCard
             collegeCode={String(userData.collegeCode)}
@@ -345,8 +357,15 @@ export default function PrincipalHomePage() {
             desc={appointments.desc}
             dateTime={appointments.dateTime}
           />
-        ))}
-      {selectedTab === "past" &&
+        ))
+        )
+        )}
+      {selectedTab === "past" && (
+        pastAppointments.length === 0 ? (
+          <Text style={{ textAlign: 'center', marginVertical: 20 }}>
+            there are no past appointments
+          </Text>
+        ) : (
         pastAppointments.map((appointments) => (
           <GenerateAppointmentsCard
             collegeCode={String(userData.collegeCode)}
@@ -356,7 +375,9 @@ export default function PrincipalHomePage() {
             desc={appointments.desc}
             dateTime={appointments.dateTime}
           />
-        ))}
+        ))
+      )
+    )}
       {/* {meetings
         .filter((m) => m.status === selectedTab)
         .map((meeting) => (
