@@ -222,10 +222,10 @@ const cancelAppointment = async (userData)=>{
       {new:true,upsert:false}
     );
 
-    // const users = await schema.findOne({'staffs.mailId':msgData.userEmail});
-    // const staff = users.staffs.find(data => data.mailId === msgData.userEmail);
-    // const expoPushToken = staff.expoPushToken;
-    // await sendPushNotification(expoPushToken,'Appointment Canceled','Your Appointment was canceled by the principal');
+    const users = await schema.findOne({'staffs.mailId':msgData.userEmail});
+    const staff = users.staffs.find(data => data.mailId === msgData.userEmail);
+    const expoPushToken = staff.expoPushToken;
+    await sendPushNotification(expoPushToken,'Appointment Canceled','Your Appointment was canceled by the principal');
     
     if(removed && updatePrincipalCanceled && updateStaffCanceled) return true;
   }
