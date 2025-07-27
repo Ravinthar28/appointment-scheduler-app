@@ -262,37 +262,57 @@ export default function StaffHomePage() {
       </View>
 
       {/* Appointment Cards refreshing */}
-      <ScrollView
-      style={{ flex: 1 }}
+  <ScrollView
+  style={{ flex: 1 }}
   refreshControl={
     <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
   }
 >
   {selectedTab === 'upcoming' &&
-    upcomingAppointments.map((appointments) => (
-      <GenerateAppointments
-        key={appointments._id}
-        collegeCode={appointments.collegeCode}
-        _id={appointments._id}
-        userName={appointments.userName}
-        userEmail={appointments.userEmail}
-        desc={appointments.desc}
-        dateTime={appointments.dateTime}
-      />
-    ))}
+    (upcomingAppointments.length === 0 ||
+      (upcomingAppointments.length === 1 && !upcomingAppointments[0]._id)) ? (
+      <Text style={{ textAlign: 'center', marginVertical: 20 }}>
+        There are no upcoming appointments.
+      </Text>
+    ) : (
+      upcomingAppointments.map((appointments) => (
+        appointments._id && (
+          <GenerateAppointments
+            key={appointments._id}
+            collegeCode={appointments.collegeCode}
+            _id={appointments._id}
+            userName={appointments.userName}
+            userEmail={appointments.userEmail}
+            desc={appointments.desc}
+            dateTime={appointments.dateTime}
+          />
+        )
+      ))
+    )
+  }
 
-    {selectedTab === 'past' &&
-    pastAppointments.map((appointments) => (
-      <GenerateAppointments
-        key={appointments._id}
-        collegeCode={appointments.collegeCode}
-        _id={appointments._id}
-        userName={appointments.userName}
-        userEmail={appointments.userEmail}
-        desc={appointments.desc}
-        dateTime={appointments.dateTime}
-      />
-    ))}
+  {selectedTab === 'past' &&
+    (pastAppointments.length === 0 ||
+      (pastAppointments.length === 1 && !pastAppointments[0]._id)) ? (
+      <Text style={{ textAlign: 'center', marginVertical: 20 }}>
+        There are no past appointments.
+      </Text>
+    ) : (
+      pastAppointments.map((appointments) => (
+        appointments._id && (
+          <GenerateAppointments
+            key={appointments._id}
+            collegeCode={appointments.collegeCode}
+            _id={appointments._id}
+            userName={appointments.userName}
+            userEmail={appointments.userEmail}
+            desc={appointments.desc}
+            dateTime={appointments.dateTime}
+          />
+        )
+      ))
+    )
+  }
 </ScrollView>
 
       {/* Modal */}
