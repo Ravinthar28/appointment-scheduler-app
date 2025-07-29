@@ -25,25 +25,25 @@ export default function HomeScreen() {
   const [collegeCode,setCollegeCode] = useState('');
   const [selectedRole,setSelectedRole] = useState('');
 
-  const retriveData = async ()=>{
-  try{
-    const isLoginVal = await AsyncStorage.getItem('isLogin');
-    if( isLoginVal != null) setIsLogin(isLoginVal);
-    const emailVal = await AsyncStorage.getItem('email');
-    if( emailVal != null) setEmail(emailVal);
-    const collegeCodeVal = await AsyncStorage.getItem('collegeCode');
-    if( collegeCodeVal != null) setCollegeCode(collegeCodeVal);
-    const selectedRoleVal = await AsyncStorage.getItem('selectedRole');
-    if( selectedRoleVal != null) setSelectedRole(selectedRoleVal);
-  }
-  catch(error){
-    console.log("Error in fetching the data from the local storage");
-  }
-}
+//   const retriveData = async ()=>{
+//   try{
+//     const isLoginVal = await AsyncStorage.getItem('isLogin');
+//     if( isLoginVal != null) setIsLogin(isLoginVal);
+//     const emailVal = await AsyncStorage.getItem('email');
+//     if( emailVal != null) setEmail(emailVal);
+//     const collegeCodeVal = await AsyncStorage.getItem('collegeCode');
+//     if( collegeCodeVal != null) setCollegeCode(collegeCodeVal);
+//     const selectedRoleVal = await AsyncStorage.getItem('selectedRole');
+//     if( selectedRoleVal != null) setSelectedRole(selectedRoleVal);
+//   }
+//   catch(error){
+//     console.log("Error in fetching the data from the local storage");
+//   }
+// }
 
 const descideScreen = ()=>{
   if(isLogin === 'true'){
-    setShowFlashScreen(false);
+    setShowFlashScreen(true);
     if(selectedRole == 'principal') router.push({
             pathname:'/(principal-screen)/home',
             params: {
@@ -63,15 +63,24 @@ const descideScreen = ()=>{
 }
 
 useEffect(()=>{
-  retriveData();
+  // retriveData();
   descideScreen();
   
 })
 
 
-function FlashScreen(){
-  return(
-    <ScrollView
+// function FlashScreen(){
+//   return(
+    
+//   )
+// }
+
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      style={{ flex: 1 }}
+    >
+      <ScrollView
         contentContainerStyle={styles.container}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
@@ -107,17 +116,6 @@ function FlashScreen(){
         {/* Footer */}
         <Text style={styles.footer}>Don’t have a college code? Learn more</Text>
       </ScrollView>
-  )
-}
-
-  return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      style={{ flex: 1 }}
-    >
-      {
-        (shoFlashScreen) && <FlashScreen />
-      }
     </KeyboardAvoidingView>
   );
 }

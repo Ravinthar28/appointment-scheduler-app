@@ -7,92 +7,92 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-} from 'react-native';
-import { useState } from 'react';
-import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import { loginStyles } from './style';
+} from "react-native";
+import { useState } from "react";
+import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { loginStyles } from "./style";
 
 // LOCAL STORAGE
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // BASE URL
 import { baseUrl } from "../apiUrl";
 
 export default function LoginForm() {
   const router = useRouter();
-  const [selectedRole, setSelectedRole] = useState<'staff' | 'principal'>('staff');
+  const [selectedRole, setSelectedRole] = useState<"staff" | "principal">(
+    "staff"
+  );
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [collegeCode, setCollegeCode] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [collegeCode, setCollegeCode] = useState("");
 
   interface data {
-    isLogin:string,
-    email:string,
-    collegeCode:string,
-    selectedRole:string
+    isLogin: string;
+    email: string;
+    collegeCode: string;
+    selectedRole: string;
   }
-  const storeData = async (data:data) =>{
-    try{
-      await AsyncStorage.setItem('isLogin',data.isLogin);
-      await AsyncStorage.setItem('email',data.email);
-      await AsyncStorage.setItem('collegeCode',data.collegeCode);
-      await AsyncStorage.setItem('selectedRole',data.selectedRole);
+  const storeData = async (data: data) => {
+    try {
+      await AsyncStorage.setItem("isLogin", data.isLogin);
+      await AsyncStorage.setItem("email", data.email);
+      await AsyncStorage.setItem("collegeCode", data.collegeCode);
+      await AsyncStorage.setItem("selectedRole", data.selectedRole);
 
       console.log("data stroed");
-    }
-    catch(error){
+    } catch (error) {
       console.log("Error in storing the data in local storage");
     }
-  }
-
+  };
 
   const handleLogin = async () => {
-
-    try{
+    try {
       const userData = {
         email,
         password,
         collegeCode,
-        selectedRole
+        selectedRole,
       };
-      const url = `${baseUrl}/auth/login`
-      const response = await fetch(url,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({userData})
+      const url = `${baseUrl}/auth/login`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userData }),
       });
-      if(! response.ok){
-        throw new Error ("Faild to load");
+      if (!response.ok) {
+        throw new Error("Faild to load");
       }
       storeData({
-        isLogin:"true",
-        email:email,
-        collegeCode:collegeCode,
-        selectedRole:selectedRole
+        isLogin: "true",
+        email: email,
+        collegeCode: collegeCode,
+        selectedRole: selectedRole,
       });
-      if(selectedRole == 'principal') router.push({
-            pathname:'/(principal-screen)/home',
-            params: {
-              email,
-              collegeCode
-            }
-          })
-      if(selectedRole == 'staff') router.push({
-        pathname:'/(staff-screen)/home',
-        params:{
-          email,
-          collegeCode
-        }
-      });
-    }
-    catch(error){
+      if (selectedRole == "principal")
+        router.push({
+          pathname: "/(principal-screen)/home",
+          params: {
+            email,
+            collegeCode,
+          },
+        });
+      if (selectedRole == "staff")
+        router.push({
+          pathname: "/(staff-screen)/home",
+          params: {
+            email,
+            collegeCode,
+          },
+        });
+    } catch (error) {
       console.log(error);
       alert("Check the email and password");
     }
 
-     /*if (selectedRole === 'staff') {
+    /*if (selectedRole === 'staff') {
        router.push('/(staff-screen)/home');
      } else if (selectedRole === 'principal') {
        router.push('/(principal-screen)/home');
@@ -104,7 +104,7 @@ export default function LoginForm() {
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ScrollView
         contentContainerStyle={loginStyles.container}
@@ -113,7 +113,7 @@ export default function LoginForm() {
       >
         {/* Top Image */}
         <Image
-          source={require('../../assets/images/university.jpeg')}
+          source={require("../../assets/images/university.jpeg")}
           style={loginStyles.image}
           resizeMode="cover"
         />
@@ -148,24 +148,28 @@ export default function LoginForm() {
               onChangeText={setPassword}
             />
             <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-              <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={20} color="#ccc" />
+              <Ionicons
+                name={showPassword ? "eye-off" : "eye"}
+                size={20}
+                color="#ccc"
+              />
             </TouchableOpacity>
           </View>
         </View>
 
-      {/* College Code Input */}
-<View style={loginStyles.inputBox}>
-  <Text style={loginStyles.label}>College Code</Text>
-  <TextInput
-    placeholder="Enter College Code"
-    placeholderTextColor="#ccc"
-    style={loginStyles.input}
-    keyboardType="default"
-    autoCapitalize="none"
-    value={collegeCode}
-    onChangeText={setCollegeCode}
-  />
-</View>
+        {/* College Code Input */}
+        <View style={loginStyles.inputBox}>
+          <Text style={loginStyles.label}>College Code</Text>
+          <TextInput
+            placeholder="Enter College Code"
+            placeholderTextColor="#ccc"
+            style={loginStyles.input}
+            keyboardType="default"
+            autoCapitalize="none"
+            value={collegeCode}
+            onChangeText={setCollegeCode}
+          />
+        </View>
 
         {/* Forgot Password */}
         <Text style={loginStyles.forgotText}>Forgot Password?</Text>
@@ -175,13 +179,13 @@ export default function LoginForm() {
           <TouchableOpacity
             style={[
               loginStyles.toggleButton,
-              selectedRole === 'staff' && loginStyles.toggleSelected,
+              selectedRole === "staff" && loginStyles.toggleSelected,
             ]}
-            onPress={() => setSelectedRole('staff')}
+            onPress={() => setSelectedRole("staff")}
           >
             <Text
               style={
-                selectedRole === 'staff'
+                selectedRole === "staff"
                   ? loginStyles.toggleTextSelected
                   : loginStyles.toggleText
               }
@@ -192,13 +196,13 @@ export default function LoginForm() {
           <TouchableOpacity
             style={[
               loginStyles.toggleButton,
-              selectedRole === 'principal' && loginStyles.toggleSelected,
+              selectedRole === "principal" && loginStyles.toggleSelected,
             ]}
-            onPress={() => setSelectedRole('principal')}
+            onPress={() => setSelectedRole("principal")}
           >
             <Text
               style={
-                selectedRole === 'principal'
+                selectedRole === "principal"
                   ? loginStyles.toggleTextSelected
                   : loginStyles.toggleText
               }
@@ -209,16 +213,19 @@ export default function LoginForm() {
         </View>
 
         {/* Sign In Button */}
-        <TouchableOpacity style={loginStyles.signInButton} onPress={handleLogin}>
+        <TouchableOpacity
+          style={loginStyles.signInButton}
+          onPress={handleLogin}
+        >
           <Text style={loginStyles.signInText}>Sign In</Text>
         </TouchableOpacity>
 
         {/* Footer */}
         <Text style={loginStyles.footerText}>
-          Don’t have an account?{' '}
+          Don’t have an account?{" "}
           <Text
-            style={{ textDecorationLine: 'underline' }}
-            onPress={() => router.push('/register')}
+            style={{ textDecorationLine: "underline" }}
+            onPress={() => router.push("/register")}
           >
             Sign up
           </Text>
@@ -227,4 +234,3 @@ export default function LoginForm() {
     </KeyboardAvoidingView>
   );
 }
-

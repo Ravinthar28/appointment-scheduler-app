@@ -5,6 +5,10 @@ const registerSchema = require('./models/registerModel');
 cron.schedule('* * * * *', async () => {
   try {
 
+    const db = mongoose.connection.db;
+    if(! db){
+      throw new Error("Database not Connected yet");
+    }
     const allCollections = await mongoose.connection.db.listCollections().toArray();
 
     // You can apply a better filter based on your naming pattern

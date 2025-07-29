@@ -439,7 +439,19 @@ export default function PrincipalHomePage() {
                     </TouchableOpacity>
                   </View>
                 )}
-                <View style = {principalHome.modelBtnContainer}>
+                {selectedTab !== "pending" && (
+                  <View style= {principalHome.modelBtnContainer}>
+                    <TouchableOpacity
+                      style={principalHome.modelMsgAcceptBtn}
+                      onPress={() => acceptAppointment("accept")}
+                    >
+                      <Text style={{ color: "#fff" }}>Revisit</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+                
+                {selectedTab != "past" && (
+                  <View style = {principalHome.modelBtnContainer}>
                   <TouchableOpacity
                     style={principalHome.modelMsgCancelBtn}
                     onPress={() => cancelAppointment()}
@@ -447,6 +459,9 @@ export default function PrincipalHomePage() {
                     <Text style={{ color: "#fff" }}>Cancel</Text>
                   </TouchableOpacity>
                 </View>
+                )
+
+                }
               </View>
             </View>
 
