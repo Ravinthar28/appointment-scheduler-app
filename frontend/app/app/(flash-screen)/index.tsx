@@ -1,123 +1,101 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Text,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
+import React from 'react';
+import { Text, View, TouchableOpacity } from 'react-native';
+
+// ROUTER
 import { useRouter } from 'expo-router';
 
-// LOCAL STORAGE
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { LinearGradient } from 'expo-linear-gradient'; // Or 'react-native-linear-gradient' for bare RN
 
-// STYLES
-import { styles } from './style';
+import {styles} from "./new_style";
 
-
-export default function HomeScreen() {
+export default function WelcomeScreen() {
   const router = useRouter();
 
-  const [shoFlashScreen,setShowFlashScreen] = useState(true);
-  const [isLogin,setIsLogin] = useState('');
-  const [email,setEmail] = useState('');
-  const [collegeCode,setCollegeCode] = useState('');
-  const [selectedRole,setSelectedRole] = useState('');
-
-//   const retriveData = async ()=>{
-//   try{
-//     const isLoginVal = await AsyncStorage.getItem('isLogin');
-//     if( isLoginVal != null) setIsLogin(isLoginVal);
-//     const emailVal = await AsyncStorage.getItem('email');
-//     if( emailVal != null) setEmail(emailVal);
-//     const collegeCodeVal = await AsyncStorage.getItem('collegeCode');
-//     if( collegeCodeVal != null) setCollegeCode(collegeCodeVal);
-//     const selectedRoleVal = await AsyncStorage.getItem('selectedRole');
-//     if( selectedRoleVal != null) setSelectedRole(selectedRoleVal);
-//   }
-//   catch(error){
-//     console.log("Error in fetching the data from the local storage");
-//   }
-// }
-
-const descideScreen = ()=>{
-  if(isLogin === 'true'){
-    setShowFlashScreen(true);
-    if(selectedRole == 'principal') router.push({
-            pathname:'/(principal-screen)/home',
-            params: {
-              email,
-              collegeCode
-            }
-          })
-    if(selectedRole == 'staff') router.push({
-      pathname:'/(staff-screen)/home',
-      params:{
-        email,
-        collegeCode
-      }
-    });
-  }
-  else setShowFlashScreen(false);
-}
-
-useEffect(()=>{
-  // retriveData();
-  descideScreen();
-  
-})
-
-
-// function FlashScreen(){
-//   return(
-    
-//   )
-// }
-
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      style={{ flex: 1 }}
+    <LinearGradient
+      colors={['#2D3F75', '#3A508C', '#5C7FB7', '#7D9DCF']} // 
+      style={styles.container}
+      start={{ x: 0.5, y: 0 }} // Starts from the top-center
+      end={{ x: 0.5, y: 1 }}   // Ends at the bottom-center
     >
-      <ScrollView
-        contentContainerStyle={styles.container}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Large Centered Image */}
-        <Image
-          source={require('../../assets/images/appointment login.jpeg')}
-          style={styles.image}
-          resizeMode="contain"
-        />
+      <View style={styles.content}>
+        <Text style={styles.title}>Welcome Back Sign In{"\n"}or Register</Text>
+        <Text style={styles.subtitle}>Connect With Your Principal Schedule{"\n"}Meeting.No Waiting.</Text>
 
-        {/* Heading Text */}
-        <Text style={styles.heading}>
-          Connect With Your Principal{'\n'}Schedule Meetings. No Waiting.
-        </Text>
-
-        {/* Login Button */}
-        <TouchableOpacity
-          style={styles.loginButton}
-          onPress={() => router.push('/login')}
-        >
+        <TouchableOpacity style={styles.loginButton}
+        onPress={() => router.push('/(auth-screen)/login')}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
 
-        {/* Register Button */}
-        <TouchableOpacity
-          style={styles.registerButton}
-          onPress={() => router.push('/register')}
+        <TouchableOpacity style={styles.registerButton}
+        onPress={()=>router.push('/(auth-screen)/register_new')}
         >
-          <Text style={styles.buttonTextAlt}>Register</Text>
+          <Text style={styles.buttonText}>Register</Text>
         </TouchableOpacity>
-
-        {/* Footer */}
-        <Text style={styles.footer}>Don’t have a college code? Learn more</Text>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </View>
+    </LinearGradient>
   );
 }
 
-
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//   },
+//   content: {
+//     flex: 1,
+//     justifyContent: 'flex-end', // Aligns content to the bottom
+//     alignItems: 'center',
+//     paddingBottom: 50, // Adjust as needed to move content up from the bottom
+//     width: '100%',
+//   },
+//   title: {
+//     fontSize: 28,
+//     fontWeight: 'bold',
+//     color: '#fff',
+//     textAlign: 'center',
+//     marginBottom: 10,
+//   },
+//   subtitle: {
+//     fontSize: 16,
+//     color: '#ccc', // A slightly lighter color for subtitle
+//     textAlign: 'center',
+//     marginBottom: 40,
+//     lineHeight: 24,
+//   },
+//   loginButton: {
+//     backgroundColor: '#4A6296', // A darker blue similar to the image
+//     paddingVertical: 15,
+//     paddingHorizontal: 80,
+//     borderRadius: 30,
+//     marginBottom: 15,
+//     width: '80%', // Adjust width as needed
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//     shadowColor: '#000',
+//     shadowOffset: { width: 0, height: 4 },
+//     shadowOpacity: 0.3,
+//     shadowRadius: 5,
+//     elevation: 8,
+//   },
+//   registerButton: {
+//     backgroundColor: '#4A6296', // Same color as login button
+//     paddingVertical: 15,
+//     paddingHorizontal: 80,
+//     borderRadius: 30,
+//     width: '80%', // Adjust width as needed
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//     shadowColor: '#000',
+//     shadowOffset: { width: 0, height: 4 },
+//     shadowOpacity: 0.3,
+//     shadowRadius: 5,
+//     elevation: 8,
+//   },
+//   buttonText: {
+//     color: '#fff',
+//     fontSize: 18,
+//     fontWeight: 'bold',
+//   },
+// });
