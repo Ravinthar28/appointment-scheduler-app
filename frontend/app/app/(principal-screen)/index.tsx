@@ -88,7 +88,8 @@ export default function PrincipalDashboard() {
         onPress={() => router.push('/pending_appointments')}>
           <MaterialCommunityIcons name="history" size={28} color="#A7B7DC" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem}
+          onPress={() => router.push('/confirm_appointments')}>
           <Ionicons name="checkmark-circle-outline" size={28} color="#A7B7DC" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem}>
