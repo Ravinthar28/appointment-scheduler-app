@@ -178,7 +178,7 @@ export default function Register() {
             ]}
           >
             <TouchableOpacity
-              onPress={() => router.push('/(auth-screen)/login')}
+              onPress={() => router.push('/(auth-screen)/login_new')}
               // disabled={!isFormValid}
             >
               <Text style={register_styles.nextButtonText}>Next</Text>

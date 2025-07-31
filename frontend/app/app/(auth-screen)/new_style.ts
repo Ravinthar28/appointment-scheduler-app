@@ -9,6 +9,14 @@ export const register_styles = StyleSheet.create({
     paddingVertical:60,
     paddingHorizontal:20
   },
+  outerContainer: {
+    width:"100%",
+    height:"100%",
+    maxHeight:600,
+    display:"flex",
+    alignItems:"center",
+    justifyContent:"center",
+  },
   innerContainer:{
     width:"100%",
     height:"100%",

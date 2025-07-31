@@ -2,6 +2,19 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  gradientOverlay: {
+    flex: 1,
+    width: '100%',
+    justifyContent: 'center', // Center content vertically within the gradient
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
