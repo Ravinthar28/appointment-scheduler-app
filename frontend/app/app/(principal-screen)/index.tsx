@@ -2,8 +2,11 @@ import React from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient'; // For the background gradient
 import { Ionicons, MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons'; // For icons
+import { useRouter } from 'expo-router';
 
 export default function PrincipalDashboard() {
+   const router = useRouter();
+  
   const scheduleItems = [
     {
       timeStart: '11:30',
@@ -81,10 +84,12 @@ export default function PrincipalDashboard() {
         <TouchableOpacity style={styles.navItem}>
           <Ionicons name="home" size={28} color="#fff" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem}
+        onPress={() => router.push('/pending_appointments')}>
           <MaterialCommunityIcons name="history" size={28} color="#A7B7DC" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem}
+          onPress={() => router.push('/confirm_appointments')}>
           <Ionicons name="checkmark-circle-outline" size={28} color="#A7B7DC" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem}>
@@ -97,8 +102,7 @@ export default function PrincipalDashboard() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    paddingTop: 50, // Adjust for status bar
+    flex: 1, // Adjust for status bar
   },
   header: {
     flexDirection: 'row',
