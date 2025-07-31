@@ -130,10 +130,8 @@ const PendingAppointmentsScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#f0f2f5" />
-
-
+    <>
+      <View style={styles.container}>
       {/* Title */}
       <Text style={styles.title}>Pending Appointments</Text>
 
@@ -231,7 +229,8 @@ const PendingAppointmentsScreen = () => {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
+    </>
   );
 };
 
@@ -239,28 +238,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f0f2f5", // Light background similar to image
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    backgroundColor: "#3E5793",
-    borderBottomLeftRadius: 20, // Rounded corners for header
-    borderBottomRightRadius: 20,
-    elevation: 2, // Shadow for Android
-    shadowColor: "#000", // Shadow for iOS
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-  },
-  profileAvatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20, // Half of width/height for a circle
-    borderWidth: 1,
-    borderColor: "#ddd",
   },
   title: {
     fontSize: 24,

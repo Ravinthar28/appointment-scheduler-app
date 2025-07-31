@@ -39,16 +39,6 @@ const ConfirmedAppointmentsScreen = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <View style={styles.header}>
-          <Image
-            source={require('../../assets//images//profile.png')} // Replace with your profile picture URI
-            style={styles.profileImage}
-          />
-       <TouchableOpacity
-       onPress={() => router.push('/(auth-screen)/login')}>
-          <Ionicons name="log-out-outline" size={30} color="#fff" />
-        </TouchableOpacity>
-        </View>
 
         <Text style={styles.title}>Confirmed Appointments:</Text>
 
@@ -58,20 +48,6 @@ const ConfirmedAppointmentsScreen = () => {
           ))}
         </ScrollView>
         
-        <View style={styles.navBar}>
-          <TouchableOpacity style={styles.navItem}>
-            <Ionicons name="home-outline" size={24} color="#555" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem}>
-            <Ionicons name="time-outline" size={24} color="#555" />
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.navItem, styles.activeNavItem]}>
-            <FontAwesome5 name="check-circle" size={24} color="#fff" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem}>
-            <Ionicons name="calendar-outline" size={24} color="#555" />
-          </TouchableOpacity>
-        </View>
       </View>
     </SafeAreaView>
   );

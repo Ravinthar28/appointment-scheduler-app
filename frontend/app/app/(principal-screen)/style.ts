@@ -194,6 +194,9 @@ export const new_principal_styles = StyleSheet.create({
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
   },
+  body:{
+    
+  },
   profilePic: {
     width: 45,
     height: 45,
@@ -306,5 +309,6 @@ export const new_principal_styles = StyleSheet.create({
   },
   navItem: {
     padding: 10,
+    
   },
 })
