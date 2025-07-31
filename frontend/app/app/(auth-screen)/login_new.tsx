@@ -27,6 +27,57 @@ export default function Register() {
     "staff"
   );
 
+  const handleLogin = async () => {
+    // try {
+    //   const userData = {
+    //     email,
+    //     password,
+    //     collegeCode,
+    //     selectedRole,
+    //   };
+    //   const url = `${baseUrl}/auth/login`;
+    //   const response = await fetch(url, {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({ userData }),
+    //   });
+    //   if (!response.ok) {
+    //     throw new Error("Faild to load");
+    //   }
+    //   storeData({
+    //     isLogin: "true",
+    //     email: email,
+    //     collegeCode: collegeCode,
+    //     selectedRole: selectedRole,
+    //   });
+    //   if (selectedRole == "principal")
+    //     router.push({
+    //       pathname: "/(principal-screen)/home",
+    //       params: {
+    //         email,
+    //         collegeCode,
+    //       },
+    //     });
+    //   if (selectedRole == "staff")
+    //     router.push({
+    //       pathname: "/(staff-screen)/home",
+    //       params: {
+    //         email,
+    //         collegeCode,
+    //       },
+    //     });
+    // } catch (error) {
+    //   console.log(error);
+    //   alert("Check the email and password");
+    // }
+
+    if (selectedRole === 'staff') {
+       router.push('/(staff-screen)/home');
+     } else if (selectedRole === 'principal') {
+       router.push('/(principal-screen)');
+     }
+  };
+
   const isFormValid = email && collegeCode && password && selectedRole;
 
   return (
@@ -153,10 +204,10 @@ export default function Register() {
               ]}
             >
               <TouchableOpacity
-                onPress={() => router.push("/(auth-screen)/login")}
+                onPress={handleLogin }
                 // disabled={!isFormValid}
               >
-                <Text style={register_styles.nextButtonText}>Next</Text>
+                <Text style={register_styles.nextButtonText}>Login</Text>
               </TouchableOpacity>
             </LinearGradient>
           </View>
