@@ -19,6 +19,7 @@ import { new_principal_styles } from "./style";
 import PrincipalHome from "./principal_home";
 import PendingAppointmentsScreen from "./pending_appointments";
 import ConfirmedAppointmentsScreen from "./confirm_appointments";
+import CancelAppointmentsScreen from "./cancel_appointment";
 
 export default function PrincipalDashboard() {
   const router = useRouter();
@@ -27,37 +28,6 @@ export default function PrincipalDashboard() {
     "home" | "pending" | "confirmed" | "past"
   >("home");
 
-  const scheduleItems = [
-    {
-      timeStart: "11:30",
-      timeEnd: "13:00",
-      type: "Meeting",
-      title: "Discussion with Placement Cell",
-      details: "Discussion about upcoming company recruitment",
-    },
-    {
-      timeStart: "14:00",
-      timeEnd: "15:00",
-      type: "Meeting",
-      title: "Discussion with CS HOD",
-      details: "Discussion about ongoing app project",
-    },
-    {
-      timeStart: "17:00",
-      timeEnd: "17:30",
-      type: "Meeting",
-      title: "Discussion with Civil HOD",
-      details: "Discussion about ongoing app project",
-    },
-    {
-      timeStart: "17:30",
-      timeEnd: "18:00",
-      type: "Meeting",
-      title: "Discussion with CS HOD",
-      details: "Discussion about ongoing app project",
-    },
-    // You can add more schedule items here
-  ];
 
   return (
     <LinearGradient
@@ -82,6 +52,9 @@ export default function PrincipalDashboard() {
       }
       {
         selectedTab === "confirmed" && <ConfirmedAppointmentsScreen />
+      }
+      {
+        selectedTab === "past" && <CancelAppointmentsScreen />
       }
 
       <View style={new_principal_styles.bottomNavBar}>
