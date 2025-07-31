@@ -17,7 +17,7 @@ export const register_styles = StyleSheet.create({
     display:"flex",
     flexDirection:"row",
     alignItems:"center",
-    marginVertical:20
+    marginVertical:30
   },
   
   pageTitleIcon:{
@@ -35,7 +35,80 @@ export const register_styles = StyleSheet.create({
   },
   personalInfoTitle:{
     color:"white",
-    fontSize:20,
+    fontSize:23,
     fontWeight:"bold"
-  }
+  },
+  inputFormContainer:{
+    marginVertical:30,
+    width:"100%",
+    display:"flex",
+    alignItems:"center",
+    justifyContent:"center",
+    flexDirection:"column"
+  },
+  inputBox: {
+    width: '100%',
+    marginBottom: 15,
+  },
+  label: {
+    color: '#fff',
+    marginBottom: 6,
+    fontWeight: '500',
+  },
+  input: {
+    backgroundColor: '#D9D9D9',
+    color: '#000000',
+    borderRadius: 10,
+    padding: 12,
+    fontSize: 16,
+    width: '100%',
+  },
+  passwordWrapper: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  backgroundColor: '#D9D9D9',
+  borderRadius: 10,
+  paddingHorizontal: 12,
+  width: '100%',
+  },
+  toggleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderRadius: 25,
+    marginBottom: 20,
+    overflow: 'hidden',
+    width: '100%',
+    maxWidth: 350,
+  },
+  toggleButton: {
+    flex: 1,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  toggleSelected: {
+    backgroundColor: '#1E1E1E',
+  },
+  toggleText: {
+    color: '#ccc',
+    fontWeight: '600',
+  },
+  toggleTextSelected: {
+    color: '#fff',
+    fontWeight: '700',
+  },
+  nextButton: {
+    backgroundColor: '#b0cdee',
+    paddingVertical: 14,
+    borderRadius: 30,
+    width: '100%',
+    maxWidth: 250,
+    alignItems: 'center',
+    marginTop:40
+  },
+  nextButtonText: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
+    cursor:"pointer"
+  },
 })
