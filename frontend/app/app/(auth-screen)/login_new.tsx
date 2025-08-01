@@ -72,7 +72,7 @@ export default function Register() {
     // }
 
     if (selectedRole === 'staff') {
-       router.push('/(staff-screen)/home');
+       router.push('/(staff-screen)/new_index');
      } else if (selectedRole === 'principal') {
        router.push('/(principal-screen)');
      }
