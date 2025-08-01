@@ -97,11 +97,6 @@ export default function Register() {
     //  } else if (selectedRole === 'principal') {
     //    router.push('/(principal-screen)');
     //  }
-    if (selectedRole === 'staff') {
-       router.push('/(staff-screen)/new_index');
-     } else if (selectedRole === 'principal') {
-       router.push('/(principal-screen)');
-     }
   };
 
   const isFormValid = email && collegeCode && password && selectedRole;
