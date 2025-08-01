@@ -1,0 +1,390 @@
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, Image, TouchableOpacity, SafeAreaView, ScrollView, Modal, TextInput } from 'react-native';
+import { Ionicons, FontAwesome5, Feather } from '@expo/vector-icons';
+import { router } from 'expo-router';
+
+// Define the type for the appointment object
+interface Appointment {
+  id: string;
+  name: string;
+  email: string;
+  subText: string;
+  avatar: string;
+}
+
+// Props for the RescheduleModal component
+interface RescheduleModalProps {
+  isVisible: boolean;
+  onClose: () => void;
+  appointment: Appointment | null;
+}
+
+// Modal component
+const RescheduleModal = ({ isVisible, onClose, appointment }: RescheduleModalProps) => {
+    if (!appointment) return null;
+
+    const [date, setDate] = useState<string>('');
+    const [time, setTime] = useState<string>('');
+
+    return (
+        <Modal
+            animationType="fade"
+            transparent={true}
+            visible={isVisible}
+            onRequestClose={onClose}
+        >
+            <View style={modalStyles.centeredView}>
+                <View style={modalStyles.modalView}>
+                    <TouchableOpacity style={modalStyles.closeButton} onPress={onClose}>
+                        <Ionicons name="close" size={24} color="#000" />
+                    </TouchableOpacity>
+                    <Image
+                        source={{ uri: appointment.avatar }}
+                        style={modalStyles.modalAvatar}
+                    />
+                    <Text style={modalStyles.modalStaffName}>{appointment.name}</Text>
+                    <Text style={modalStyles.modalStaffEmail}>{appointment.email}</Text>
+                    <View style={modalStyles.modalContent}>
+                        <Text style={modalStyles.modalDescription}>
+                            Lorem ipsum dolor sit amet consectetur. Elementum habitant aliquam ut eget eget feugiat nibh.
+                        </Text>
+                        <View style={modalStyles.inputRow}>
+                            <Text>Re-meeting Date:</Text>
+                            <TextInput
+                                style={modalStyles.input}
+                                placeholder="DD-MM-YYYY"
+                                value={date}
+                                onChangeText={setDate}
+                            />
+                        </View>
+                        <View style={modalStyles.inputRow}>
+                            <Text>Re-meeting Time:</Text>
+                            <TextInput
+                                style={modalStyles.inputTime}
+                                placeholder="00:00"
+                                value={time}
+                                onChangeText={setTime}
+                            />
+                             <View style={modalStyles.timeSelector}>
+                                <Text>AM</Text>
+                                <Text>PM</Text>
+                             </View>
+                        </View>
+                        <TouchableOpacity style={modalStyles.rescheduleButton}>
+                            <Text style={modalStyles.rescheduleButtonText}>Reschedule</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+        </Modal>
+    );
+};
+
+// Props for the AppointmentCard component
+interface AppointmentCardProps {
+  appointment: Appointment;
+  onPress: (appointment: Appointment) => void;
+}
+
+const CancelAppointmentsScreen = () => {
+    const [modalVisible, setModalVisible] = useState<boolean>(false);
+    const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+
+    const confirmedAppointments: Appointment[] = [
+        { id: '1', name: 'Staff-1', email: 'staffone@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
+        { id: '2', name: 'Staff-2', email: 'stafftwo@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
+        { id: '3', name: 'Staff-3', email: 'staffthree@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
+        { id: '4', name: 'Staff-4', email: 'stafffour@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
+        { id: '5', name: 'Staff-5', email: 'stafffive@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
+        { id: '6', name: 'Staff-6', email: 'staffsix@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
+    ];
+
+    const handleCardPress = (appointment: Appointment) => {
+        setSelectedAppointment(appointment);
+        setModalVisible(true);
+    };
+
+    const AppointmentCard = ({ appointment, onPress }: AppointmentCardProps) => (
+        <TouchableOpacity style={styles.card} onPress={() => onPress(appointment)}>
+            <View style={styles.cardHeader}>
+                <Image
+                    source={{ uri: appointment.avatar }}
+                    style={styles.staffAvatar}
+                />
+                <View style={styles.cardTitleContainer}>
+                    <Text style={styles.staffName}>{appointment.name}</Text>
+                    <Text style={styles.staffEmail}>{appointment.email}</Text>
+                </View>
+                <TouchableOpacity style={styles.settingsIcon}>
+                    <Feather name="settings" size={20} color="#888" />
+                </TouchableOpacity>
+            </View>
+            <View style={styles.cardContent}>
+                <Text style={styles.subTitle}>Sub:</Text>
+                <Text style={styles.subText}>{appointment.subText}</Text>
+            </View>
+        </TouchableOpacity>
+    );
+
+    return (
+        <SafeAreaView style={styles.safeArea}>
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <Image
+                        source={require('../../assets/images/profile.png')}
+                        style={styles.profileImage}
+                    />
+                    <TouchableOpacity onPress={() => router.push('/(auth-screen)/login')}>
+                        <Ionicons name="log-out-outline" size={30} color="#fff" />
+                    </TouchableOpacity>
+                </View>
+
+                <Text style={styles.title}>C Appointments</Text>
+
+                <ScrollView style={styles.listContainer}>
+                    {confirmedAppointments.map(appointment => (
+                        <AppointmentCard key={appointment.id} appointment={appointment} onPress={handleCardPress} />
+                    ))}
+                </ScrollView>
+
+                <View style={styles.navBar}>
+                    <TouchableOpacity style={styles.navItem}>
+                        <Ionicons name="home-outline" size={24} color="#555" />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.navItem}>
+                        <Ionicons name="time-outline" size={24} color="#555" />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.navItem}>
+                        <FontAwesome5 name="check-circle" size={24} color="#555" />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.navItem, styles.activeNavItem]}>
+                        <Ionicons name="calendar-outline" size={24} color="#fff" />
+                    </TouchableOpacity>
+                </View>
+            </View>
+            
+            <RescheduleModal
+                isVisible={modalVisible}
+                onClose={() => setModalVisible(false)}
+                appointment={selectedAppointment}
+            />
+        </SafeAreaView>
+    );
+};
+
+const styles = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+        backgroundColor: '#F5F8FF',
+    },
+    container: {
+        flex: 1,
+        backgroundColor: '#F5F8FF',
+    },
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 30,
+        backgroundColor: '#3E5793',
+        padding: 15,
+    },
+    profileImage: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        borderWidth: 2,
+        borderColor: '#fff',
+    },
+    title: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        color: '#3E5793',
+        marginBottom: 20,
+        marginLeft: 15,
+    },
+    listContainer: {
+        flex: 1,
+        paddingHorizontal: 15,
+    },
+    card: {
+        backgroundColor: '#E6E9F0',
+        borderRadius: 10,
+        padding: 15,
+        marginBottom: 15,
+        borderWidth: 1,
+        borderColor: '#A8B3C7',
+    },
+    cardHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    staffAvatar: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        marginRight: 15,
+    },
+    cardTitleContainer: {
+        flex: 1,
+    },
+    staffName: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#3C64B1',
+    },
+    staffEmail: {
+        fontSize: 12,
+        color: '#666',
+    },
+    settingsIcon: {
+        padding: 5,
+    },
+    cardContent: {
+        flexDirection: 'row',
+    },
+    subTitle: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        color: '#000',
+        marginRight: 5,
+    },
+    subText: {
+        flex: 1,
+        fontSize: 14,
+        color: '#555',
+    },
+    navBar: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        backgroundColor: '#1C4A9E',
+        borderRadius: 30,
+        paddingVertical: 15,
+        position: 'absolute',
+        bottom: 20,
+        left: 20,
+        right: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 5,
+        elevation: 8,
+    },
+    navItem: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    activeNavItem: {
+        backgroundColor: '#2E69D8',
+        borderRadius: 25,
+        width: 50,
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+});
+
+const modalStyles = StyleSheet.create({
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+        width: '90%',
+    },
+    closeButton: {
+        position: 'absolute',
+        right: 15,
+        top: 15,
+    },
+    modalAvatar: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        marginBottom: 10,
+    },
+    modalStaffName: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#3C64B1',
+    },
+    modalStaffEmail: {
+        fontSize: 14,
+        color: '#666',
+        marginBottom: 20,
+    },
+    modalContent: {
+        width: '100%',
+    },
+    modalDescription: {
+        backgroundColor: '#E6E9F0',
+        padding: 15,
+        borderRadius: 10,
+        fontSize: 14,
+        color: '#555',
+        textAlign: 'center',
+        marginBottom: 20,
+    },
+    inputRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 15,
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+        padding: 8,
+        flex: 1,
+        marginLeft: 10,
+    },
+    inputTime: {
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+        padding: 8,
+        flex: 1,
+        marginLeft: 10,
+        marginRight: 5,
+    },
+    timeSelector: {
+        flexDirection: 'row',
+        backgroundColor: '#E6E9F0',
+        borderRadius: 5,
+        padding: 5,
+    },
+    rescheduleButton: {
+        backgroundColor: '#FFC107',
+        borderRadius: 50,
+        paddingVertical: 15,
+        marginTop: 20,
+        width: '100%',
+        alignItems: 'center',
+    },
+    rescheduleButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
+});
+
+export default CancelAppointmentsScreen;

@@ -92,7 +92,8 @@ export default function PrincipalDashboard() {
           onPress={() => router.push('/confirm_appointments')}>
           <Ionicons name="checkmark-circle-outline" size={28} color="#A7B7DC" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem}
+        onPress={() => router.push('/cancel_appointment')}>
           <FontAwesome name="calendar" size={28} color="#A7B7DC" />
         </TouchableOpacity>
       </View>
