@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, Image, TouchableOpacity, SafeAreaView, ScrollView, Modal, TextInput } from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableOpacity, SafeAreaView, ScrollView, Modal, Platform } from 'react-native';
 import { Ionicons, FontAwesome5, Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 // Define the type for the appointment object
 interface Appointment {
@@ -23,8 +24,37 @@ interface RescheduleModalProps {
 const RescheduleModal = ({ isVisible, onClose, appointment }: RescheduleModalProps) => {
     if (!appointment) return null;
 
-    const [date, setDate] = useState<string>('');
-    const [time, setTime] = useState<string>('');
+    const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+    const [showTimePicker, setShowTimePicker] = useState<boolean>(false);
+    const [reMeetingDate, setReMeetingDate] = useState<Date>(new Date());
+
+    const onDateChange = (event: any, selectedDate?: Date) => {
+      const currentDate = selectedDate || reMeetingDate;
+      setShowDatePicker(false);
+      if (selectedDate) {
+        setReMeetingDate(currentDate);
+      }
+    };
+
+    const onTimeChange = (event: any, selectedTime?: Date) => {
+      const currentTime = selectedTime || reMeetingDate;
+      setShowTimePicker(false);
+      if (selectedTime) {
+        setReMeetingDate(currentTime);
+      }
+    };
+
+    const formatDate = (date: Date): string => {
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}-${month}-${year}`;
+    };
+
+    const formatTime = (date: Date): string => {
+      const options: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', hour12: true };
+      return new Intl.DateTimeFormat('en-US', options).format(date);
+    };
 
     return (
         <Modal
@@ -48,28 +78,43 @@ const RescheduleModal = ({ isVisible, onClose, appointment }: RescheduleModalPro
                         <Text style={modalStyles.modalDescription}>
                             Lorem ipsum dolor sit amet consectetur. Elementum habitant aliquam ut eget eget feugiat nibh.
                         </Text>
+                        
                         <View style={modalStyles.inputRow}>
-                            <Text>Re-meeting Date:</Text>
-                            <TextInput
+                            <Text style={modalStyles.inputLabel}>Re-meeting Date:</Text>
+                            <TouchableOpacity
+                                onPress={() => setShowDatePicker(true)}
                                 style={modalStyles.input}
-                                placeholder="DD-MM-YYYY"
-                                value={date}
-                                onChangeText={setDate}
-                            />
+                            >
+                                <Text>{formatDate(reMeetingDate)}</Text>
+                                <Feather name="calendar" size={20} color="#666" />
+                            </TouchableOpacity>
+                            {showDatePicker && (
+                                <DateTimePicker
+                                    mode="date"
+                                    value={reMeetingDate}
+                                    minimumDate={new Date()}
+                                    onChange={onDateChange}
+                                />
+                            )}
                         </View>
                         <View style={modalStyles.inputRow}>
-                            <Text>Re-meeting Time:</Text>
-                            <TextInput
+                            <Text style={modalStyles.inputLabel}>Re-meeting Time:</Text>
+                            <TouchableOpacity
+                                onPress={() => setShowTimePicker(true)}
                                 style={modalStyles.inputTime}
-                                placeholder="00:00"
-                                value={time}
-                                onChangeText={setTime}
-                            />
-                             <View style={modalStyles.timeSelector}>
-                                <Text>AM</Text>
-                                <Text>PM</Text>
-                             </View>
+                            >
+                                <Text>{formatTime(reMeetingDate)}</Text>
+                                <Ionicons name="time-outline" size={20} color="#666" />
+                            </TouchableOpacity>
+                            {showTimePicker && (
+                                <DateTimePicker
+                                    mode="time"
+                                    value={reMeetingDate}
+                                    onChange={onTimeChange}
+                                />
+                            )}
                         </View>
+
                         <TouchableOpacity style={modalStyles.rescheduleButton}>
                             <Text style={modalStyles.rescheduleButtonText}>Reschedule</Text>
                         </TouchableOpacity>
@@ -127,19 +172,9 @@ const CancelAppointmentsScreen = () => {
     );
 
     return (
-        <SafeAreaView style={styles.safeArea}>
-            <View style={styles.container}>
-                <View style={styles.header}>
-                    <Image
-                        source={require('../../assets/images/profile.png')}
-                        style={styles.profileImage}
-                    />
-                    <TouchableOpacity onPress={() => router.push('/(auth-screen)/login')}>
-                        <Ionicons name="log-out-outline" size={30} color="#fff" />
-                    </TouchableOpacity>
-                </View>
+        <><View style={styles.container}>
 
-                <Text style={styles.title}>C Appointments</Text>
+                <Text style={styles.title}>Closed Appointments</Text>
 
                 <ScrollView style={styles.listContainer}>
                     {confirmedAppointments.map(appointment => (
@@ -147,20 +182,6 @@ const CancelAppointmentsScreen = () => {
                     ))}
                 </ScrollView>
 
-                <View style={styles.navBar}>
-                    <TouchableOpacity style={styles.navItem}>
-                        <Ionicons name="home-outline" size={24} color="#555" />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.navItem}>
-                        <Ionicons name="time-outline" size={24} color="#555" />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.navItem}>
-                        <FontAwesome5 name="check-circle" size={24} color="#555" />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.navItem, styles.activeNavItem]}>
-                        <Ionicons name="calendar-outline" size={24} color="#fff" />
-                    </TouchableOpacity>
-                </View>
             </View>
             
             <RescheduleModal
@@ -168,7 +189,8 @@ const CancelAppointmentsScreen = () => {
                 onClose={() => setModalVisible(false)}
                 appointment={selectedAppointment}
             />
-        </SafeAreaView>
+        
+        </>
     );
 };
 
@@ -349,28 +371,31 @@ const modalStyles = StyleSheet.create({
         justifyContent: 'space-between',
         marginBottom: 15,
     },
+    inputLabel: {
+      fontSize: 14,
+      color: '#000',
+    },
     input: {
+        flex: 1,
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 5,
-        padding: 8,
-        flex: 1,
+        padding: 10,
         marginLeft: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
     inputTime: {
+        flex: 1,
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 5,
-        padding: 8,
-        flex: 1,
+        padding: 10,
         marginLeft: 10,
-        marginRight: 5,
-    },
-    timeSelector: {
         flexDirection: 'row',
-        backgroundColor: '#E6E9F0',
-        borderRadius: 5,
-        padding: 5,
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
     rescheduleButton: {
         backgroundColor: '#FFC107',
