@@ -23,7 +23,7 @@ export default function WelcomeScreen() {
         <Text style={styles.subtitle}>Connect With Your Principal Schedule{"\n"}Meeting.No Waiting.</Text>
 
         <TouchableOpacity style={styles.loginButton}
-        onPress={() => router.push('/(auth-screen)/login')}>
+        onPress={() => router.push('/(auth-screen)/login_new')}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
 
