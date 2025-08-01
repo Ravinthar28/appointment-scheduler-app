@@ -40,7 +40,7 @@ export default function RequestAppointmentScreen() {
       alert(`Validation Error Please enter appointment details`);
       return;
     }
-    console.log(userData);
+
 
     Alert.alert('Appointment Scheduled', `On ${date.toLocaleString()}`, [
       {

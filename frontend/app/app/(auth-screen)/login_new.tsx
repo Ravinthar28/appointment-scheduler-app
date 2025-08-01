@@ -6,15 +6,17 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  Image,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
 } from "react-native";
 
 import { register_styles } from "./new_style";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+
+// BASE URL
+import { baseUrl } from "../apiUrl";
+
+// LOCAL STORAGE
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Register() {
   const router = useRouter();
@@ -27,55 +29,74 @@ export default function Register() {
     "staff"
   );
 
-  const handleLogin = async () => {
-    // try {
-    //   const userData = {
-    //     email,
-    //     password,
-    //     collegeCode,
-    //     selectedRole,
-    //   };
-    //   const url = `${baseUrl}/auth/login`;
-    //   const response = await fetch(url, {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({ userData }),
-    //   });
-    //   if (!response.ok) {
-    //     throw new Error("Faild to load");
-    //   }
-    //   storeData({
-    //     isLogin: "true",
-    //     email: email,
-    //     collegeCode: collegeCode,
-    //     selectedRole: selectedRole,
-    //   });
-    //   if (selectedRole == "principal")
-    //     router.push({
-    //       pathname: "/(principal-screen)/home",
-    //       params: {
-    //         email,
-    //         collegeCode,
-    //       },
-    //     });
-    //   if (selectedRole == "staff")
-    //     router.push({
-    //       pathname: "/(staff-screen)/home",
-    //       params: {
-    //         email,
-    //         collegeCode,
-    //       },
-    //     });
-    // } catch (error) {
-    //   console.log(error);
-    //   alert("Check the email and password");
-    // }
+  interface data {
+    isLogin: string;
+    email: string;
+    collegeCode: string;
+    selectedRole: string;
+  }
+  const storeData = async (data: data) => {
+    try {
+      await AsyncStorage.setItem("isLogin", data.isLogin);
+      await AsyncStorage.setItem("email", data.email);
+      await AsyncStorage.setItem("collegeCode", data.collegeCode);
+      await AsyncStorage.setItem("selectedRole", data.selectedRole);
 
-    if (selectedRole === 'staff') {
-       router.push('/(staff-screen)/home');
-     } else if (selectedRole === 'principal') {
-       router.push('/(principal-screen)');
-     }
+      console.log("data stroed");
+    } catch (error) {
+      console.log("Error in storing the data in local storage");
+    }
+  };
+
+  const handleLogin = async () => {
+    try {
+      const userData = {
+        email,
+        password,
+        collegeCode,
+        selectedRole,
+      };
+      const url = `${baseUrl}/auth/login`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userData }),
+      });
+      if (!response.ok) {
+        throw new Error("Faild to load");
+      }
+      storeData({
+        isLogin: "true",
+        email: email,
+        collegeCode: collegeCode,
+        selectedRole: selectedRole,
+      });
+      if (selectedRole == "principal")
+        router.push({
+          pathname: "/(principal-screen)",
+          params: {
+            email,
+            collegeCode,
+          },
+        });
+      if (selectedRole == "staff")
+        router.push({
+          pathname: "/(staff-screen)/home",
+          params: {
+            email,
+            collegeCode,
+          },
+        });
+    } catch (error) {
+      console.log(error);
+      alert("Check the email and password");
+    }
+
+    // if (selectedRole === 'staff') {
+    //    router.push('/(staff-screen)/home');
+    //  } else if (selectedRole === 'principal') {
+    //    router.push('/(principal-screen)');
+    //  }
   };
 
   const isFormValid = email && collegeCode && password && selectedRole;

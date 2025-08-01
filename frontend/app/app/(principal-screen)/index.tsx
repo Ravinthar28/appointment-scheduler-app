@@ -13,7 +13,7 @@ import {
   MaterialCommunityIcons,
   FontAwesome,
 } from "@expo/vector-icons"; // For icons
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 
 import { new_principal_styles } from "./style";
 import PrincipalHome from "./principal_home";
@@ -27,6 +27,9 @@ export default function PrincipalDashboard() {
   const [selectedTab, setSelectedTab] = useState<
     "home" | "pending" | "confirmed" | "past"
   >("home");
+  
+      // PARAMETER VALUES
+      const userData = useLocalSearchParams();
 
 
   return (
@@ -45,10 +48,10 @@ export default function PrincipalDashboard() {
       </View>
 
       {
-        selectedTab === "home" && <PrincipalHome />
+        selectedTab === "home" && <PrincipalHome email={userData.email} collegeCode= {userData.collegeCode}/>
       }
       {
-        selectedTab === 'pending' && <PendingAppointmentsScreen />
+        selectedTab === 'pending' && <PendingAppointmentsScreen email={userData.email} collegeCode={userData.collegeCode} selectedTab="pending" />
       }
       {
         selectedTab === "confirmed" && <ConfirmedAppointmentsScreen />

@@ -173,6 +173,8 @@ export default function PrincipalHomePage() {
   };
 
 
+  // -----------------WORKING FROM HERE --------------------
+
   // FUNCTION FOR ACCEPTING THE APPOINTMENT BASED ON THE STAFF ASSIGNED TIME AND RESCHEDULED TIME BY THE PRINCIPAL
   const acceptAppointment = async (btn: String) => {
     if (btn === "reschedule" && selectedMeeting) {
@@ -223,7 +225,6 @@ export default function PrincipalHomePage() {
       });
       if(! response) throw new Error('Error in canceling the appointment');
       const result = await response.json();
-      console.log(result);
       alert("Appointment Canceled");
       setSelectedMeeting(null);
     }

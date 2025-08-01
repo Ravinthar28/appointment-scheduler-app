@@ -1,14 +1,11 @@
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
-  Image,
-  ScrollView,
-  KeyboardAvoidingView,
   Platform,
 } from "react-native";
 
@@ -16,8 +13,75 @@ import { register_styles } from "./new_style";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
-export default function Register() {
+// BASE URL
+import { baseUrl } from "../apiUrl";
 
+// NOTIFICATIONS
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
+
+function handleRegistrationError(errorMessage: string) {
+  alert(errorMessage);
+  throw new Error(errorMessage);
+}
+
+async function registerForPushNotificationsAsync() {
+  if (Platform.OS === "android") {
+    await Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: "#FF231F7C",
+    });
+  }
+
+  if (Device.isDevice) {
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") {
+      handleRegistrationError(
+        "Permission not granted to get push token for push notification!"
+      );
+      return;
+    }
+    const projectId =
+      Constants?.expoConfig?.extra?.eas?.projectId ??
+      Constants?.easConfig?.projectId;
+    if (!projectId) {
+      handleRegistrationError("Project ID not found");
+    }
+    try {
+      const pushTokenString = (
+        await Notifications.getExpoPushTokenAsync({
+          projectId,
+        })
+      ).data;
+      console.log(pushTokenString);
+      return pushTokenString;
+    } catch (e: unknown) {
+      handleRegistrationError(`${e}`);
+    }
+  } else {
+    handleRegistrationError("Must use physical device for push notifications");
+  }
+}
+
+export default function Register() {
   const router = useRouter();
 
   const [fullName, setFullName] = useState("");
@@ -29,6 +93,87 @@ export default function Register() {
   const [selectedRole, setSelectedRole] = useState<"staff" | "principal">(
     "staff"
   );
+
+    // NOTIFICATION
+    const [expoPushToken, setExpoPushToken] = useState('');
+    const [notification, setNotification] = useState<Notifications.Notification | undefined>(
+      undefined
+    );
+  
+    useEffect(() => {
+      registerForPushNotificationsAsync()
+        .then(token => setExpoPushToken(token ?? ''))
+        .catch((error: any) => setExpoPushToken(`${error}`));
+  
+      const notificationListener = Notifications.addNotificationReceivedListener(notification => {
+        setNotification(notification);
+      });
+  
+      const responseListener = Notifications.addNotificationResponseReceivedListener(response => {
+        console.log(response);
+      });
+  
+      return () => {
+        notificationListener.remove();
+        responseListener.remove();
+      };
+    }, []);
+
+  const handleNext = async () => {
+      if (!fullName || !email || !phone || !collegeCode || !password || !selectedRole) {
+        alert('Validation Error, Please fill in all the fields.');
+        return;
+      }
+  
+      try {
+        const userData = {
+          fullName,
+          email,
+          phone,
+          collegeCode,
+          password,
+          role: selectedRole,
+          expoPushToken
+        };
+        const url = `${baseUrl}/auth/register`;
+        const response = await fetch(url,{
+          method: "POST",
+          headers: { "Content-Type":"application/json"},
+          body: JSON.stringify({userData})
+        })
+        if(! response.ok){
+          throw new Error("Failed to fetch teh data");
+        }
+        alert("Registerd Successfully");
+        router.push('/(auth-screen)/login')
+      //   const usersData = await AsyncStorage.getItem('registeredUsers');
+      //   const users = usersData ? JSON.parse(usersData) : [];
+  
+      //   const emailExists = users.some((user: any) => user.email === email);
+      //   if (emailExists) {
+      //     Alert.alert('Already Registered', 'This email is already registered.');
+      //     return;
+      //   }
+  
+      //   users.push(userData);
+      //   await AsyncStorage.setItem('registeredUsers', JSON.stringify(users));
+  
+      //   Alert.alert('Registration Successful', 'You can now log in.', [
+      //     {
+      //       text: 'OK',
+      //       onPress: () => router.push('/login'),
+      //     },
+      //   ]);
+      // } catch (error) {
+      //   console.error(error);
+      //   Alert.alert('Error', 'Failed to register. Please try again.');
+      }
+      catch (error){
+        alert('Make sure the college code you provided is correct')
+        console.log(error);
+      }
+      
+    };
 
   const isFormValid =
     fullName && email && phone && collegeCode && password && selectedRole;
@@ -42,7 +187,10 @@ export default function Register() {
     >
       <View style={register_styles.innerContainer}>
         <View style={register_styles.pageTitle}>
-          <TouchableOpacity style={register_styles.pageTitleIcon} onPress={()=>router.back()}>
+          <TouchableOpacity
+            style={register_styles.pageTitleIcon}
+            onPress={() => router.back()}
+          >
             <Ionicons name={"arrow-back"} size={30} color="#FFFFFF" />
           </TouchableOpacity>
           <View style={register_styles.pageTitleContent}>Create Account</View>
@@ -127,7 +275,9 @@ export default function Register() {
           </View>
 
           {/* Role Toggle */}
-          <Text style={[register_styles.label,{fontSize:25}]}>Select Role</Text>
+          <Text style={[register_styles.label, { fontSize: 25 }]}>
+            Select Role
+          </Text>
           <LinearGradient
             colors={["#1F3988", "#080E22"]}
             style={register_styles.toggleContainer}
@@ -169,7 +319,7 @@ export default function Register() {
           </LinearGradient>
 
           {/* Next Button */}
-          
+
           <LinearGradient
             colors={["#1F3988", "#080E22"]}
             style={[
@@ -178,8 +328,8 @@ export default function Register() {
             ]}
           >
             <TouchableOpacity
-              onPress={() => router.push('/(auth-screen)/login_new')}
-              // disabled={!isFormValid}
+              onPress={handleNext}
+              disabled={!isFormValid}
             >
               <Text style={register_styles.nextButtonText}>Next</Text>
             </TouchableOpacity>

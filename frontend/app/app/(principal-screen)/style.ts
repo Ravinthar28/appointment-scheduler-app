@@ -309,6 +309,33 @@ export const new_principal_styles = StyleSheet.create({
   },
   navItem: {
     padding: 10,
-    
+  },
+  card: {
+    flexDirection: 'row',
+    backgroundColor: '#222',
+    padding: 12,
+    borderRadius: 10,
+    marginBottom: 12,
+    alignItems: 'center',
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#555',
+    marginRight: 10,
+  },
+  cardName: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  cardTime: {
+    color: '#ccc',
+    fontSize: 12,
+  },
+  cardMessage: {
+    color: '#aaa',
+    fontSize: 12,
+    marginTop: 4,
   },
 })

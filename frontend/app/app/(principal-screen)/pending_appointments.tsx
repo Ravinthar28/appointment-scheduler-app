@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -11,6 +11,7 @@ import {
   Dimensions,
   Modal,
   ImageSourcePropType,
+  RefreshControl,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import {
@@ -19,6 +20,8 @@ import {
   FontAwesome,
 } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { baseUrl } from "../apiUrl";
+import { new_principal_styles } from "./style";
 
 const { width, height } = Dimensions.get("window"); // Get screen height for modal positioning
 
@@ -84,16 +87,182 @@ const appointments: Appointment[] = [
 // For simplicity, we'll use 'any' for navigation if you don't have these types configured yet,
 // but it's best practice to type navigation properly in a full TypeScript app.
 
-const PendingAppointmentsScreen = () => {
-
-  interface PendingAppointmentsScreenProps {
-  navigation: any; // Replace 'any' with the correct navigation prop type if you use React Navigation
+interface PendingAppointmentsScreenProps {
+  email?:string | string[],
+  collegeCode?:string | string[]
+  selectedTab?:string
 }
+const PendingAppointmentsScreen = ({email,collegeCode,selectedTab}:PendingAppointmentsScreenProps) => {
+
+  const [selectedMeeting, setSelectedMeeting] = useState<appointments | null>(
+      null
+    );
+  const [refreshing, setRefreshing] = useState(false);
+  const [tempDate, setTempDate] = useState(new Date());
+
+  interface appointments {
+    collegeCode: string;
+    id: string;
+    userName: string;
+    userEmail: string;
+    desc: string;
+    dateTime: Date;
+  }
+
+  const [pendingAppointments, setPendingAppointments] = useState<
+      appointments[]
+    >([]);
+
+  // FUNCTION TO FETCH THE REQUESTS DATA FROM THE DB
+    const fetchRequest = async () => {
+      try {
+        const url = `${baseUrl}/principal/appointments-data`;
+        const response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({email,collegeCode}),
+        });
+        const result = await response.json();
+        setPendingAppointments(result.pendingAppointments);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    // refresh control function
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchRequest();
+    setRefreshing(false);
+  };
+
+    // FUNCTION TO GENERATE APPOINTMENTS CARD
+    const GenerateAppointmentsCard = ({
+      collegeCode,
+      id,
+      userName,
+      userEmail,
+      desc,
+      dateTime,
+    }: appointments) => {
+      return (
+        <TouchableOpacity
+          key={id}
+          style={new_principal_styles.card}
+          onPress={() => {
+            setSelectedMeeting({
+              collegeCode,
+              id,
+              userName,
+              userEmail,
+              desc,
+              dateTime,
+            });
+          }}
+        >
+          <View style={new_principal_styles.avatar} />
+          <View style={{ flex: 1 }}>
+            <Text style={new_principal_styles.cardName}>Meeting with {userName}</Text>
+            <Text style={new_principal_styles.cardTime}>
+              {extractDateTime(dateTime)}
+            </Text>
+            {/* {meeting.message && <Text style={new_principal_styles.cardMessage}>{meeting.message}</Text>} */}
+          </View>
+          <TouchableOpacity>
+            
+          </TouchableOpacity>
+        </TouchableOpacity>
+      );
+    };
+
+    useEffect(() => {
+        fetchRequest();
+      }, []);
+    
+      // FUNCTION TO EXTRACT THE DATE AND TIME FORMAT
+      const extractDateTime = (dateTime: Date) => {
+        const dateObject = new Date(dateTime);
+        const date = dateObject.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+        const time = `${
+          dateObject.getHours() > 12
+            ? dateObject.getHours() - 12
+            : dateObject.getHours()
+        }:${dateObject.getMinutes()} ${dateObject.getHours() > 12 ? "PM" : "AM"}`;
+    
+        return `${date}, ${time}`;
+      };
+
+        // FUNCTION FOR ACCEPTING THE APPOINTMENT BASED ON THE STAFF ASSIGNED TIME AND RESCHEDULED TIME BY THE PRINCIPAL
+        const acceptAppointment = async (btn: String) => {
+          if (btn === "reschedule" && selectedMeeting) {
+            selectedMeeting.dateTime = tempDate;
+          }
+          try {
+            const url = `${baseUrl}/principal/accept-appointment`;
+            const response = await fetch(url, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                selectedTab,
+                selectedMeeting:selectedAppointment,
+              }),
+            });
+            if (!response)
+              throw new Error("Failed to accept the appiontment by the principal");
+            alert(
+              `Appointment with ${
+                selectedMeeting?.userName
+              } is scheduled on ${extractDateTime(
+                btn === "reschedule"
+                  ? tempDate
+                  : selectedMeeting?.dateTime || tempDate
+              )}`
+            );
+            router.push({
+              pathname: "/(principal-screen)/home",
+              params: {email,collegeCode,selectedTab},
+            });
+            setSelectedMeeting(null);
+            setSelectedAppointment(null);
+            setModalVisible(false);
+          } catch (error) {
+            alert(error);
+          }
+        };
+
+        // FUNCTION FOR CANCELING THE APPOINTMENT
+          const cancelAppointment = async ()=>{
+            try{
+              const url = `${baseUrl}/principal/cancel-appointment`;
+              const response = await fetch(url,{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({
+                  selectedTab,
+                  selectedMeeting
+                })
+              });
+              if(! response) throw new Error('Error in canceling the appointment');
+              const result = await response.json();
+              alert("Appointment Canceled");
+              setSelectedMeeting(null);
+            }
+            catch(error){
+              console.log(error);
+            }
+          }
+
+
+
   // Type the props
   const [modalVisible, setModalVisible] = useState(false);
   // Type selectedAppointment to be either an Appointment or null
   const [selectedAppointment, setSelectedAppointment] =
-    useState<Appointment | null>(null);
+    useState<appointments | null>(null);
 
   const handleSettingsPress = (staffId: string) => {
     // Type 'staffId' as string
@@ -101,7 +270,7 @@ const PendingAppointmentsScreen = () => {
     // Implement navigation or action for settings
   };
 
-  const handleAppointmentCardPress = (appointment: Appointment) => {
+  const handleAppointmentCardPress = (appointment: appointments) => {
     // Type 'appointment' as Appointment
     setSelectedAppointment(appointment);
     setModalVisible(true);
@@ -115,7 +284,7 @@ const PendingAppointmentsScreen = () => {
   // Ensure selectedAppointment is not null before accessing its properties
   const handleAccept = () => {
     if (selectedAppointment) {
-      console.log("Accepted appointment for:", selectedAppointment.name);
+      console.log("Accepted appointment for:", selectedAppointment.userName);
       // Implement accept logic
       handleCloseModal();
     }
@@ -123,7 +292,7 @@ const PendingAppointmentsScreen = () => {
 
   const handleReject = () => {
     if (selectedAppointment) {
-      console.log("Rejected appointment for:", selectedAppointment.name);
+      console.log("Rejected appointment for:", selectedAppointment.userName);
       // Implement reject logic
       handleCloseModal();
     }
@@ -136,15 +305,19 @@ const PendingAppointmentsScreen = () => {
       <Text style={styles.title}>Pending Appointments</Text>
 
       {/* Appointments List */}
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        {appointments.map(
+      <ScrollView contentContainerStyle={styles.scrollViewContent} refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+            }>
+        {pendingAppointments.map(
           (
-            appointment: Appointment // Type 'appointment' in map callback
+            appointment: appointments // Type 'appointment' in map callback
           ) => (
             <TouchableOpacity
               key={appointment.id}
               style={styles.appointmentCard}
-              onPress={() => handleAppointmentCardPress(appointment)}
+              onPress={() => {
+                handleAppointmentCardPress(appointment)
+              }}
             >
               <View style={styles.cardHeader}>
                 <Image
@@ -152,8 +325,8 @@ const PendingAppointmentsScreen = () => {
                   style={styles.staffAvatar}
                 />
                 <View style={styles.staffInfo}>
-                  <Text style={styles.staffName}>{appointment.name}</Text>
-                  <Text style={styles.staffEmail}>{appointment.email}</Text>
+                  <Text style={styles.staffName}>{appointment.userName}</Text>
+                  <Text style={styles.staffEmail}>{appointment.userEmail}</Text>
                 </View>
                 <TouchableOpacity
                   onPress={() => handleSettingsPress(appointment.id)}
@@ -162,12 +335,9 @@ const PendingAppointmentsScreen = () => {
                 </TouchableOpacity>
               </View>
               <View style={styles.cardBody}>
-                <Text style={styles.descriptionLabel}>
-                  Sub:Lorem ipsum dolor sit amet consectetur.
-                </Text>
                 <Text style={styles.descriptionText}>
                   {/* Shortened description for list view */}
-                  {appointment.description.substring(0, 70)}...
+                  {appointment.desc.substring(0, 70)}...
                 </Text>
               </View>
             </TouchableOpacity>
@@ -198,28 +368,31 @@ const PendingAppointmentsScreen = () => {
                   style={styles.modalStaffAvatar}
                 />
                 <Text style={styles.modalStaffName}>
-                  {selectedAppointment.name}
+                  {selectedAppointment.userName}
                 </Text>
                 <Text style={styles.modalStaffEmail}>
-                  {selectedAppointment.email}
+                  {selectedAppointment.userName}
                 </Text>
 
                 <View style={styles.modalDescriptionContainer}>
                   <Text style={styles.modalDescriptionText}>
-                    {selectedAppointment.description}
+                    {selectedAppointment.desc}
                   </Text>
                 </View>
 
                 <View style={styles.modalButtonContainer}>
                   <TouchableOpacity
                     style={styles.acceptButton}
-                    onPress={handleAccept}
+                    onPress={()=>{
+                      acceptAppointment('accept');
+                      
+                    }}
                   >
                     <Text style={styles.acceptButtonText}>Accept</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.rejectButton}
-                    onPress={handleReject}
+                    onPress={()=>cancelAppointment()}
                   >
                     <Text style={styles.rejectButtonText}>Reject</Text>
                   </TouchableOpacity>

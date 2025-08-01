@@ -25,6 +25,7 @@ const newAppointment = async (userData) => {
             userEmail: staff.mailId,
             desc: userData.desc,
             dateTime: userData.dateTime,
+            collegeCode:collectionName
           },
         },
       },
