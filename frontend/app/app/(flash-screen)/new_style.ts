@@ -1,31 +1,25 @@
-
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  background: {
+  // Style for the ImageBackground component
+  imageBackground: {
     flex: 1,
     width: '100%',
     height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  gradientOverlay: {
-    flex: 1,
-    width: '100%',
-    justifyContent: 'center', // Center content vertically within the gradient
-    alignItems: 'center',
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  content: {
-    flex: 1,
     justifyContent: 'flex-end', // Aligns content to the bottom
+  },
+  // Style for the LinearGradient overlay on top of the image
+  gradientOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'flex-end',
     alignItems: 'center',
-    paddingBottom: 50, // Adjust as needed to move content up from the bottom
+    paddingBottom: 50, // Pushes content up from the bottom edge
+  },
+  // Container for the text and buttons
+  content: {
     width: '100%',
+    alignItems: 'center',
+    marginBottom: 50, // Adds space above the content
   },
   title: {
     fontSize: 28,
@@ -36,37 +30,40 @@ export const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    color: '#ccc', // A slightly lighter color for subtitle
+    color: '#ccc',
     textAlign: 'center',
-    marginBottom: 40,
+    marginBottom: 100,
     lineHeight: 24,
   },
   loginButton: {
-    backgroundColor: '#4A6296', // A darker blue similar to the image
+    backgroundColor: '#1F3988',
     paddingVertical: 15,
     paddingHorizontal: 80,
     borderRadius: 30,
     marginBottom: 15,
-    width: '80%', // Adjust width as needed
+    width: '80%',
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
-    shadowRadius: 5,
+    shadowRadius: 8,
     elevation: 8,
+    paddingBottom: 10, // Adds space above the button
+    marginTop: -60, // Adds space below the button
   },
   registerButton: {
-    backgroundColor: '#4A6296', // Same color as login button
+    backgroundColor: '#1F3988',
     paddingVertical: 15,
     paddingHorizontal: 80,
     borderRadius: 30,
-    width: '80%', // Adjust width as needed
+    marginBottom: 15,
+    width: '80%',
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.33,
     shadowRadius: 5,
     elevation: 8,
   },

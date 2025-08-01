@@ -42,6 +42,7 @@ export default function Register() {
       await AsyncStorage.setItem("collegeCode", data.collegeCode);
       await AsyncStorage.setItem("selectedRole", data.selectedRole);
 
+<<<<<<< HEAD
       console.log("data stroed");
     } catch (error) {
       console.log("Error in storing the data in local storage");
@@ -97,6 +98,13 @@ export default function Register() {
     //  } else if (selectedRole === 'principal') {
     //    router.push('/(principal-screen)');
     //  }
+=======
+    if (selectedRole === 'staff') {
+       router.push('/(staff-screen)/new_index');
+     } else if (selectedRole === 'principal') {
+       router.push('/(principal-screen)');
+     }
+>>>>>>> 56484c967daf96b9178cee2dad2a52cf737259f3
   };
 
   const isFormValid = email && collegeCode && password && selectedRole;
