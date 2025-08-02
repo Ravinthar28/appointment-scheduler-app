@@ -1,26 +1,11 @@
 import React from 'react';
 import { StyleSheet, View, Text, Image, TouchableOpacity, SafeAreaView } from 'react-native';
-import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
-import { router } from 'expo-router';
 
-const NewAppointmentsScreen = () => {
+
+const NoNewAppointmentsScreen = () => {
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <>
       <View style={styles.container}>
-        <View style={styles.header}>
-          <Image
-            source={require('../../assets/images/profile.png')} // Replace with your profile picture URI
-            style={styles.profileImage}
-          />
-
-       <TouchableOpacity
-       onPress={() => router.push('/(auth-screen)/login')}>
-          <Ionicons name="log-out-outline" size={30} color="#fff" />
-        </TouchableOpacity>
-        </View>
-
-        <Text style={styles.title}>New Appointments</Text>
-
         <View style={styles.content}>
           <Image
             source={require('../../assets/images/thumbnail.png')} // Replace with your illustration URI
@@ -29,23 +14,8 @@ const NewAppointmentsScreen = () => {
           />
           <Text style={styles.noAppointmentsText}>no new appointments</Text>
         </View>
-        
-        <View style={styles.navBar}>
-          <TouchableOpacity style={styles.navItem}>
-            <Ionicons name="home-outline" size={24} color="#555" />
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.navItem, styles.activeNavItem]}>
-            <Ionicons name="time-outline" size={24} color="#fff" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem}>
-            <FontAwesome5 name="check-circle" size={24} color="#555" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem}>
-            <Ionicons name="calendar-outline" size={24} color="#555" />
-          </TouchableOpacity>
-        </View>
       </View>
-    </SafeAreaView>
+    </>
   );
 };
 
@@ -56,7 +26,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#F5F8FF',
   },
   header: {
     flexDirection: 'row',
@@ -124,4 +93,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NewAppointmentsScreen;
+export default NoNewAppointmentsScreen;

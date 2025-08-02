@@ -1,29 +1,86 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, Image, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
 import { Ionicons, FontAwesome5, Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { baseUrl } from '../apiUrl';
+import NoNewAppointmentsScreen from './no_appointment';
 
-const ConfirmedAppointmentsScreen = () => {
+interface confirmAppointmentProps{
+  email?:string | string[],
+  collegeCode?:string | string[]
+}
+
+const ConfirmedAppointmentsScreen = ({email,collegeCode}:confirmAppointmentProps) => {
   // Dummy data for the list of confirmed appointments
-  const confirmedAppointments = [
-    { id: '1', name: 'Staff-1', email: 'staffone@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
-    { id: '2', name: 'Staff-2', email: 'stafftwo@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
-    { id: '3', name: 'Staff-3', email: 'staffthree@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
-    { id: '4', name: 'Staff-4', email: 'stafffour@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
-    { id: '5', name: 'Staff-5', email: 'stafffive@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
-    { id: '6', name: 'Staff-6', email: 'staffsix@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
-  ];
+  // const confirmedAppointments = [
+  //   { id: '1', name: 'Staff-1', email: 'staffone@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
+  //   { id: '2', name: 'Staff-2', email: 'stafftwo@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
+  //   { id: '3', name: 'Staff-3', email: 'staffthree@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
+  //   { id: '4', name: 'Staff-4', email: 'stafffour@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
+  //   { id: '5', name: 'Staff-5', email: 'stafffive@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
+  //   { id: '6', name: 'Staff-6', email: 'staffsix@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
+  // ];
 
-  const AppointmentCard = ({ appointment }: { appointment: typeof confirmedAppointments[0] }) => (
+
+  const [selectedMeeting, setSelectedMeeting] = useState<appointments | null>(
+      null
+    );
+    const [refreshing, setRefreshing] = useState(false);
+  
+    interface appointments {
+      collegeCode: string;
+      id: string;
+      userName: string;
+      userEmail: string;
+      desc: string;
+      dateTime: Date;
+    }
+  
+    const [confirmedAppointments, setConfirmedAppointments] = useState<
+      appointments[]
+    >([]);
+
+      // FUNCTION TO FETCH THE REQUESTS DATA FROM THE DB
+      const fetchRequest = async () => {
+        try {
+          const url = `${baseUrl}/principal/appointments-data`;
+          const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({email,collegeCode}),
+          });
+          const result = await response.json();
+          setConfirmedAppointments(result.confirmedAppointments);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+    
+      // refresh control function
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchRequest();
+    setRefreshing(false);
+  };
+  
+
+  const AppointmentCard = ({
+    collegeCode,
+    id,
+    userName,
+    userEmail,
+    desc,
+    dateTime,
+  }:appointments) => (
     <View style={styles.card}>
       <View style={styles.cardHeader}>
         <Image
-          source={{ uri: appointment.avatar }}
+          source={require('../../assets/images/profile.png')}
           style={styles.staffAvatar}
         />
         <View style={styles.cardTitleContainer}>
-          <Text style={styles.staffName}>{appointment.name}</Text>
-          <Text style={styles.staffEmail}>{appointment.email}</Text>
+          <Text style={styles.staffName}>{userName}</Text>
+          <Text style={styles.staffEmail}>{userEmail}</Text>
         </View>
         <TouchableOpacity style={styles.settingsIcon}>
           <Feather name="settings" size={20} color="#888" />
@@ -31,25 +88,55 @@ const ConfirmedAppointmentsScreen = () => {
       </View>
       <View style={styles.cardContent}>
         <Text style={styles.subTitle}>Sub:</Text>
-        <Text style={styles.subText}>{appointment.subText}</Text>
+        <Text style={styles.subText}>{desc}</Text>
       </View>
     </View>
   );
 
+  useEffect(() => {
+      fetchRequest();
+    }, []);
+
+  // FUNCTION TO EXTRACT THE DATE AND TIME FORMAT
+  const extractDateTime = (dateTime: Date) => {
+    const dateObject = new Date(dateTime);
+    const date = dateObject.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+    const time = `${
+      dateObject.getHours() > 12
+        ? dateObject.getHours() - 12
+        : dateObject.getHours()
+    }:${dateObject.getMinutes()} ${dateObject.getHours() > 12 ? "PM" : "AM"}`;
+
+    return `${date}, ${time}`;
+  };
+
+  function AppointmentScreen(){
+    return(
+      <>
+        <ScrollView style={styles.listContainer}>
+          {confirmedAppointments.map(appointment => (
+            <AppointmentCard key={appointment.id} collegeCode={appointment.collegeCode} id={appointment.id} userName={appointment.userName} userEmail={appointment.userEmail} desc={appointment.desc} dateTime={appointment.dateTime} />
+          ))}
+        </ScrollView>
+      </>
+    )
+  }
+
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
+    <View style={styles.container}>
 
         <Text style={styles.title}>Confirmed Appointments:</Text>
 
-        <ScrollView style={styles.listContainer}>
-          {confirmedAppointments.map(appointment => (
-            <AppointmentCard key={appointment.id} appointment={appointment} />
-          ))}
-        </ScrollView>
+      {
+        confirmedAppointments.length === 0 ? <NoNewAppointmentsScreen /> : <AppointmentScreen />
+      }
+        
         
       </View>
-    </SafeAreaView>
   );
 };
 

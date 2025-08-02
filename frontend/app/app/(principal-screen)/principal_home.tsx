@@ -9,6 +9,7 @@ import {
 
 import { new_principal_styles } from "./style";
 import { baseUrl } from "../apiUrl";
+import NoNewAppointmentsScreen from "./no_appointment";
 
 interface principalHomeProps{
   email?:string | string[],
@@ -121,7 +122,6 @@ export default function PrincipalHome({email,collegeCode}:principalHomeProps) {
 
   useEffect(() => {
     fetchRequest();
-    console.log(confirmedAppointments);
   }, []);
 
   // FUNCTION TO EXTRACT THE DATE AND TIME FORMAT
@@ -141,23 +141,10 @@ export default function PrincipalHome({email,collegeCode}:principalHomeProps) {
     return `${date}, ${time}`;
   };
 
-  return (
-    <>
-      <View style={new_principal_styles.welcomeCard}>
-        <Text style={new_principal_styles.welcomeTitle}>
-          Welcome Principal !!
-        </Text>
-        <Text style={new_principal_styles.welcomeDescription}>
-          Lorem ipsum dolor sit amet consectetur. Sit adipiscing gravida in
-          faucibus.
-        </Text>
-      </View>
-
-      <Text style={new_principal_styles.todayScheduleText}>
-        Today's Schedule
-      </Text>
-
-      <ScrollView
+  function AppointmentScreen(){
+    return(
+      <>
+        <ScrollView
         contentContainerStyle={new_principal_styles.scheduleList}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
@@ -190,6 +177,30 @@ export default function PrincipalHome({email,collegeCode}:principalHomeProps) {
           </View>
         ))} */}
       </ScrollView>
+      </>
+    )
+  }
+
+  return (
+    <>
+      <View style={new_principal_styles.welcomeCard}>
+        <Text style={new_principal_styles.welcomeTitle}>
+          Welcome Principal !!
+        </Text>
+        <Text style={new_principal_styles.welcomeDescription}>
+          Lorem ipsum dolor sit amet consectetur. Sit adipiscing gravida in
+          faucibus.
+        </Text>
+      </View>
+
+      <Text style={new_principal_styles.todayScheduleText}>
+        Today's Schedule
+      </Text>
+
+      {
+        confirmedAppointments.length === 0 ? <NoNewAppointmentsScreen /> : <AppointmentScreen />
+      }
+      
     </>
   );
 }

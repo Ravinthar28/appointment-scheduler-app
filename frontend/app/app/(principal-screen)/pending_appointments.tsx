@@ -22,6 +22,7 @@ import {
 import { router } from "expo-router";
 import { baseUrl } from "../apiUrl";
 import { new_principal_styles } from "./style";
+import NoNewAppointmentsScreen from "./no_appointment";
 
 const { width, height } = Dimensions.get("window"); // Get screen height for modal positioning
 
@@ -298,13 +299,10 @@ const PendingAppointmentsScreen = ({email,collegeCode,selectedTab}:PendingAppoin
     }
   };
 
-  return (
-    <>
-      <View style={styles.container}>
-      {/* Title */}
-      <Text style={styles.title}>Pending Appointments</Text>
-
-      {/* Appointments List */}
+  function AppointmentScreen(){
+    return(
+      <>
+        {/* Appointments List */}
       <ScrollView contentContainerStyle={styles.scrollViewContent} refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
             }>
@@ -344,6 +342,19 @@ const PendingAppointmentsScreen = ({email,collegeCode,selectedTab}:PendingAppoin
           )
         )}
       </ScrollView>
+      </>
+    )
+  }
+
+  return (
+    <>
+      <View style={styles.container}>
+      {/* Title */}
+      <Text style={styles.title}>Pending Appointments</Text>
+
+      {
+        pendingAppointments.length === 0 ? <NoNewAppointmentsScreen /> : <AppointmentScreen />
+      }
 
       {/* Appointment Details Modal */}
       <Modal
