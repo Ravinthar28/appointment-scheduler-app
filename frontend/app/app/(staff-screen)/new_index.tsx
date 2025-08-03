@@ -5,12 +5,15 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
   Modal,
+  TextInput,
+  Platform,
+  SafeAreaView,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { router, useLocalSearchParams } from "expo-router";
+import { Ionicons, Feather } from "@expo/vector-icons";
+import { router } from "expo-router";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 // Dummy data for today's schedule
 const todaySchedule = [
@@ -92,6 +95,145 @@ const MeetingModal = ({ isVisible, onClose, meeting }: MeetingModalProps) => {
   );
 };
 
+const RequestAppointmentModal = ({
+  isVisible,
+  onClose,
+}: {
+  isVisible: boolean;
+  onClose: () => void;
+}) => {
+  const [meetingDate, setMeetingDate] = useState<Date>(new Date());
+  const [reason, setReason] = useState<string>("");
+  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+  const [showTimePicker, setShowTimePicker] = useState<boolean>(false);
+
+  const onDateChange = (event: any, selectedDate?: Date) => {
+    setShowDatePicker(Platform.OS === "ios");
+    if (selectedDate) {
+      setMeetingDate(selectedDate);
+    }
+  };
+
+  const onTimeChange = (event: any, selectedTime?: Date) => {
+    setShowTimePicker(Platform.OS === "ios");
+    if (selectedTime) {
+      const newDate = new Date(
+        meetingDate.setHours(selectedTime.getHours(), selectedTime.getMinutes())
+      );
+      setMeetingDate(newDate);
+    }
+  };
+
+  const formatDate = (date: Date): string => {
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+  const formatTime = (date: Date): string => {
+    const options: Intl.DateTimeFormatOptions = {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    };
+    return date.toLocaleTimeString("en-US", options);
+  };
+
+  const handleRequestAppointment = () => {
+    console.log("Appointment Requested:");
+    console.log("Reason:", reason);
+    console.log("Date:", formatDate(meetingDate));
+    console.log("Time:", formatTime(meetingDate));
+    setReason("");
+    onClose();
+  };
+
+  return (
+    <Modal
+      animationType="fade"
+      transparent={true}
+      visible={isVisible}
+      onRequestClose={onClose}
+    >
+      <View style={modalStyles.centeredView}>
+        <View style={modalStyles.modalView}>
+          <TouchableOpacity style={modalStyles.closeButton} onPress={onClose}>
+            <Ionicons name="close" size={24} color="#000" />
+          </TouchableOpacity>
+          <Image
+            source={require("../../assets/images/Principal.jpg")}
+            style={modalStyles.modalAvatar}
+          />
+          <Text style={modalStyles.modalStaffName}>
+            Dr. C. Mathalai Sundaram
+          </Text>
+          <Text style={modalStyles.modalStaffEmail}>principal@gmail.com</Text>
+
+          <View style={modalStyles.modalContent}>
+            <TextInput
+              style={[modalStyles.textInput, modalStyles.multilineInput]}
+              placeholder="Reason for appointment"
+              multiline
+              value={reason}
+              onChangeText={setReason}
+            />
+
+            <View style={modalStyles.inputRow}>
+              <Text style={modalStyles.inputLabel}>Appointment Date:</Text>
+              <TouchableOpacity
+                style={modalStyles.inputField}
+                onPress={() => setShowDatePicker(true)}
+              >
+                <Text>{formatDate(meetingDate)}</Text>
+                <Feather name="calendar" size={20} color="#666" />
+              </TouchableOpacity>
+              {showDatePicker && (
+                <DateTimePicker
+                  value={meetingDate}
+                  mode="date"
+                  display={Platform.OS === "ios" ? "spinner" : "default"}
+                  onChange={onDateChange}
+                  minimumDate={new Date()}
+                />
+              )}
+            </View>
+
+            <View style={modalStyles.inputRow}>
+              <Text style={modalStyles.inputLabel}>Appointment Time:</Text>
+              <TouchableOpacity
+                style={modalStyles.inputField}
+                onPress={() => setShowTimePicker(true)}
+              >
+                <Text>{formatTime(meetingDate)}</Text>
+                <Ionicons name="time-outline" size={20} color="#666" />
+              </TouchableOpacity>
+              {showTimePicker && (
+                <DateTimePicker
+                  value={meetingDate}
+                  mode="time"
+                  display={Platform.OS === "ios" ? "spinner" : "default"}
+                  onChange={onTimeChange}
+                />
+              )}
+            </View>
+          </View>
+
+          <TouchableOpacity
+            style={modalStyles.bookButton}
+            onPress={handleRequestAppointment}
+          >
+            <Text style={modalStyles.bookButtonText}>
+              Request Appointment
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
 const ScheduleCard = ({
   schedule,
   onPress,
@@ -118,55 +260,55 @@ const ScheduleCard = ({
   </TouchableOpacity>
 );
 
-interface homeScreenProps {
-  email?: string | string[];
-  collegeCode?: string | string[];
-}
-const HomeScreen = ({ email, collegeCode }: homeScreenProps) => {
+const StaffHomeScreen = () => {
+  const [selectedTab, setSelectedTab] = useState<"home" | "upcoming" | "past">(
+    "home"
+  );
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [selectedMeeting, setSelectedMeeting] = useState<MeetingDetails | null>(
     null
   );
+  const [isRequestModalVisible, setIsRequestModalVisible] = useState(false);
 
   const handleCardPress = (meeting: MeetingDetails) => {
     setSelectedMeeting(meeting);
     setModalVisible(true);
   };
 
-  return (
+  const openRequestModal = () => {
+    setIsRequestModalVisible(true);
+  };
+
+  const closeRequestModal = () => {
+    setIsRequestModalVisible(false);
+  };
+
+  const renderHomeContent = () => (
     <>
-      <ScrollView style={principalHome.container}>
-        <View style={principalHome.welcomeCard}>
-          <Text style={principalHome.welcomeTitle}>Welcome Staff !!</Text>
-          <Text style={principalHome.welcomeText}>
-            Hello Staff ! You have 10 meetings lined up for today Wishing you a
-            successful day.
-          </Text>
-        </View>
+      <View style={principalHome.welcomeCard}>
+        <Text style={principalHome.welcomeTitle}>Welcome Staff !!</Text>
+        <Text style={principalHome.welcomeText}>
+          Hello Staff! You have meetings lined up for today. Wishing you a
+          successful day.
+        </Text>
+      </View>
 
-        <View style={principalHome.mainImageContainer}>
-          <Image
-            source={require("../../assets/images/Principal.jpg")}
-            style={principalHome.mainImage}
-          />
-        </View>
+      <View style={principalHome.mainImageContainer}>
+        <Image
+          source={require("../../assets/images/Principal.jpg")}
+          style={principalHome.mainImage}
+        />
+      </View>
 
-        <TouchableOpacity
-          style={principalHome.requestButton}
-          onPress={() =>
-            router.push({
-              pathname: "/(staff-screen)/new_requestpage",
-              params: { email, collegeCode },
-            })
-          }
-        >
-          <Text style={principalHome.requestButtonText}>
-            Request Appointment
-          </Text>
-        </TouchableOpacity>
+      <TouchableOpacity
+        style={principalHome.requestButton}
+        onPress={openRequestModal}
+      >
+        <Text style={principalHome.requestButtonText}>Request Appointment</Text>
+      </TouchableOpacity>
 
+      <View>
         <Text style={principalHome.sectionTitle}>Today's Schedule</Text>
-
         {todaySchedule.map((schedule) => (
           <ScheduleCard
             key={schedule.id}
@@ -174,38 +316,46 @@ const HomeScreen = ({ email, collegeCode }: homeScreenProps) => {
             onPress={handleCardPress}
           />
         ))}
-      </ScrollView>
-
-      <MeetingModal
-        isVisible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        meeting={selectedMeeting}
-      />
+      </View>
     </>
   );
-};
-const StaffHomeScreen = () => {
-  const userData = useLocalSearchParams();
 
-  const [selectedTab, setSelectedTab] = useState<"home" | "upcoming" | "past">(
-    "upcoming"
+  const renderUpcomingContent = () => (
+    <View>
+      <Text style={principalHome.sectionTitle}>Upcoming Meetings</Text>
+      <Text style={principalHome.placeholderText}>
+        This is where you will list all your upcoming meetings.
+      </Text>
+    </View>
+  );
+
+  const renderPastContent = () => (
+    <View>
+      <Text style={principalHome.sectionTitle}>Past Meetings</Text>
+      <Text style={principalHome.placeholderText}>
+        This is where you will list all your past meetings.
+      </Text>
+    </View>
   );
 
   return (
-    <SafeAreaView style={principalHome.safeArea}>
+    <>
+    <view style={{ flex: 1, backgroundColor: "#F5F8FF" }}>
       <View style={principalHome.header}>
         <Image
           source={require("../../assets/images/profile.png")}
           style={principalHome.profileImage}
         />
+        <TouchableOpacity onPress={() => router.push("../../(auth-screen)/login_new")}>
+          <Ionicons name="log-out-outline" size={30} color="#fff" />
+        </TouchableOpacity>
       </View>
 
-
-    {
-      selectedTab === 'home' && <HomeScreen email={userData.email} collegeCode={userData.collegeCode} />
-    }
-      
-
+      <ScrollView contentContainerStyle={principalHome.scrollViewContent}>
+        {selectedTab === "home" && renderHomeContent()}
+        {selectedTab === "upcoming" && renderUpcomingContent()}
+        {selectedTab === "past" && renderPastContent()}
+      </ScrollView>
 
       <View style={principalHome.navBar}>
         <TouchableOpacity
@@ -227,25 +377,38 @@ const StaffHomeScreen = () => {
           <Ionicons name="checkmark-circle-outline" size={24} color="#fff" />
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+
+      <MeetingModal
+        isVisible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        meeting={selectedMeeting}
+      />
+
+      <RequestAppointmentModal
+        isVisible={isRequestModalVisible}
+        onClose={closeRequestModal}
+      />
+      </view>
+    </>
   );
 };
 
 const principalHome = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#F5F8FF",
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "#F5F8FF",
-    padding: 20,
+  scrollViewContent: {
+    flexGrow: 1,
+    paddingHorizontal: 20,
+    paddingBottom: 80,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
     marginBottom: 20,
+    backgroundColor: '#3E5793', // Dark blue background for header to match design
+    paddingVertical: 15,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
   },
   profileImage: {
     width: 40,
@@ -344,27 +507,32 @@ const principalHome = StyleSheet.create({
     fontSize: 12,
     color: "#555",
   },
+  placeholderText: {
+    textAlign: "center",
+    marginTop: 50,
+    fontSize: 18,
+    color: "#666",
+  },
   navBar: {
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    backgroundColor: "#1C4A9E",
-    borderRadius: 30,
-    paddingVertical: 15,
+    backgroundColor: "#3E5793",
     position: "absolute",
-    bottom: 20,
-    left: 20,
-    right: 20,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 70,
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: -5 },
     shadowOpacity: 0.2,
-    shadowRadius: 5,
-    elevation: 8,
+    shadowRadius: 10,
+    elevation: 15,
   },
   navItem: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    padding: 10,
   },
 });
 
@@ -432,6 +600,53 @@ const modalStyles = StyleSheet.create({
     fontSize: 14,
     color: "#555",
     textAlign: "center",
+  },
+  textInput: {
+    backgroundColor: "#F5F8FF",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#A8B3C7",
+    padding: 10,
+    marginBottom: 15,
+    width: "100%",
+  },
+  multilineInput: {
+    minHeight: 80,
+    textAlignVertical: "top",
+  },
+  inputRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 15,
+  },
+  inputLabel: {
+    fontSize: 14,
+    color: "#000",
+  },
+  inputField: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    padding: 10,
+    marginLeft: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  bookButton: {
+    backgroundColor: "#95BD79",
+    borderRadius: 50,
+    paddingVertical: 15,
+    marginTop: 20,
+    width: "100%",
+    alignItems: "center",
+  },
+  bookButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });
 
