@@ -223,10 +223,10 @@ const PendingAppointmentsScreen = ({email,collegeCode,selectedTab}:PendingAppoin
                   : selectedMeeting?.dateTime || tempDate
               )}`
             );
-            router.push({
-              pathname: "/(principal-screen)/home",
-              params: {email,collegeCode,selectedTab},
-            });
+            // router.push({
+            //   pathname: "/(principal-screen)",
+            //   params: {email,collegeCode,selectedTab},
+            // });
             setSelectedMeeting(null);
             setSelectedAppointment(null);
             setModalVisible(false);
@@ -244,13 +244,15 @@ const PendingAppointmentsScreen = ({email,collegeCode,selectedTab}:PendingAppoin
                 headers:{'Content-Type':'application/json'},
                 body:JSON.stringify({
                   selectedTab,
-                  selectedMeeting
+                  selectedMeeting:selectedAppointment
                 })
               });
               if(! response) throw new Error('Error in canceling the appointment');
               const result = await response.json();
               alert("Appointment Canceled");
               setSelectedMeeting(null);
+              setSelectedAppointment(null);
+              setModalVisible(false);
             }
             catch(error){
               console.log(error);

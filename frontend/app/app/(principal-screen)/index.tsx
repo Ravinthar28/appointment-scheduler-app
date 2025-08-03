@@ -54,10 +54,10 @@ export default function PrincipalDashboard() {
         selectedTab === 'pending' && <PendingAppointmentsScreen email={userData.email} collegeCode={userData.collegeCode} selectedTab="pending" />
       }
       {
-        selectedTab === "confirmed" && <ConfirmedAppointmentsScreen />
+        selectedTab === "confirmed" && <ConfirmedAppointmentsScreen email={userData.email} collegeCode={userData.collegeCode} />
       }
       {
-        selectedTab === "past" && <CancelAppointmentsScreen />
+        selectedTab === "past" && <CancelAppointmentsScreen email={userData.email} collegeCode={userData.collegeCode} />
       }
 
       <View style={new_principal_styles.bottomNavBar}>

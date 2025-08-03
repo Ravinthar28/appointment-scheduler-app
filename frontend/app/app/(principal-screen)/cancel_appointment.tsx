@@ -1,23 +1,25 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, Image, TouchableOpacity, SafeAreaView, ScrollView, Modal, Platform } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, Text, Image, TouchableOpacity, SafeAreaView, ScrollView, Modal, Platform, RefreshControl } from 'react-native';
 import { Ionicons, FontAwesome5, Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { baseUrl } from '../apiUrl';
 
 // Define the type for the appointment object
-interface Appointment {
-  id: string;
-  name: string;
-  email: string;
-  subText: string;
-  avatar: string;
-}
+interface appointments {
+    collegeCode: string;
+    id: string;
+    userName: string;
+    userEmail: string;
+    desc: string;
+    dateTime: Date;
+  }
 
 // Props for the RescheduleModal component
 interface RescheduleModalProps {
   isVisible: boolean;
   onClose: () => void;
-  appointment: Appointment | null;
+  appointment: appointments | null;
 }
 
 // Modal component
@@ -69,14 +71,14 @@ const RescheduleModal = ({ isVisible, onClose, appointment }: RescheduleModalPro
                         <Ionicons name="close" size={24} color="#000" />
                     </TouchableOpacity>
                     <Image
-                        source={{ uri: appointment.avatar }}
+                        source={require('../../assets/images/profile.png')}
                         style={modalStyles.modalAvatar}
                     />
-                    <Text style={modalStyles.modalStaffName}>{appointment.name}</Text>
-                    <Text style={modalStyles.modalStaffEmail}>{appointment.email}</Text>
+                    <Text style={modalStyles.modalStaffName}>{appointment.userName}</Text>
+                    <Text style={modalStyles.modalStaffEmail}>{appointment.userEmail}</Text>
                     <View style={modalStyles.modalContent}>
                         <Text style={modalStyles.modalDescription}>
-                            Lorem ipsum dolor sit amet consectetur. Elementum habitant aliquam ut eget eget feugiat nibh.
+                            {appointment.desc}
                         </Text>
                         
                         <View style={modalStyles.inputRow}>
@@ -127,24 +129,28 @@ const RescheduleModal = ({ isVisible, onClose, appointment }: RescheduleModalPro
 
 // Props for the AppointmentCard component
 interface AppointmentCardProps {
-  appointment: Appointment;
-  onPress: (appointment: Appointment) => void;
+  appointment: appointments;
+  onPress: (appointment: appointments) => void;
 }
 
-const CancelAppointmentsScreen = () => {
+interface CancelAPpointmentScreenProps{
+  email?:string | string[],
+  collegeCode?:string | string[]
+}
+const CancelAppointmentsScreen = ({email,collegeCode}:CancelAPpointmentScreenProps) => {
     const [modalVisible, setModalVisible] = useState<boolean>(false);
-    const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+    const [selectedAppointment, setSelectedAppointment] = useState<appointments | null>(null);
 
-    const confirmedAppointments: Appointment[] = [
-        { id: '1', name: 'Staff-1', email: 'staffone@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
-        { id: '2', name: 'Staff-2', email: 'stafftwo@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
-        { id: '3', name: 'Staff-3', email: 'staffthree@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
-        { id: '4', name: 'Staff-4', email: 'stafffour@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
-        { id: '5', name: 'Staff-5', email: 'stafffive@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
-        { id: '6', name: 'Staff-6', email: 'staffsix@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
-    ];
+    // const confirmedAppointments: appointments[] = [
+    //     { id: '1', name: 'Staff-1', email: 'staffone@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
+    //     { id: '2', name: 'Staff-2', email: 'stafftwo@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
+    //     { id: '3', name: 'Staff-3', email: 'staffthree@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
+    //     { id: '4', name: 'Staff-4', email: 'stafffour@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
+    //     { id: '5', name: 'Staff-5', email: 'stafffive@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
+    //     { id: '6', name: 'Staff-6', email: 'staffsix@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
+    // ];
 
-    const handleCardPress = (appointment: Appointment) => {
+    const handleCardPress = (appointment: appointments) => {
         setSelectedAppointment(appointment);
         setModalVisible(true);
     };
@@ -153,12 +159,12 @@ const CancelAppointmentsScreen = () => {
         <TouchableOpacity style={styles.card} onPress={() => onPress(appointment)}>
             <View style={styles.cardHeader}>
                 <Image
-                    source={{ uri: appointment.avatar }}
+                    source={require('../../assets/images/profile.png')}
                     style={styles.staffAvatar}
                 />
                 <View style={styles.cardTitleContainer}>
-                    <Text style={styles.staffName}>{appointment.name}</Text>
-                    <Text style={styles.staffEmail}>{appointment.email}</Text>
+                    <Text style={styles.staffName}>{appointment.userName}</Text>
+                    <Text style={styles.staffEmail}>{appointment.userEmail}</Text>
                 </View>
                 <TouchableOpacity style={styles.settingsIcon}>
                     <Feather name="settings" size={20} color="#888" />
@@ -166,18 +172,72 @@ const CancelAppointmentsScreen = () => {
             </View>
             <View style={styles.cardContent}>
                 <Text style={styles.subTitle}>Sub:</Text>
-                <Text style={styles.subText}>{appointment.subText}</Text>
+                <Text style={styles.subText}>{appointment.desc}</Text>
             </View>
         </TouchableOpacity>
     );
+
+    const [selectedMeeting, setSelectedMeeting] = useState<appointments | null>(
+        null
+      );
+
+    const [pastAppointments, setPastAppointments] = useState<appointments[]>([]);
+
+    // FUNCTION TO FETCH THE REQUESTS DATA FROM THE DB
+      const fetchRequest = async () => {
+        try {
+          const url = `${baseUrl}/principal/appointments-data`;
+          const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({email,collegeCode}),
+          });
+          const result = await response.json();
+          setPastAppointments(result.pastAppointments);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+
+    const [refreshing, setRefreshing] = useState(false);
+    
+      // refresh control function
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchRequest();
+    setRefreshing(false);
+  };
+
+  useEffect(() => {
+      fetchRequest();
+    }, []);
+  
+    // FUNCTION TO EXTRACT THE DATE AND TIME FORMAT
+    const extractDateTime = (dateTime: Date) => {
+      const dateObject = new Date(dateTime);
+      const date = dateObject.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+      const time = `${
+        dateObject.getHours() > 12
+          ? dateObject.getHours() - 12
+          : dateObject.getHours()
+      }:${dateObject.getMinutes()} ${dateObject.getHours() > 12 ? "PM" : "AM"}`;
+  
+      return `${date}, ${time}`;
+    };
 
     return (
         <><View style={styles.container}>
 
                 <Text style={styles.title}>Closed Appointments</Text>
 
-                <ScrollView style={styles.listContainer}>
-                    {confirmedAppointments.map(appointment => (
+                <ScrollView style={styles.listContainer} refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+                      }>
+                    {pastAppointments.map(appointment => (
                         <AppointmentCard key={appointment.id} appointment={appointment} onPress={handleCardPress} />
                     ))}
                 </ScrollView>

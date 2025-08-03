@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ScrollView, RefreshControl } from "react-native";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  Modal,
-} from "react-native";
+import { View, Text, TouchableOpacity, TextInput, Modal } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { principalHome } from "./style";
 import { router, useLocalSearchParams } from "expo-router";
@@ -172,7 +166,6 @@ export default function PrincipalHomePage() {
     return `${date}, ${time}`;
   };
 
-
   // -----------------WORKING FROM HERE --------------------
 
   // FUNCTION FOR ACCEPTING THE APPOINTMENT BASED ON THE STAFF ASSIGNED TIME AND RESCHEDULED TIME BY THE PRINCIPAL
@@ -212,26 +205,25 @@ export default function PrincipalHomePage() {
   };
 
   // FUNCTION FOR CANCELING THE APPOINTMENT
-  const cancelAppointment = async ()=>{
-    try{
+  const cancelAppointment = async () => {
+    try {
       const url = `${baseUrl}/principal/cancel-appointment`;
-      const response = await fetch(url,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           selectedTab,
-          selectedMeeting
-        })
+          selectedMeeting,
+        }),
       });
-      if(! response) throw new Error('Error in canceling the appointment');
+      if (!response) throw new Error("Error in canceling the appointment");
       const result = await response.json();
       alert("Appointment Canceled");
       setSelectedMeeting(null);
-    }
-    catch(error){
+    } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   // FUNCTION FOR RESCHEDULING THE APPOINTMENT BY THE PRINCIPAL
   // // Automatically move confirmed to past
@@ -288,11 +280,11 @@ export default function PrincipalHomePage() {
         <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
       }
     >
-    <View style={{ position: 'absolute', top: 10, right: 10, zIndex: 1 }}>
-      <TouchableOpacity onPress={() => router.push('/(auth-screen)/login')}>
-        <Text>Logout</Text>
+      <View style={{ position: "absolute", top: 10, right: 10, zIndex: 1 }}>
+        <TouchableOpacity onPress={() => router.push("/(auth-screen)/login")}>
+          <Text>Logout</Text>
         </TouchableOpacity>
-    </View>
+      </View>
       {/* Header */}
       {/* <View style={principalHome.header}>
         <TouchableOpacity>
@@ -325,60 +317,57 @@ export default function PrincipalHomePage() {
       </View>
 
       {/* Meeting Cards */}
-      {selectedTab === "pending" && (
-        pendingAppointments.length === 0 ? (
-          <Text style={{ textAlign: 'center', marginVertical: 20 }}>
+      {selectedTab === "pending" &&
+        (pendingAppointments.length === 0 ? (
+          <Text style={{ textAlign: "center", marginVertical: 20 }}>
             there are no pending appointments
           </Text>
         ) : (
-        pendingAppointments.map((appointments) => (
-          <GenerateAppointmentsCard
-            collegeCode={String(userData.collegeCode)}
-            id={appointments.id}
-            userName={appointments.userName}
-            userEmail={appointments.userEmail}
-            desc={appointments.desc}
-            dateTime={appointments.dateTime}
-          />
-        
-        ))
-      ))}
-      {selectedTab === "confirmed" && (
-        confirmedAppointments.length === 0 ? (
-          <Text style={{ textAlign: 'center', marginVertical: 20 }}>
+          pendingAppointments.map((appointments) => (
+            <GenerateAppointmentsCard
+              collegeCode={String(userData.collegeCode)}
+              id={appointments.id}
+              userName={appointments.userName}
+              userEmail={appointments.userEmail}
+              desc={appointments.desc}
+              dateTime={appointments.dateTime}
+            />
+          ))
+        ))}
+      {selectedTab === "confirmed" &&
+        (confirmedAppointments.length === 0 ? (
+          <Text style={{ textAlign: "center", marginVertical: 20 }}>
             there are no confirmed appointments
           </Text>
         ) : (
-        confirmedAppointments.map((appointments) => (
-          <GenerateAppointmentsCard
-            collegeCode={String(userData.collegeCode)}
-            id={appointments.id}
-            userName={appointments.userName}
-            userEmail={appointments.userEmail}
-            desc={appointments.desc}
-            dateTime={appointments.dateTime}
-          />
-        ))
-        )
-        )}
-      {selectedTab === "past" && (
-        pastAppointments.length === 0 ? (
-          <Text style={{ textAlign: 'center', marginVertical: 20 }}>
+          confirmedAppointments.map((appointments) => (
+            <GenerateAppointmentsCard
+              collegeCode={String(userData.collegeCode)}
+              id={appointments.id}
+              userName={appointments.userName}
+              userEmail={appointments.userEmail}
+              desc={appointments.desc}
+              dateTime={appointments.dateTime}
+            />
+          ))
+        ))}
+      {selectedTab === "past" &&
+        (pastAppointments.length === 0 ? (
+          <Text style={{ textAlign: "center", marginVertical: 20 }}>
             there are no past appointments
           </Text>
         ) : (
-        pastAppointments.map((appointments) => (
-          <GenerateAppointmentsCard
-            collegeCode={String(userData.collegeCode)}
-            id={appointments.id}
-            userName={appointments.userName}
-            userEmail={appointments.userEmail}
-            desc={appointments.desc}
-            dateTime={appointments.dateTime}
-          />
-        ))
-      )
-    )}
+          pastAppointments.map((appointments) => (
+            <GenerateAppointmentsCard
+              collegeCode={String(userData.collegeCode)}
+              id={appointments.id}
+              userName={appointments.userName}
+              userEmail={appointments.userEmail}
+              desc={appointments.desc}
+              dateTime={appointments.dateTime}
+            />
+          ))
+        ))}
       {/* {meetings
         .filter((m) => m.status === selectedTab)
         .map((meeting) => (
@@ -429,9 +418,9 @@ export default function PrincipalHomePage() {
                   </Text>
                 </View>
               </View>
-              <View style= {principalHome.modelBtnOuterContainer}>
+              <View style={principalHome.modelBtnOuterContainer}>
                 {selectedTab == "pending" && (
-                  <View style= {principalHome.modelBtnContainer}>
+                  <View style={principalHome.modelBtnContainer}>
                     <TouchableOpacity
                       style={principalHome.modelMsgAcceptBtn}
                       onPress={() => acceptAppointment("accept")}
@@ -441,7 +430,7 @@ export default function PrincipalHomePage() {
                   </View>
                 )}
                 {selectedTab !== "pending" && (
-                  <View style= {principalHome.modelBtnContainer}>
+                  <View style={principalHome.modelBtnContainer}>
                     <TouchableOpacity
                       style={principalHome.modelMsgAcceptBtn}
                       onPress={() => acceptAppointment("accept")}
@@ -450,19 +439,17 @@ export default function PrincipalHomePage() {
                     </TouchableOpacity>
                   </View>
                 )}
-                
-                {selectedTab != "past" && (
-                  <View style = {principalHome.modelBtnContainer}>
-                  <TouchableOpacity
-                    style={principalHome.modelMsgCancelBtn}
-                    onPress={() => cancelAppointment()}
-                  >
-                    <Text style={{ color: "#fff" }}>Cancel</Text>
-                  </TouchableOpacity>
-                </View>
-                )
 
-                }
+                {selectedTab != "past" && (
+                  <View style={principalHome.modelBtnContainer}>
+                    <TouchableOpacity
+                      style={principalHome.modelMsgCancelBtn}
+                      onPress={() => cancelAppointment()}
+                    >
+                      <Text style={{ color: "#fff" }}>Cancel</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
               </View>
             </View>
 
