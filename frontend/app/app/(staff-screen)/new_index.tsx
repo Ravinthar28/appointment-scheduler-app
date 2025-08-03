@@ -1,13 +1,43 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, Image, TouchableOpacity, SafeAreaView, ScrollView, Modal } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  SafeAreaView,
+  ScrollView,
+  Modal,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { router, useLocalSearchParams } from "expo-router";
 
 // Dummy data for today's schedule
 const todaySchedule = [
-  { id: '1', time: '11:30', endTime: '13:00', type: 'Meeting', title: 'Discussion with Placement Cell', description: 'Discussion about upcoming company recruitment' },
-  { id: '2', time: '14:00', endTime: '15:00', type: 'Meeting', title: 'Discussion with CS HOD', description: 'Discussion about ongoing app project' },
-  { id: '3', time: '17:00', endTime: '18:00', type: 'Meeting', title: 'Discussion with Civil HOD', description: 'Discussion about ongoing app project' },
+  {
+    id: "1",
+    time: "11:30",
+    endTime: "13:00",
+    type: "Meeting",
+    title: "Discussion with Placement Cell",
+    description: "Discussion about upcoming company recruitment",
+  },
+  {
+    id: "2",
+    time: "14:00",
+    endTime: "15:00",
+    type: "Meeting",
+    title: "Discussion with CS HOD",
+    description: "Discussion about ongoing app project",
+  },
+  {
+    id: "3",
+    time: "17:00",
+    endTime: "18:00",
+    type: "Meeting",
+    title: "Discussion with Civil HOD",
+    description: "Discussion about ongoing app project",
+  },
 ];
 
 interface MeetingDetails {
@@ -42,14 +72,16 @@ const MeetingModal = ({ isVisible, onClose, meeting }: MeetingModalProps) => {
           </TouchableOpacity>
           <View style={modalStyles.modalHeader}>
             <Image
-              source={require('../../assets/images/profile.png')}
+              source={require("../../assets/images/profile.png")}
               style={modalStyles.modalAvatar}
             />
             <Text style={modalStyles.modalStaffName}>Staff-3</Text>
             <Text style={modalStyles.modalStaffEmail}>staffmail@gmail.com</Text>
           </View>
           <View style={modalStyles.modalContent}>
-            <Text style={modalStyles.modalTime}>{`${meeting.time} - ${meeting.endTime}`}</Text>
+            <Text
+              style={modalStyles.modalTime}
+            >{`${meeting.time} - ${meeting.endTime}`}</Text>
             <Text style={modalStyles.modalDescription}>
               {meeting.description}
             </Text>
@@ -60,8 +92,17 @@ const MeetingModal = ({ isVisible, onClose, meeting }: MeetingModalProps) => {
   );
 };
 
-const ScheduleCard = ({ schedule, onPress }: { schedule: typeof todaySchedule[0], onPress: (schedule: MeetingDetails) => void }) => (
-  <TouchableOpacity style={principalHome.scheduleCard} onPress={() => onPress(schedule)}>
+const ScheduleCard = ({
+  schedule,
+  onPress,
+}: {
+  schedule: (typeof todaySchedule)[0];
+  onPress: (schedule: MeetingDetails) => void;
+}) => (
+  <TouchableOpacity
+    style={principalHome.scheduleCard}
+    onPress={() => onPress(schedule)}
+  >
     <View style={principalHome.timeContainer}>
       <Text style={principalHome.timeText}>{schedule.time}</Text>
       <Text style={principalHome.endTimeText}>{schedule.endTime}</Text>
@@ -70,14 +111,22 @@ const ScheduleCard = ({ schedule, onPress }: { schedule: typeof todaySchedule[0]
     <View style={principalHome.detailsContainer}>
       <Text style={principalHome.meetingTitle}>{schedule.type}</Text>
       <Text style={principalHome.meetingSubject}>{schedule.title}</Text>
-      <Text style={principalHome.meetingDescription}>{schedule.description}</Text>
+      <Text style={principalHome.meetingDescription}>
+        {schedule.description}
+      </Text>
     </View>
   </TouchableOpacity>
 );
 
-const StaffHomeScreen = () => {
+interface homeScreenProps {
+  email?: string | string[];
+  collegeCode?: string | string[];
+}
+const HomeScreen = ({ email, collegeCode }: homeScreenProps) => {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [selectedMeeting, setSelectedMeeting] = useState<MeetingDetails | null>(null);
+  const [selectedMeeting, setSelectedMeeting] = useState<MeetingDetails | null>(
+    null
+  );
 
   const handleCardPress = (meeting: MeetingDetails) => {
     setSelectedMeeting(meeting);
@@ -85,59 +134,99 @@ const StaffHomeScreen = () => {
   };
 
   return (
-    <SafeAreaView style={principalHome.safeArea}>
+    <>
       <ScrollView style={principalHome.container}>
-        <View style={principalHome.header}>
-          <Image
-            source={require('../../assets/images/profile.png')}
-            style={principalHome.profileImage}
-          />
-        </View>
-
         <View style={principalHome.welcomeCard}>
           <Text style={principalHome.welcomeTitle}>Welcome Staff !!</Text>
-          <Text style={principalHome.welcomeText}>Hello Staff ! You have 10 meetings lined up for today Wishing you a successful day.</Text>
+          <Text style={principalHome.welcomeText}>
+            Hello Staff ! You have 10 meetings lined up for today Wishing you a
+            successful day.
+          </Text>
         </View>
 
         <View style={principalHome.mainImageContainer}>
           <Image
-            source={require('../../assets/images/Principal.jpg')}
+            source={require("../../assets/images/Principal.jpg")}
             style={principalHome.mainImage}
           />
         </View>
 
-        <TouchableOpacity style={principalHome.requestButton}>
-          <Text style={principalHome.requestButtonText}>Request Appointment</Text>
+        <TouchableOpacity
+          style={principalHome.requestButton}
+          onPress={() =>
+            router.push({
+              pathname: "/(staff-screen)/new_requestpage",
+              params: { email, collegeCode },
+            })
+          }
+        >
+          <Text style={principalHome.requestButtonText}>
+            Request Appointment
+          </Text>
         </TouchableOpacity>
 
         <Text style={principalHome.sectionTitle}>Today's Schedule</Text>
 
-        {todaySchedule.map(schedule => (
-          <ScheduleCard key={schedule.id} schedule={schedule} onPress={handleCardPress} />
+        {todaySchedule.map((schedule) => (
+          <ScheduleCard
+            key={schedule.id}
+            schedule={schedule}
+            onPress={handleCardPress}
+          />
         ))}
       </ScrollView>
 
-      <View style={principalHome.navBar}>
-        <TouchableOpacity style={principalHome.navItem}>
-          <Ionicons name="home-outline" size={24} color="#fff" />
-        </TouchableOpacity>
-        <TouchableOpacity style={principalHome.navItem}>
-          <Ionicons name="time-outline" size={24} color="#fff" />
-        </TouchableOpacity>
-        <TouchableOpacity style={principalHome.navItem}>
-          <Ionicons name="checkmark-circle-outline" size={24} color="#fff" />
-        </TouchableOpacity>
-        <TouchableOpacity style={principalHome.navItem}
-        onPress={() => router.push("/(auth-screen)/login_new")}>
-          <Ionicons name="log-out-outline" size={24} color="#fff" />
-        </TouchableOpacity>
-      </View>
-      
       <MeetingModal
         isVisible={modalVisible}
         onClose={() => setModalVisible(false)}
         meeting={selectedMeeting}
       />
+    </>
+  );
+};
+const StaffHomeScreen = () => {
+  const userData = useLocalSearchParams();
+
+  const [selectedTab, setSelectedTab] = useState<"home" | "upcoming" | "past">(
+    "upcoming"
+  );
+
+  return (
+    <SafeAreaView style={principalHome.safeArea}>
+      <View style={principalHome.header}>
+        <Image
+          source={require("../../assets/images/profile.png")}
+          style={principalHome.profileImage}
+        />
+      </View>
+
+
+    {
+      selectedTab === 'home' && <HomeScreen email={userData.email} collegeCode={userData.collegeCode} />
+    }
+      
+
+
+      <View style={principalHome.navBar}>
+        <TouchableOpacity
+          style={principalHome.navItem}
+          onPress={() => setSelectedTab("home")}
+        >
+          <Ionicons name="home-outline" size={24} color="#fff" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={principalHome.navItem}
+          onPress={() => setSelectedTab("upcoming")}
+        >
+          <Ionicons name="time-outline" size={24} color="#fff" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={principalHome.navItem}
+          onPress={() => setSelectedTab("past")}
+        >
+          <Ionicons name="checkmark-circle-outline" size={24} color="#fff" />
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
@@ -145,17 +234,17 @@ const StaffHomeScreen = () => {
 const principalHome = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F5F8FF',
+    backgroundColor: "#F5F8FF",
   },
   container: {
     flex: 1,
-    backgroundColor: '#F5F8FF',
+    backgroundColor: "#F5F8FF",
     padding: 20,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
     marginBottom: 20,
   },
   profileImage: {
@@ -164,79 +253,78 @@ const principalHome = StyleSheet.create({
     borderRadius: 20,
   },
   welcomeCard: {
-    backgroundColor: '#3E5793',
+    backgroundColor: "#3E5793",
     borderRadius: 10,
     padding: 20,
     marginBottom: 20,
   },
   welcomeTitle: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 22,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   welcomeText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 14,
     marginTop: 5,
   },
   mainImageContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: -20,
     marginBottom: 10,
-    
   },
   mainImage: {
     width: 120,
     height: 120,
     borderRadius: 60,
     borderWidth: 5,
-    borderColor: '#fff',
+    borderColor: "#fff",
   },
   requestButton: {
-    backgroundColor: '#3E5793',
+    backgroundColor: "#3E5793",
     borderRadius: 50,
     paddingVertical: 15,
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 30,
   },
   requestButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
     fontSize: 16,
   },
   sectionTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#3E5793',
+    fontWeight: "bold",
+    color: "#3E5793",
     marginBottom: 20,
   },
   scheduleCard: {
-    flexDirection: 'row',
-    backgroundColor: '#E6E9F0',
+    flexDirection: "row",
+    backgroundColor: "#E6E9F0",
     borderRadius: 10,
     padding: 15,
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: '#A8B3C7',
-    alignItems: 'center',
+    borderColor: "#A8B3C7",
+    alignItems: "center",
   },
   timeContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginRight: 15,
   },
   timeText: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#3C64B1',
+    fontWeight: "bold",
+    color: "#3C64B1",
   },
   endTimeText: {
     fontSize: 14,
-    color: '#666',
+    color: "#666",
   },
   divider: {
     width: 2,
-    height: '100%',
-    backgroundColor: '#A8B3C7',
+    height: "100%",
+    backgroundColor: "#A8B3C7",
     marginRight: 15,
   },
   detailsContainer: {
@@ -244,30 +332,30 @@ const principalHome = StyleSheet.create({
   },
   meetingTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#3C64B1',
+    fontWeight: "bold",
+    color: "#3C64B1",
   },
   meetingSubject: {
     fontSize: 14,
-    fontWeight: 'bold',
-    color: '#000',
+    fontWeight: "bold",
+    color: "#000",
   },
   meetingDescription: {
     fontSize: 12,
-    color: '#555',
+    color: "#555",
   },
   navBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: '#1C4A9E',
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    backgroundColor: "#1C4A9E",
     borderRadius: 30,
     paddingVertical: 15,
-    position: 'absolute',
+    position: "absolute",
     bottom: 20,
     left: 20,
     right: 20,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 5,
@@ -275,25 +363,25 @@ const principalHome = StyleSheet.create({
   },
   navItem: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
 const modalStyles = StyleSheet.create({
   centeredView: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalView: {
     margin: 20,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 20,
     padding: 35,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -301,15 +389,15 @@ const modalStyles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    width: '90%',
+    width: "90%",
   },
   closeButton: {
-    position: 'absolute',
+    position: "absolute",
     right: 15,
     top: 15,
   },
   modalHeader: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 20,
   },
   modalAvatar: {
@@ -320,32 +408,31 @@ const modalStyles = StyleSheet.create({
   },
   modalStaffName: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#3C64B1',
+    fontWeight: "bold",
+    color: "#3C64B1",
   },
   modalStaffEmail: {
     fontSize: 14,
-    color: '#666',
+    color: "#666",
   },
   modalContent: {
-    width: '100%',
-    alignItems: 'center',
+    width: "100%",
+    alignItems: "center",
   },
   modalTime: {
     fontSize: 16,
-    color: '#000',
-    fontWeight: 'bold',
+    color: "#000",
+    fontWeight: "bold",
     marginBottom: 10,
   },
   modalDescription: {
-    backgroundColor: '#E6E9F0',
+    backgroundColor: "#E6E9F0",
     padding: 15,
     borderRadius: 10,
     fontSize: 14,
-    color: '#555',
-    textAlign: 'center',
+    color: "#555",
+    textAlign: "center",
   },
 });
-
 
 export default StaffHomeScreen;
