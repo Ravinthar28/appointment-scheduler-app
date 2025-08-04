@@ -81,7 +81,7 @@ export default function Register() {
         });
       if (selectedRole == "staff")
         router.push({
-          pathname: "/(staff-screen)/new_index",
+          pathname: "/(staff-screen)/home",
           params: {
             email,
             collegeCode,
