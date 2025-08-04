@@ -8,9 +8,12 @@ import {
   SafeAreaView,
   ScrollView,
   Modal,
+  TextInput,
+  Platform,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, Feather } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 // Dummy data for today's schedule
 const todaySchedule = [
@@ -92,6 +95,145 @@ const MeetingModal = ({ isVisible, onClose, meeting }: MeetingModalProps) => {
   );
 };
 
+const RequestAppointmentModal = ({
+  isVisible,
+  onClose,
+}: {
+  isVisible: boolean;
+  onClose: () => void;
+}) => {
+  const [meetingDate, setMeetingDate] = useState<Date>(new Date());
+  const [reason, setReason] = useState<string>("");
+  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+  const [showTimePicker, setShowTimePicker] = useState<boolean>(false);
+
+  const onDateChange = (event: any, selectedDate?: Date) => {
+    setShowDatePicker(Platform.OS === "ios");
+    if (selectedDate) {
+      setMeetingDate(selectedDate);
+    }
+  };
+
+  const onTimeChange = (event: any, selectedTime?: Date) => {
+    setShowTimePicker(Platform.OS === "ios");
+    if (selectedTime) {
+      const newDate = new Date(
+        meetingDate.setHours(selectedTime.getHours(), selectedTime.getMinutes())
+      );
+      setMeetingDate(newDate);
+    }
+  };
+
+  const formatDate = (date: Date): string => {
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+  const formatTime = (date: Date): string => {
+    const options: Intl.DateTimeFormatOptions = {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    };
+    return date.toLocaleTimeString("en-US", options);
+  };
+
+  const handleRequestAppointment = () => {
+    console.log("Appointment Requested:");
+    console.log("Reason:", reason);
+    console.log("Date:", formatDate(meetingDate));
+    console.log("Time:", formatTime(meetingDate));
+    setReason('');
+    onClose();
+  };
+
+  return (
+    <Modal
+      animationType="fade"
+      transparent={true}
+      visible={isVisible}
+      onRequestClose={onClose}
+    >
+      <View style={modalStyles.centeredView}>
+        <View style={modalStyles.modalView}>
+          <TouchableOpacity style={modalStyles.closeButton} onPress={onClose}>
+            <Ionicons name="close" size={24} color="#000" />
+          </TouchableOpacity>
+          <Image
+            source={require("../../assets/images/Principal.jpg")}
+            style={modalStyles.modalAvatar}
+          />
+          <Text style={modalStyles.modalStaffName}>
+            Dr. C. Mathalai Sundaram
+          </Text>
+          <Text style={modalStyles.modalStaffEmail}>principal@gmail.com</Text>
+
+          <View style={modalStyles.modalContent}>
+            <TextInput
+              style={[modalStyles.textInput, modalStyles.multilineInput]}
+              placeholder="Reason for appointment"
+              multiline
+              value={reason}
+              onChangeText={setReason}
+            />
+
+            <View style={modalStyles.inputRow}>
+              <Text style={modalStyles.inputLabel}>Appointment Date:</Text>
+              <TouchableOpacity
+                style={modalStyles.inputField}
+                onPress={() => setShowDatePicker(true)}
+              >
+                <Text>{formatDate(meetingDate)}</Text>
+                <Feather name="calendar" size={20} color="#666" />
+              </TouchableOpacity>
+              {showDatePicker && (
+                <DateTimePicker
+                  value={meetingDate}
+                  mode="date"
+                  display={Platform.OS === "ios" ? "spinner" : "default"}
+                  onChange={onDateChange}
+                  minimumDate={new Date()}
+                />
+              )}
+            </View>
+
+            <View style={modalStyles.inputRow}>
+              <Text style={modalStyles.inputLabel}>Appointment Time:</Text>
+              <TouchableOpacity
+                style={modalStyles.inputField}
+                onPress={() => setShowTimePicker(true)}
+              >
+                <Text>{formatTime(meetingDate)}</Text>
+                <Ionicons name="time-outline" size={20} color="#666" />
+              </TouchableOpacity>
+              {showTimePicker && (
+                <DateTimePicker
+                  value={meetingDate}
+                  mode="time"
+                  display={Platform.OS === "ios" ? "spinner" : "default"}
+                  onChange={onTimeChange}
+                />
+              )}
+            </View>
+          </View>
+
+          <TouchableOpacity
+            style={modalStyles.bookButton}
+            onPress={handleRequestAppointment}
+          >
+            <Text style={modalStyles.bookButtonText}>
+              Request Appointment
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
 const ScheduleCard = ({
   schedule,
   onPress,
@@ -127,10 +269,21 @@ const HomeScreen = ({ email, collegeCode }: homeScreenProps) => {
   const [selectedMeeting, setSelectedMeeting] = useState<MeetingDetails | null>(
     null
   );
+  // New state to manage the visibility of the appointment request modal
+  const [isRequestModalVisible, setIsRequestModalVisible] = useState(false);
+
 
   const handleCardPress = (meeting: MeetingDetails) => {
     setSelectedMeeting(meeting);
     setModalVisible(true);
+  };
+  
+  const openRequestModal = () => {
+    setIsRequestModalVisible(true);
+  };
+  
+  const closeRequestModal = () => {
+    setIsRequestModalVisible(false);
   };
 
   return (
@@ -139,7 +292,7 @@ const HomeScreen = ({ email, collegeCode }: homeScreenProps) => {
         <View style={principalHome.welcomeCard}>
           <Text style={principalHome.welcomeTitle}>Welcome Staff !!</Text>
           <Text style={principalHome.welcomeText}>
-            Hello Staff ! You have 10 meetings lined up for today Wishing you a
+            Hello Staff ! You have meetings lined up for today Wishing you a
             successful day.
           </Text>
         </View>
@@ -151,14 +304,10 @@ const HomeScreen = ({ email, collegeCode }: homeScreenProps) => {
           />
         </View>
 
+        {/* This button now opens the RequestAppointmentModal */}
         <TouchableOpacity
           style={principalHome.requestButton}
-          onPress={() =>
-            router.push({
-              pathname: "/(staff-screen)/new_requestpage",
-              params: { email, collegeCode },
-            })
-          }
+          onPress={openRequestModal}
         >
           <Text style={principalHome.requestButtonText}>
             Request Appointment
@@ -181,6 +330,12 @@ const HomeScreen = ({ email, collegeCode }: homeScreenProps) => {
         onClose={() => setModalVisible(false)}
         meeting={selectedMeeting}
       />
+      
+      {/* The new RequestAppointmentModal is rendered here */}
+      <RequestAppointmentModal
+        isVisible={isRequestModalVisible}
+        onClose={closeRequestModal}
+      />
     </>
   );
 };
@@ -188,7 +343,7 @@ const StaffHomeScreen = () => {
   const userData = useLocalSearchParams();
 
   const [selectedTab, setSelectedTab] = useState<"home" | "upcoming" | "past">(
-    "upcoming"
+    "home" // Changed initial state to 'home' so the content shows by default
   );
 
   return (
@@ -200,11 +355,25 @@ const StaffHomeScreen = () => {
         />
       </View>
 
-
-    {
-      selectedTab === 'home' && <HomeScreen email={userData.email} collegeCode={userData.collegeCode} />
-    }
-      
+      {selectedTab === "home" && (
+        <HomeScreen
+          email={userData.email}
+          collegeCode={userData.collegeCode}
+        />
+      )}
+      {/* You can add components for other tabs here */}
+      {selectedTab === "upcoming" && (
+        <View style={principalHome.container}>
+            <Text style={principalHome.sectionTitle}>Upcoming Meetings</Text>
+            {/* Add content for upcoming meetings here */}
+        </View>
+      )}
+      {selectedTab === "past" && (
+        <View style={principalHome.container}>
+            <Text style={principalHome.sectionTitle}>Past Meetings</Text>
+            {/* Add content for past meetings here */}
+        </View>
+      )}
 
 
       <View style={principalHome.navBar}>
@@ -246,6 +415,8 @@ const principalHome = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
     marginBottom: 20,
+    paddingHorizontal: 20,
+    marginTop: 20
   },
   profileImage: {
     width: 40,
@@ -432,6 +603,53 @@ const modalStyles = StyleSheet.create({
     fontSize: 14,
     color: "#555",
     textAlign: "center",
+  },
+  textInput: {
+    backgroundColor: "#F5F8FF",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#A8B3C7",
+    padding: 10,
+    marginBottom: 15,
+    width: "100%",
+  },
+  multilineInput: {
+    minHeight: 80,
+    textAlignVertical: "top",
+  },
+  inputRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 15,
+  },
+  inputLabel: {
+    fontSize: 14,
+    color: "#000",
+  },
+  inputField: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    padding: 10,
+    marginLeft: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  bookButton: {
+    backgroundColor: "#95BD79",
+    borderRadius: 50,
+    paddingVertical: 15,
+    marginTop: 20,
+    width: "100%",
+    alignItems: "center",
+  },
+  bookButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });
 
