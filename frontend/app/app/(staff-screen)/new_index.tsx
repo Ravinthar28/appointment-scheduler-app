@@ -14,6 +14,8 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 
 import { new_principal_styles } from "../(principal-screen)/style";
 import StaffHomeScreen from "./staff_newhome";
+import UpcomingMeetingsScreen from "./upcoming";
+import PastMeetingsScreen from "./past";
 
 
 export default function PrincipalDashboard() {
@@ -43,6 +45,12 @@ export default function PrincipalDashboard() {
 
       {
         selectedTab === "home" && <StaffHomeScreen email={userData.email} collegeCode= {userData.collegeCode}/>
+      }
+      {
+        selectedTab === 'upcomming' && <UpcomingMeetingsScreen email={userData.email} collegeCode= {userData.collegeCode}/>
+      }
+      {
+        selectedTab === 'past' && <PastMeetingsScreen />
       }
       
 

@@ -14,62 +14,66 @@ import { Ionicons } from "@expo/vector-icons";
 
 import RequestAppointmentModal from "../(staff-screen)/request_page";
 import { baseUrl } from "../apiUrl";
+import NoNewAppointmentsScreen from "../(principal-screen)/no_appointment";
 
 // Dummy data and other components remain the same
-const todaySchedule = [
-  {
-    id: "1",
-    time: "11:30",
-    endTime: "13:00",
-    type: "Meeting",
-    title: "Discussion with Placement Cell",
-    description: "Discussion about upcoming company recruitment",
-  },
-  {
-    id: "2",
-    time: "14:00",
-    endTime: "15:00",
-    type: "Meeting",
-    title: "Discussion with CS HOD",
-    description: "Discussion about ongoing app project",
-  },
-  {
-    id: "3",
-    time: "17:00",
-    endTime: "18:00",
-    type: "Meeting",
-    title: "Discussion with Civil HOD",
-    description: "Discussion about ongoing app project",
-  },
-];
-
+// const todaySchedule = [
+//   {
+//     id: "1",
+//     time: "11:30",
+//     endTime: "13:00",
+//     type: "Meeting",
+//     title: "Discussion with Placement Cell",
+//     description: "Discussion about upcoming company recruitment",
+//   },
+//   {
+//     id: "2",
+//     time: "14:00",
+//     endTime: "15:00",
+//     type: "Meeting",
+//     title: "Discussion with CS HOD",
+//     description: "Discussion about ongoing app project",
+//   },
+//   {
+//     id: "3",
+//     time: "17:00",
+//     endTime: "18:00",
+//     type: "Meeting",
+//     title: "Discussion with Civil HOD",
+//     description: "Discussion about ongoing app project",
+//   },
+// ];
 
 interface appointments {
-    collegeCode:string,
-    _id:string,
-    userName: string;
-    userEmail:string
-    desc: string;
-    dateTime: Date;
-  }
+  collegeCode: string;
+  _id: string;
+  userName: string;
+  userEmail: string;
+  desc: string;
+  dateTime: Date;
+}
 interface MeetingModalProps {
   isVisible: boolean;
   onClose: () => void;
   meeting: appointments | null;
 }
 
-   // FUNCTION TO EXTRACT THE DATE AND TIME FORMAT
-    const extractDateTime = (dateTime : Date) => {
-      const dateObject = new Date(dateTime);
-      const date = dateObject.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
-      const time = `${(dateObject.getHours() > 12)? dateObject.getHours()-12: dateObject.getHours()}:${dateObject.getMinutes()} ${(dateObject.getHours() > 12) ? 'PM' : 'AM'}`;
+// FUNCTION TO EXTRACT THE DATE AND TIME FORMAT
+const extractDateTime = (dateTime: Date) => {
+  const dateObject = new Date(dateTime);
+  const date = dateObject.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+  const time = `${
+    dateObject.getHours() > 12
+      ? dateObject.getHours() - 12
+      : dateObject.getHours()
+  }:${dateObject.getMinutes()} ${dateObject.getHours() > 12 ? "PM" : "AM"}`;
 
-      return `${date}, ${time}`;
-    };
+  return `${date}, ${time}`;
+};
 
 // Keep the MeetingModal here since it's specific to this screen's schedule cards
 const MeetingModal = ({ isVisible, onClose, meeting }: MeetingModalProps) => {
@@ -96,12 +100,10 @@ const MeetingModal = ({ isVisible, onClose, meeting }: MeetingModalProps) => {
             <Text style={modalStyles.modalStaffEmail}>{meeting.userEmail}</Text>
           </View>
           <View style={modalStyles.modalContent}>
-            <Text
-              style={modalStyles.modalTime}
-            >{extractDateTime(meeting.dateTime)}</Text>
-            <Text style={modalStyles.modalDescription}>
-              {meeting.desc}
+            <Text style={modalStyles.modalTime}>
+              {extractDateTime(meeting.dateTime)}
             </Text>
+            <Text style={modalStyles.modalDescription}>{meeting.desc}</Text>
           </View>
         </View>
       </View>
@@ -113,7 +115,7 @@ const ScheduleCard = ({
   schedule,
   onPress,
 }: {
-  schedule: appointments
+  schedule: appointments;
   onPress: (schedule: appointments) => void;
 }) => (
   <TouchableOpacity
@@ -121,45 +123,35 @@ const ScheduleCard = ({
     onPress={() => onPress(schedule)}
   >
     <View style={principalHome.timeContainer}>
-      <Text style={principalHome.timeText}>{}</Text>
+      <Text style={principalHome.timeText}>
+  {new Date(schedule.dateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+</Text>
+
       {/* <Text style={principalHome.endTimeText}>{schedule.endTime}</Text> */}
     </View>
     <View style={principalHome.divider} />
     <View style={principalHome.detailsContainer}>
-      <Text style={principalHome.meetingTitle}>{schedule.userName}</Text>
-      <Text style={principalHome.meetingSubject}>{schedule.userEmail}</Text>
-      <Text style={principalHome.meetingDescription}>
-        {schedule.desc}
-      </Text>
+      <Text style={principalHome.meetingTitle}>Appointment with Principal</Text>
+      {/* <Text style={principalHome.meetingSubject}>{schedule.userEmail}</Text> */}
+      <Text style={principalHome.meetingDescription} numberOfLines={1}>{schedule.desc}</Text>
     </View>
   </TouchableOpacity>
 );
 
-interface staffHomeScreenProps{
-  email:string | string[],
-  collegeCode:string | string[]
+interface staffHomeScreenProps {
+  email: string;
+  collegeCode: string;
 }
-const StaffHomeScreen = ({email,collegeCode}:staffHomeScreenProps) => {
-
+const StaffHomeScreen = ({ email, collegeCode }: staffHomeScreenProps) => {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [selectedMeeting, setSelectedMeeting] = useState<appointments | null>(
     null
   );
   const [isRequestModalVisible, setIsRequestModalVisible] = useState(false);
 
-
-  const dataTemplate = {
-      _id:"",
-      collegeCode:"",
-      userName: "",
-      userEmail:"",
-      desc: "",
-      dateTime: new Date(),
-    }
-
-    const [upcomingAppointments, setUpcomingAppointments] = useState([dataTemplate]);
-
-  
+  const [upcomingAppointments, setUpcomingAppointments] = useState<
+    appointments[]
+  >([]);
 
   const handleCardPress = (meeting: appointments) => {
     setSelectedMeeting(meeting);
@@ -176,76 +168,95 @@ const StaffHomeScreen = ({email,collegeCode}:staffHomeScreenProps) => {
 
   const renderHomeContent = () => {
     // FUNCTION TO FETCH THE APPOINTMENT DATAS FROM DB
-      const fetchAppointmentData = async ()=>{
-        try{
-          const url = `${baseUrl}/staff/fetch-appointments`;
-          const response = await fetch(url,{
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({email,collegeCode})
-          });
-          if(! response.ok) throw new Error("Faild to load data");
-          const data = await response.json();
-          console.log(data);
-          setUpcomingAppointments(data.upcomingAppointments);
-        }
-        catch(error){
-          console.log(error);
-        }
+    const fetchAppointmentData = async () => {
+      try {
+        const url = `${baseUrl}/staff/fetch-appointments`;
+        const response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, collegeCode }),
+        });
+        if (!response.ok) throw new Error("Faild to load data");
+        const data = await response.json();
+        console.log(data);
+        setUpcomingAppointments(data.upcomingAppointments);
+      } catch (error) {
+        console.log(error);
       }
+    };
 
-    useEffect(()=>{
-          fetchAppointmentData();
-          console.log(upcomingAppointments);
-        },[]);
-    return(
+    useEffect(() => {
+      fetchAppointmentData();
+    }, []);
+
+    function UpComingAppointmentsCards() {
+      return (
+        <>
+          {upcomingAppointments
+            .filter((appointment) => {
+              const apptDate = new Date(appointment?.dateTime);
+              const today = new Date();
+
+              return (
+                apptDate.getDate() === today.getDate() &&
+                apptDate.getMonth() === today.getMonth() &&
+                apptDate.getFullYear() === today.getFullYear()
+              );
+            })
+            .map((schedule) => (
+              <ScheduleCard
+                key={schedule._id}
+                schedule={schedule}
+                onPress={handleCardPress}
+              />
+            ))}
+        </>
+      );
+    }
+    return (
       <>
-      <View style={principalHome.welcomeCard}>
-        <Text style={principalHome.welcomeTitle}>Welcome Staff !!</Text>
-        <Text style={principalHome.welcomeText}>
-          Hello Staff! You have meetings lined up for today. Wishing you a
-          successful day.
-        </Text>
-      </View>
+        <View style={principalHome.welcomeCard}>
+          <Text style={principalHome.welcomeTitle}>Welcome Staff !!</Text>
+          <Text style={principalHome.welcomeText}>
+            Hello Staff! You have meetings lined up for today. Wishing you a
+            successful day.
+          </Text>
+        </View>
 
-      <View style={principalHome.mainImageContainer}>
-        <Image
-          source={require("../../assets/images/Principal.jpg")}
-          style={principalHome.mainImage}
-        />
-      </View>
-
-      <TouchableOpacity
-        style={principalHome.requestButton}
-        onPress={openRequestModal}
-      >
-        <Text style={principalHome.requestButtonText}>Request Appointment</Text>
-      </TouchableOpacity>
-
-      <View>
-        <Text style={principalHome.sectionTitle}>Today's Schedule</Text>
-        {upcomingAppointments.map((schedule) => (
-          <ScheduleCard
-            key={schedule._id}
-            schedule={schedule}
-            onPress={handleCardPress}
+        <View style={principalHome.mainImageContainer}>
+          <Image
+            source={require("../../assets/images/Principal.jpg")}
+            style={principalHome.mainImage}
           />
-        ))}
-      </View>
-    </>
-    )
+        </View>
+
+        <TouchableOpacity
+          style={principalHome.requestButton}
+          onPress={openRequestModal}
+        >
+          <Text style={principalHome.requestButtonText}>
+            Request Appointment
+          </Text>
+        </TouchableOpacity>
+
+        <View>
+          <Text style={principalHome.sectionTitle}>Today's Schedule</Text>
+          {upcomingAppointments.length === 0 ? (
+            <NoNewAppointmentsScreen />
+          ) : (
+            <UpComingAppointmentsCards />
+          )}
+        </View>
+      </>
+    );
   };
 
   return (
     <>
       <View style={{ flex: 1, backgroundColor: "#F5F8FF" }}>
-
         <ScrollView contentContainerStyle={principalHome.scrollViewContent}>
-          {
-            renderHomeContent()
-          }
+          {renderHomeContent()}
         </ScrollView>
-
 
         <MeetingModal
           isVisible={modalVisible}
@@ -256,13 +267,15 @@ const StaffHomeScreen = ({email,collegeCode}:staffHomeScreenProps) => {
         <RequestAppointmentModal
           isVisible={isRequestModalVisible}
           onClose={closeRequestModal}
+          email={email}
+          collegeCode={collegeCode}
         />
       </View>
     </>
   );
 };
 
-const principalHome = StyleSheet.create({
+export const principalHome = StyleSheet.create({
   scrollViewContent: {
     flexGrow: 1,
     paddingHorizontal: 20,
@@ -368,7 +381,7 @@ const principalHome = StyleSheet.create({
   },
 });
 
-const modalStyles = StyleSheet.create({
+export const modalStyles = StyleSheet.create({
   centeredView: {
     flex: 1,
     justifyContent: "center",

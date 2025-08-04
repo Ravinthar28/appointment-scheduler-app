@@ -8,16 +8,22 @@ import {
   TouchableOpacity,
   Image,
   Platform,
+  Alert,
 } from "react-native";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { baseUrl } from "../apiUrl";
 
 const RequestAppointmentModal = ({
   isVisible,
   onClose,
+  email,
+  collegeCode
 }: {
   isVisible: boolean;
   onClose: () => void;
+  email:string;
+  collegeCode:string
 }) => {
   const [meetingDate, setMeetingDate] = useState<Date>(new Date());
   const [reason, setReason] = useState<string>("");
@@ -57,6 +63,58 @@ const RequestAppointmentModal = ({
     };
     return date.toLocaleTimeString("en-US", options);
   };
+
+
+    // FUNCTION TO VALIDATE THE APPOINTMENT FORM AND TO STORE IT IN THE DB
+    const handleSchedule = async () => {
+  
+      if (!reason.trim()) {
+        alert(`Validation Error Please enter appointment details`);
+        return;
+      }
+  
+  
+      // Alert.alert('Appointment Scheduled', `On ${meetingDate.toLocaleString()}`, [
+      //   {
+      //     text: 'OK',
+      //     onPress: () => {
+      //       // ✅ Navigate to staff home after scheduling
+      //       router.push({
+      //         pathname:'/(staff-screen)/home',
+      //         params:userData
+      //       });
+      //     },
+      //   },
+      // ]);
+  
+      try{
+        const messageData = {
+          email:email,
+          collegeCode:collegeCode,
+          desc:reason,
+          dateTime:meetingDate
+        }
+        console.log(messageData);
+        const url = `${baseUrl}/principal/appointment-request`;
+        const response = await fetch(url,{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(messageData)
+        });
+        if(! response.ok) throw new Error("Faild to save the message");
+        alert('Request sent to the principal successfully');
+        // router.push({
+        //   pathname:'/(staff-screen)/home',
+        //   params:userData
+        // });
+      }
+      catch(error){
+        alert('Error in requesting');
+        console.log(error);
+      }
+      setReason("");
+      onClose();
+    };
 
   const handleRequestAppointment = () => {
     console.log("Appointment Requested:");
@@ -139,7 +197,7 @@ const RequestAppointmentModal = ({
 
           <TouchableOpacity
             style={modalStyles.bookButton}
-            onPress={handleRequestAppointment}
+            onPress={handleSchedule}
           >
             <Text style={modalStyles.bookButtonText}>
               Request Appointment
