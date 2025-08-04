@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, Image, TouchableOpacity, SafeAreaView, ScrollView, Modal } from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableOpacity, SafeAreaView, ScrollView, Modal, Platform } from 'react-native';
 import { Ionicons, FontAwesome5, Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { baseUrl } from '../apiUrl';
 import NoNewAppointmentsScreen from './no_appointment';
+
+// You will need to install this library:
+// npm install @react-native-community/datetimepicker
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 interface confirmAppointmentProps {
   email?: string | string[],
@@ -19,22 +23,20 @@ interface appointments {
   dateTime: Date;
 }
 
-// NEW INTERFACE: This now includes the formatted date and time strings for the modal
 interface AppointmentWithDateTime extends appointments {
   date: string;
   time: string;
 }
 
 const ConfirmedAppointmentsScreen = ({ email, collegeCode }: confirmAppointmentProps) => {
-  // The selectedAppointment state is now typed with the new interface
-  const [selectedAppointment, setSelectedAppointment] = useState<AppointmentWithDateTime | null>(
-    null
-  );
-  const [refreshing, setRefreshing] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState<AppointmentWithDateTime | null>(null);
   const [confirmedAppointments, setConfirmedAppointments] = useState<appointments[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isRescheduleModalVisible, setIsRescheduleModalVisible] = useState(false); // New state for reschedule modal
+  const [rescheduleDateTime, setRescheduleDateTime] = useState<Date>(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
 
-  // FUNCTION TO EXTRACT THE DATE AND TIME FORMAT
   const extractDateTime = (dateTime: Date) => {
     const dateObject = new Date(dateTime);
     const date = dateObject.toLocaleDateString("en-US", {
@@ -47,11 +49,9 @@ const ConfirmedAppointmentsScreen = ({ email, collegeCode }: confirmAppointmentP
       minute: '2-digit',
       hour12: true,
     });
-
     return { date, time };
   };
 
-  // FUNCTION TO FETCH THE REQUESTS DATA FROM THE DB
   const fetchRequest = async () => {
     try {
       const url = `${baseUrl}/principal/appointments-data`;
@@ -67,36 +67,51 @@ const ConfirmedAppointmentsScreen = ({ email, collegeCode }: confirmAppointmentP
     }
   };
 
-  // Refresh control function
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    await fetchRequest();
-    setRefreshing(false);
-  };
-
-  // Function to show the modal with appointment details
   const showAppointmentDetails = (appointment: appointments) => {
     const { date, time } = extractDateTime(new Date(appointment.dateTime));
-    // The state is now correctly set with the new properties
     setSelectedAppointment({ ...appointment, date, time });
     setIsModalVisible(true);
+    setRescheduleDateTime(new Date(appointment.dateTime));
   };
 
-  // Function to close the modal
   const closeModal = () => {
     setIsModalVisible(false);
     setSelectedAppointment(null);
   };
 
-  // Modal button handlers
+  const closeRescheduleModal = () => {
+    setIsRescheduleModalVisible(false);
+  };
+
   const handleReschedule = () => {
-    console.log("Reschedule button pressed for:", selectedAppointment);
     closeModal();
+    setIsRescheduleModalVisible(true);
+  };
+
+  const handleConfirmReschedule = () => {
+    console.log("Confirm reschedule button pressed");
+    console.log("Appointment ID:", selectedAppointment?.id);
+    console.log("New Date:", rescheduleDateTime.toLocaleDateString());
+    console.log("New Time:", rescheduleDateTime.toLocaleTimeString());
+    // Here you would add the API call to update the appointment
+    closeRescheduleModal();
   };
 
   const handleCancel = () => {
     console.log("Cancel button pressed for:", selectedAppointment);
     closeModal();
+  };
+
+  const onDateChange = (event: any, selectedDate?: Date) => {
+    const currentDate = selectedDate || rescheduleDateTime;
+    setShowDatePicker(Platform.OS === 'ios');
+    setRescheduleDateTime(currentDate);
+  };
+
+  const onTimeChange = (event: any, selectedTime?: Date) => {
+    const currentTime = selectedTime || rescheduleDateTime;
+    setShowTimePicker(Platform.OS === 'ios');
+    setRescheduleDateTime(currentTime);
   };
 
   const AppointmentCard = ({
@@ -148,37 +163,22 @@ const ConfirmedAppointmentsScreen = ({ email, collegeCode }: confirmAppointmentP
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Confirmed Appointments:</Text>
-
       {confirmedAppointments.length === 0 ? <NoNewAppointmentsScreen /> : <AppointmentScreen />}
-
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={isModalVisible}
-        onRequestClose={closeModal}
-      >
+      
+      {/* Main Appointment Details Modal */}
+      <Modal animationType="fade" transparent={true} visible={isModalVisible} onRequestClose={closeModal}>
         <View style={modalStyles.centeredView}>
           <View style={modalStyles.modalView}>
             <TouchableOpacity onPress={closeModal} style={modalStyles.closeButton}>
               <Ionicons name="close" size={24} color="#000" />
             </TouchableOpacity>
-
-            <Image
-              source={require('../../assets/images/profile.png')}
-              style={modalStyles.modalProfilePic}
-            />
-
+            <Image source={require('../../assets/images/profile.png')} style={modalStyles.modalProfilePic} />
             {selectedAppointment && (
               <>
                 <Text style={modalStyles.modalTitle}>{selectedAppointment.userName}</Text>
                 <Text style={modalStyles.modalText}>{selectedAppointment.userEmail}</Text>
-                
                 <Text style={modalStyles.modalDateTime}>{selectedAppointment.date} at {selectedAppointment.time}</Text>
-
-                <Text style={modalStyles.modalDescription}>
-                  {selectedAppointment.desc}
-                </Text>
-
+                <Text style={modalStyles.modalDescription}>{selectedAppointment.desc}</Text>
                 <View style={modalStyles.modalButtonContainer}>
                   <TouchableOpacity style={modalStyles.rescheduleButton} onPress={handleReschedule}>
                     <Text style={modalStyles.buttonText}>Reschedule</Text>
@@ -192,177 +192,101 @@ const ConfirmedAppointmentsScreen = ({ email, collegeCode }: confirmAppointmentP
           </View>
         </View>
       </Modal>
+
+      {/* Reschedule Modal */}
+      <Modal animationType="fade" transparent={true} visible={isRescheduleModalVisible} onRequestClose={closeRescheduleModal}>
+        <View style={modalStyles.centeredView}>
+          <View style={modalStyles.modalView}>
+            <TouchableOpacity onPress={closeRescheduleModal} style={modalStyles.closeButton}>
+              <Ionicons name="close" size={24} color="#000" />
+            </TouchableOpacity>
+            <Text style={rescheduleModalStyles.modalTitle}>Reschedule Appointment</Text>
+            <Text style={rescheduleModalStyles.currentDateTime}>Current: {selectedAppointment?.date} at {selectedAppointment?.time}</Text>
+
+            <View style={rescheduleModalStyles.pickerContainer}>
+              <Text style={rescheduleModalStyles.pickerLabel}>New Date:</Text>
+              <TouchableOpacity onPress={() => setShowDatePicker(true)} style={rescheduleModalStyles.pickerButton}>
+                <Text style={rescheduleModalStyles.pickerButtonText}>{rescheduleDateTime.toLocaleDateString()}</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={rescheduleModalStyles.pickerContainer}>
+              <Text style={rescheduleModalStyles.pickerLabel}>New Time:</Text>
+              <TouchableOpacity onPress={() => setShowTimePicker(true)} style={rescheduleModalStyles.pickerButton}>
+                <Text style={rescheduleModalStyles.pickerButtonText}>{rescheduleDateTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: true})}</Text>
+              </TouchableOpacity>
+            </View>
+
+            {showDatePicker && (
+              <DateTimePicker
+                value={rescheduleDateTime}
+                mode="date"
+                display="default"
+                onChange={onDateChange}
+              />
+            )}
+            {showTimePicker && (
+              <DateTimePicker
+                value={rescheduleDateTime}
+                mode="time"
+                display="default"
+                onChange={onTimeChange}
+              />
+            )}
+            
+            <TouchableOpacity style={rescheduleModalStyles.confirmButton} onPress={handleConfirmReschedule}>
+              <Text style={rescheduleModalStyles.confirmButtonText}>Confirm Reschedule</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#F5F8FF',
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F8FF',
-    paddingHorizontal: 20,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 30,
-    backgroundColor: '#3E5793',
-    padding: 15,
-  },
-  profileImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    borderWidth: 2,
-    borderColor: '#fff',
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#3E5793',
-    marginBottom: 20,
-    marginTop: 20,
-  },
-  listContainer: {
-    flex: 1,
-    paddingBottom: 80,
-  },
-  card: {
-    backgroundColor: '#E6E9F0',
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: '#A8B3C7',
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  staffAvatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 15,
-  },
-  cardTitleContainer: {
-    flex: 1,
-  },
-  staffName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#3C64B1',
-  },
-  staffEmail: {
-    fontSize: 12,
-    color: '#666',
-  },
-  settingsIcon: {
-    padding: 5,
-  },
-  cardContent: {
-    flexDirection: 'row',
-    marginTop: 5,
-  },
-  subTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#000',
-    marginRight: 5,
-  },
-  subText: {
-    flex: 1,
-    fontSize: 14,
-    color: '#555',
-  },
+  safeArea: { flex: 1, backgroundColor: '#F5F8FF' },
+  container: { flex: 1, backgroundColor: '#F5F8FF', paddingHorizontal: 20 },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 30, backgroundColor: '#3E5793', padding: 15 },
+  profileImage: { width: 40, height: 40, borderRadius: 20, borderWidth: 2, borderColor: '#fff' },
+  title: { fontSize: 28, fontWeight: 'bold', color: '#3E5793', marginBottom: 20, marginTop: 20 },
+  listContainer: { flex: 1, paddingBottom: 80 },
+  card: { backgroundColor: '#E6E9F0', borderRadius: 10, padding: 15, marginBottom: 15, borderWidth: 1, borderColor: '#A8B3C7' },
+  cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
+  staffAvatar: { width: 50, height: 50, borderRadius: 25, marginRight: 15 },
+  cardTitleContainer: { flex: 1 },
+  staffName: { fontSize: 18, fontWeight: 'bold', color: '#3C64B1' },
+  staffEmail: { fontSize: 12, color: '#666' },
+  settingsIcon: { padding: 5 },
+  cardContent: { flexDirection: 'row', marginTop: 5 },
+  subTitle: { fontSize: 14, fontWeight: 'bold', color: '#000', marginRight: 5 },
+  subText: { flex: 1, fontSize: 14, color: '#555' },
 });
 
 const modalStyles = StyleSheet.create({
-  centeredView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalView: {
-    width: '90%',
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 25,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  closeButton: {
-    position: 'absolute',
-    top: 15,
-    right: 15,
-  },
-  modalProfilePic: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginBottom: 10,
-  },
-  modalTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#3C64B1',
-    marginBottom: 5,
-  },
-  modalText: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 15,
-  },
-  modalDescription: {
-    fontSize: 16,
-    color: '#333',
-    textAlign: 'center',
-    lineHeight: 22,
-    marginBottom: 10,
-  },
-  modalDateTime: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 20,
-  },
-  modalButtonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-  },
-  rescheduleButton: {
-    flex: 1,
-    backgroundColor: '#FFC107',
-    borderRadius: 10,
-    paddingVertical: 12,
-    marginRight: 10,
-    alignItems: 'center',
-  },
-  cancelButton: {
-    flex: 1,
-    backgroundColor: '#F44336',
-    borderRadius: 10,
-    paddingVertical: 12,
-    marginLeft: 10,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
+  centeredView: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+  modalView: { width: '90%', backgroundColor: 'white', borderRadius: 20, padding: 25, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 4, elevation: 5 },
+  closeButton: { position: 'absolute', top: 15, right: 15 },
+  modalProfilePic: { width: 80, height: 80, borderRadius: 40, marginBottom: 10 },
+  modalTitle: { fontSize: 24, fontWeight: 'bold', color: '#3C64B1', marginBottom: 5 },
+  modalText: { fontSize: 16, color: '#666', marginBottom: 15 },
+  modalDescription: { fontSize: 16, color: '#333', textAlign: 'center', lineHeight: 22, marginBottom: 10 },
+  modalDateTime: { fontSize: 16, fontWeight: 'bold', color: '#333', marginBottom: 20 },
+  modalButtonContainer: { flexDirection: 'row', justifyContent: 'space-between', width: '100%' },
+  rescheduleButton: { flex: 1, backgroundColor: '#FFC107', borderRadius: 10, paddingVertical: 12, marginRight: 10, alignItems: 'center' },
+  cancelButton: { flex: 1, backgroundColor: '#F44336', borderRadius: 10, paddingVertical: 12, marginLeft: 10, alignItems: 'center' },
+  buttonText: { color: 'white', fontWeight: 'bold', fontSize: 16 },
+});
+
+const rescheduleModalStyles = StyleSheet.create({
+  modalTitle: { fontSize: 24, fontWeight: 'bold', color: '#3C64B1', marginBottom: 10 },
+  currentDateTime: { fontSize: 16, color: '#666', marginBottom: 20 },
+  pickerContainer: { flexDirection: 'row', alignItems: 'center', width: '100%', marginBottom: 15 },
+  pickerLabel: { flex: 1, fontSize: 16, fontWeight: 'bold', color: '#3C64B1' },
+  pickerButton: { flex: 2, borderWidth: 1, borderColor: '#A8B3C7', borderRadius: 8, padding: 10, alignItems: 'center' },
+  pickerButtonText: { fontSize: 16 },
+  confirmButton: { backgroundColor: '#28a745', borderRadius: 10, paddingVertical: 12, marginTop: 20, width: '100%', alignItems: 'center' },
+  confirmButtonText: { color: 'white', fontWeight: 'bold', fontSize: 16 },
 });
 
 export default ConfirmedAppointmentsScreen;
