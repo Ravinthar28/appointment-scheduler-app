@@ -1,143 +1,179 @@
-import React, { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  TouchableOpacity,
-  Image,
-  Modal, // Import Modal
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import {
-  Ionicons,
-  MaterialCommunityIcons,
-  FontAwesome,
-} from "@expo/vector-icons";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, Text, Image, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
+import { Ionicons, FontAwesome5, Feather } from '@expo/vector-icons';
+import { baseUrl } from '../apiUrl';
+import NoNewAppointmentsScreen from './no_appointment';
 
-import { new_principal_styles } from "./style";
-import PrincipalHome from "./principal_home";
-import PendingAppointmentsScreen from "./pending_appointments";
-import ConfirmedAppointmentsScreen from "./confirm_appointments";
-import CancelAppointmentsScreen from "./cancel_appointment";
+// Define the same interface here as in PrincipalDashboard.js
+// This ensures type safety across components.
+interface MeetingData {
+  id: string;
+  staffName: string;
+  staffEmail: string;
+  reason: string;
+  date: string;
+  time: string;
+}
 
-export default function PrincipalDashboard() {
-  const router = useRouter();
+// Define props for this component, including the onPressMeeting function
+interface PendingAppointmentsScreenProps {
+  email?: string | string[];
+  collegeCode?: string | string[];
+  selectedTab: string;
+  onPressMeeting: (meeting: MeetingData) => void;
+}
 
-  const [selectedTab, setSelectedTab] = useState<
-    "home" | "pending" | "confirmed" | "past"
-  >("home");
-  
-  // PARAMETER VALUES
-  const userData = useLocalSearchParams();
+// The component is now correctly typed to accept all props, including onPressMeeting
+const PendingAppointmentsScreen = ({ email, collegeCode, onPressMeeting }: PendingAppointmentsScreenProps) => {
+  const [pendingAppointments, setPendingAppointments] = useState<MeetingData[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
 
-  // State for the modal
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedMeeting, setSelectedMeeting] = useState(null);
-
-  // Function to show the modal with meeting details
-  const showMeetingDetails = (meetingData) => {
-    setSelectedMeeting(meetingData);
-    setIsModalVisible(true);
+  // FUNCTION TO FETCH THE REQUESTS DATA FROM THE DB
+  const fetchRequest = async () => {
+    try {
+      const url = `${baseUrl}/principal/pending-appointments`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, collegeCode }),
+      });
+      const result = await response.json();
+      // Assuming the API returns data that matches the MeetingData interface
+      setPendingAppointments(result.pendingAppointments);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  // Function to close the modal
-  const closeModal = () => {
-    setIsModalVisible(false);
-    setSelectedMeeting(null);
+  // refresh control function
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchRequest();
+    setRefreshing(false);
   };
 
-  const handleAccept = () => {
-    // Logic to handle accepting the meeting
-    console.log("Meeting accepted:", selectedMeeting);
-    // You would typically call an API here
-    closeModal();
-  };
+  // The AppointmentCard component is now a TouchableOpacity
+  const AppointmentCard = ({
+    id,
+    staffName,
+    staffEmail,
+    reason,
+    date,
+    time,
+  }: MeetingData) => (
+    <TouchableOpacity
+      style={styles.card}
+      // When pressed, call the onPressMeeting function with the correct data structure
+      onPress={() => onPressMeeting({ id, staffName, staffEmail, reason, date, time })}
+    >
+      <View style={styles.cardHeader}>
+        <Image
+          source={require('../../assets/images/profile.png')}
+          style={styles.staffAvatar}
+        />
+        <View style={styles.cardTitleContainer}>
+          <Text style={styles.staffName}>{staffName}</Text>
+          <Text style={styles.staffEmail}>{staffEmail}</Text>
+        </View>
+        <TouchableOpacity style={styles.settingsIcon}>
+          <Feather name="settings" size={20} color="#888" />
+        </TouchableOpacity>
+      </View>
+      <View style={styles.cardContent}>
+        <Text style={styles.subTitle}>Reason:</Text>
+        <Text style={styles.subText}>{reason}</Text>
+      </View>
+    </TouchableOpacity>
+  );
 
-  const handleReject = () => {
-    // Logic to handle rejecting the meeting
-    console.log("Meeting rejected:", selectedMeeting);
-    // You would typically call an API here
-    closeModal();
-  };
+  useEffect(() => {
+    fetchRequest();
+  }, []);
+
+  function AppointmentScreen() {
+    return (
+      <ScrollView style={styles.listContainer}>
+        {pendingAppointments.map(appointment => (
+          <AppointmentCard key={appointment.id} {...appointment} />
+        ))}
+      </ScrollView>
+    );
+  }
 
   return (
-    <LinearGradient
-      colors={["#E0E8F7", "#F0F4F9"]}
-      style={new_principal_styles.container}
-    >
-      <View style={new_principal_styles.header}>
-        <Image
-          source={require("../../assets//images//profile.png")}
-          style={new_principal_styles.profilePic}
-        />
-        <TouchableOpacity>
-          <Ionicons name="log-out-outline" size={30} color="#fff" />
-        </TouchableOpacity>
-      </View>
-
-      {selectedTab === "home" && <PrincipalHome email={userData.email} collegeCode={userData.collegeCode} />}
-      {selectedTab === 'pending' && (
-        <PendingAppointmentsScreen
-          email={userData.email}
-          collegeCode={userData.collegeCode}
-          selectedTab="pending"
-          onPressMeeting={showMeetingDetails} // Pass the function to the child component
-        />
-      )}
-      {selectedTab === "confirmed" && <ConfirmedAppointmentsScreen email={userData.email} collegeCode={userData.collegeCode} />}
-      {selectedTab === "past" && <CancelAppointmentsScreen email={userData.email} collegeCode={userData.collegeCode} />}
-
-      <View style={new_principal_styles.bottomNavBar}>
-        <TouchableOpacity style={new_principal_styles.navItem} onPress={() => setSelectedTab('home')}>
-          <Ionicons name="home" size={28} color="#fff" />
-        </TouchableOpacity>
-        <TouchableOpacity style={new_principal_styles.navItem} onPress={() => setSelectedTab('pending')}>
-          <MaterialCommunityIcons name="history" size={28} color="#A7B7DC" />
-        </TouchableOpacity>
-        <TouchableOpacity style={new_principal_styles.navItem} onPress={() => setSelectedTab('confirmed')}>
-          <Ionicons name="checkmark-circle-outline" size={28} color="#A7B7DC" />
-        </TouchableOpacity>
-        <TouchableOpacity style={new_principal_styles.navItem} onPress={() => setSelectedTab('past')}>
-          <FontAwesome name="calendar" size={28} color="#A7B7DC" />
-        </TouchableOpacity>
-      </View>
-
-      {/* The Modal Component */}
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={isModalVisible}
-        onRequestClose={closeModal}
-      >
-        <View style={new_principal_styles.modalCenteredView}>
-          <View style={new_principal_styles.modalView}>
-            {/* Close Button */}
-            <TouchableOpacity onPress={closeModal} style={new_principal_styles.closeButton}>
-              <Ionicons name="close" size={24} color="#000" />
-            </TouchableOpacity>
-
-            {/* Content from the image */}
-            <Image
-              source={require("../../assets/images/profile.png")} // Use the profile image or a specific image for the student
-              style={new_principal_styles.modalProfilePic}
-            />
-            
-            {selectedMeeting && (
-              <>
-                <Text style={new_principal_styles.modalTitle}>{selectedMeeting.staffName}</Text>
-                <Text style={new_principal_styles.modalText}>
-                  {selectedMeeting.staffEmail}
-                <Text style={new_principal_styles.modalReasonTitle}>Reason:</Text>
-                <Text style={new_principal_styles.modalReasonText}>{selectedMeeting.reason}</Text>
-                <Text style={new_principal_styles.modalDateTime}>{selectedMeeting.date} at {selectedMeeting.time}</Text>
-                </Text>
-              </>
-            )}
-          </View>
-        </View>
-      </Modal>
-    </LinearGradient>
+    <View style={styles.container}>
+      <Text style={styles.title}>New Appointments</Text>
+      {pendingAppointments.length === 0 ? <NoNewAppointmentsScreen /> : <AppointmentScreen />}
+    </View>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F8FF',
+    paddingHorizontal: 20,
+    paddingTop: 20,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#3E5793',
+    marginBottom: 20,
+  },
+  listContainer: {
+    flex: 1,
+    paddingBottom: 80, // Adds space for the bottom nav bar
+  },
+  card: {
+    backgroundColor: '#E6E9F0',
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: '#A8B3C7',
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  staffAvatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 15,
+  },
+  cardTitleContainer: {
+    flex: 1,
+  },
+  staffName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#3C64B1',
+  },
+  staffEmail: {
+    fontSize: 12,
+    color: '#666',
+  },
+  settingsIcon: {
+    padding: 5,
+  },
+  cardContent: {
+    flexDirection: 'row',
+    marginTop: 5,
+  },
+  subTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#000',
+    marginRight: 5,
+  },
+  subText: {
+    flex: 1,
+    fontSize: 14,
+    color: '#555',
+  },
+});
+
+export default PendingAppointmentsScreen;

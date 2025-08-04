@@ -19,13 +19,37 @@ interface appointments {
   dateTime: Date;
 }
 
+// NEW INTERFACE: This now includes the formatted date and time strings for the modal
+interface AppointmentWithDateTime extends appointments {
+  date: string;
+  time: string;
+}
+
 const ConfirmedAppointmentsScreen = ({ email, collegeCode }: confirmAppointmentProps) => {
-  const [selectedAppointment, setSelectedAppointment] = useState<appointments | null>(
+  // The selectedAppointment state is now typed with the new interface
+  const [selectedAppointment, setSelectedAppointment] = useState<AppointmentWithDateTime | null>(
     null
   );
   const [refreshing, setRefreshing] = useState(false);
   const [confirmedAppointments, setConfirmedAppointments] = useState<appointments[]>([]);
-  const [isModalVisible, setIsModalVisible] = useState(false); // State for modal visibility
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  // FUNCTION TO EXTRACT THE DATE AND TIME FORMAT
+  const extractDateTime = (dateTime: Date) => {
+    const dateObject = new Date(dateTime);
+    const date = dateObject.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+    const time = dateObject.toLocaleTimeString("en-US", {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
+
+    return { date, time };
+  };
 
   // FUNCTION TO FETCH THE REQUESTS DATA FROM THE DB
   const fetchRequest = async () => {
@@ -52,7 +76,9 @@ const ConfirmedAppointmentsScreen = ({ email, collegeCode }: confirmAppointmentP
 
   // Function to show the modal with appointment details
   const showAppointmentDetails = (appointment: appointments) => {
-    setSelectedAppointment(appointment);
+    const { date, time } = extractDateTime(new Date(appointment.dateTime));
+    // The state is now correctly set with the new properties
+    setSelectedAppointment({ ...appointment, date, time });
     setIsModalVisible(true);
   };
 
@@ -65,13 +91,11 @@ const ConfirmedAppointmentsScreen = ({ email, collegeCode }: confirmAppointmentP
   // Modal button handlers
   const handleReschedule = () => {
     console.log("Reschedule button pressed for:", selectedAppointment);
-    // Add your reschedule logic here (e.g., navigate to a reschedule screen)
     closeModal();
   };
 
   const handleCancel = () => {
     console.log("Cancel button pressed for:", selectedAppointment);
-    // Add your cancel logic here (e.g., API call to cancel the appointment)
     closeModal();
   };
 
@@ -111,23 +135,6 @@ const ConfirmedAppointmentsScreen = ({ email, collegeCode }: confirmAppointmentP
     fetchRequest();
   }, []);
 
-  // FUNCTION TO EXTRACT THE DATE AND TIME FORMAT
-  const extractDateTime = (dateTime: Date) => {
-    const dateObject = new Date(dateTime);
-    const date = dateObject.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-    const time = `${
-      dateObject.getHours() > 12
-        ? dateObject.getHours() - 12
-        : dateObject.getHours()
-    }:${dateObject.getMinutes()} ${dateObject.getHours() > 12 ? "PM" : "AM"}`;
-
-    return `${date}, ${time}`;
-  };
-
   function AppointmentScreen() {
     return (
       <ScrollView style={styles.listContainer}>
@@ -144,7 +151,6 @@ const ConfirmedAppointmentsScreen = ({ email, collegeCode }: confirmAppointmentP
 
       {confirmedAppointments.length === 0 ? <NoNewAppointmentsScreen /> : <AppointmentScreen />}
 
-      {/* The Modal Component */}
       <Modal
         animationType="fade"
         transparent={true}
@@ -153,12 +159,10 @@ const ConfirmedAppointmentsScreen = ({ email, collegeCode }: confirmAppointmentP
       >
         <View style={modalStyles.centeredView}>
           <View style={modalStyles.modalView}>
-            {/* Close Button */}
             <TouchableOpacity onPress={closeModal} style={modalStyles.closeButton}>
               <Ionicons name="close" size={24} color="#000" />
             </TouchableOpacity>
 
-            {/* Profile Image */}
             <Image
               source={require('../../assets/images/profile.png')}
               style={modalStyles.modalProfilePic}
@@ -168,11 +172,13 @@ const ConfirmedAppointmentsScreen = ({ email, collegeCode }: confirmAppointmentP
               <>
                 <Text style={modalStyles.modalTitle}>{selectedAppointment.userName}</Text>
                 <Text style={modalStyles.modalText}>{selectedAppointment.userEmail}</Text>
+                
+                <Text style={modalStyles.modalDateTime}>{selectedAppointment.date} at {selectedAppointment.time}</Text>
+
                 <Text style={modalStyles.modalDescription}>
                   {selectedAppointment.desc}
                 </Text>
 
-                {/* Reschedule & Cancel Buttons */}
                 <View style={modalStyles.modalButtonContainer}>
                   <TouchableOpacity style={modalStyles.rescheduleButton} onPress={handleReschedule}>
                     <Text style={modalStyles.buttonText}>Reschedule</Text>
@@ -198,7 +204,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F8FF',
-    paddingHorizontal: 20, // Add horizontal padding
+    paddingHorizontal: 20,
   },
   header: {
     flexDirection: 'row',
@@ -275,11 +281,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#555',
   },
-  // Note: I've moved the nav bar styles to the parent component
-  // as it's typically part of the main dashboard, not this screen.
 });
 
-// New styles for the modal
 const modalStyles = StyleSheet.create({
   centeredView: {
     flex: 1,
@@ -326,6 +329,12 @@ const modalStyles = StyleSheet.create({
     color: '#333',
     textAlign: 'center',
     lineHeight: 22,
+    marginBottom: 10,
+  },
+  modalDateTime: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
     marginBottom: 20,
   },
   modalButtonContainer: {
