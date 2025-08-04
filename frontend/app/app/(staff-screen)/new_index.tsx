@@ -50,7 +50,7 @@ export default function PrincipalDashboard() {
         selectedTab === 'upcomming' && <UpcomingMeetingsScreen email={userData.email} collegeCode= {userData.collegeCode}/>
       }
       {
-        selectedTab === 'past' && <PastMeetingsScreen />
+        selectedTab === 'past' && <PastMeetingsScreen email={userData.email} collegeCode= {userData.collegeCode}/>
       }
       
 

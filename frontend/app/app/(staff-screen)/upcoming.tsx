@@ -135,7 +135,6 @@ const UpcomingMeetingsScreen = ({email,collegeCode}:staffHomeScreenProps) => {
           });
           if (!response.ok) throw new Error("Faild to load data");
           const data = await response.json();
-          console.log(data);
           setUpcomingAppointments(data.upcomingAppointments);
         } catch (error) {
           console.log(error);
