@@ -1,68 +1,79 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, Image, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableOpacity, SafeAreaView, ScrollView, Modal } from 'react-native';
 import { Ionicons, FontAwesome5, Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { baseUrl } from '../apiUrl';
 import NoNewAppointmentsScreen from './no_appointment';
 
-interface confirmAppointmentProps{
-  email?:string | string[],
-  collegeCode?:string | string[]
+interface confirmAppointmentProps {
+  email?: string | string[],
+  collegeCode?: string | string[]
 }
 
-const ConfirmedAppointmentsScreen = ({email,collegeCode}:confirmAppointmentProps) => {
-  // Dummy data for the list of confirmed appointments
-  // const confirmedAppointments = [
-  //   { id: '1', name: 'Staff-1', email: 'staffone@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
-  //   { id: '2', name: 'Staff-2', email: 'stafftwo@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
-  //   { id: '3', name: 'Staff-3', email: 'staffthree@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
-  //   { id: '4', name: 'Staff-4', email: 'stafffour@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
-  //   { id: '5', name: 'Staff-5', email: 'stafffive@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
-  //   { id: '6', name: 'Staff-6', email: 'staffsix@gmail.com', subText: 'Lorem ipsum dolor sit amet consectetur. Gravida sed at in pellentesque', avatar: 'https://via.placeholder.com/150' },
-  // ];
+interface appointments {
+  collegeCode: string;
+  id: string;
+  userName: string;
+  userEmail: string;
+  desc: string;
+  dateTime: Date;
+}
 
+const ConfirmedAppointmentsScreen = ({ email, collegeCode }: confirmAppointmentProps) => {
+  const [selectedAppointment, setSelectedAppointment] = useState<appointments | null>(
+    null
+  );
+  const [refreshing, setRefreshing] = useState(false);
+  const [confirmedAppointments, setConfirmedAppointments] = useState<appointments[]>([]);
+  const [isModalVisible, setIsModalVisible] = useState(false); // State for modal visibility
 
-  const [selectedMeeting, setSelectedMeeting] = useState<appointments | null>(
-      null
-    );
-    const [refreshing, setRefreshing] = useState(false);
-  
-    interface appointments {
-      collegeCode: string;
-      id: string;
-      userName: string;
-      userEmail: string;
-      desc: string;
-      dateTime: Date;
+  // FUNCTION TO FETCH THE REQUESTS DATA FROM THE DB
+  const fetchRequest = async () => {
+    try {
+      const url = `${baseUrl}/principal/appointments-data`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, collegeCode }),
+      });
+      const result = await response.json();
+      setConfirmedAppointments(result.confirmedAppointments);
+    } catch (error) {
+      console.log(error);
     }
-  
-    const [confirmedAppointments, setConfirmedAppointments] = useState<
-      appointments[]
-    >([]);
+  };
 
-      // FUNCTION TO FETCH THE REQUESTS DATA FROM THE DB
-      const fetchRequest = async () => {
-        try {
-          const url = `${baseUrl}/principal/appointments-data`;
-          const response = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({email,collegeCode}),
-          });
-          const result = await response.json();
-          setConfirmedAppointments(result.confirmedAppointments);
-        } catch (error) {
-          console.log(error);
-        }
-      };
-    
-      // refresh control function
+  // Refresh control function
   const handleRefresh = async () => {
     setRefreshing(true);
     await fetchRequest();
     setRefreshing(false);
   };
-  
+
+  // Function to show the modal with appointment details
+  const showAppointmentDetails = (appointment: appointments) => {
+    setSelectedAppointment(appointment);
+    setIsModalVisible(true);
+  };
+
+  // Function to close the modal
+  const closeModal = () => {
+    setIsModalVisible(false);
+    setSelectedAppointment(null);
+  };
+
+  // Modal button handlers
+  const handleReschedule = () => {
+    console.log("Reschedule button pressed for:", selectedAppointment);
+    // Add your reschedule logic here (e.g., navigate to a reschedule screen)
+    closeModal();
+  };
+
+  const handleCancel = () => {
+    console.log("Cancel button pressed for:", selectedAppointment);
+    // Add your cancel logic here (e.g., API call to cancel the appointment)
+    closeModal();
+  };
 
   const AppointmentCard = ({
     collegeCode,
@@ -71,8 +82,11 @@ const ConfirmedAppointmentsScreen = ({email,collegeCode}:confirmAppointmentProps
     userEmail,
     desc,
     dateTime,
-  }:appointments) => (
-    <View style={styles.card}>
+  }: appointments) => (
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => showAppointmentDetails({ collegeCode, id, userName, userEmail, desc, dateTime })}
+    >
       <View style={styles.cardHeader}>
         <Image
           source={require('../../assets/images/profile.png')}
@@ -90,12 +104,12 @@ const ConfirmedAppointmentsScreen = ({email,collegeCode}:confirmAppointmentProps
         <Text style={styles.subTitle}>Sub:</Text>
         <Text style={styles.subText}>{desc}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   useEffect(() => {
-      fetchRequest();
-    }, []);
+    fetchRequest();
+  }, []);
 
   // FUNCTION TO EXTRACT THE DATE AND TIME FORMAT
   const extractDateTime = (dateTime: Date) => {
@@ -114,47 +128,84 @@ const ConfirmedAppointmentsScreen = ({email,collegeCode}:confirmAppointmentProps
     return `${date}, ${time}`;
   };
 
-  function AppointmentScreen(){
-    return(
-      <>
-        <ScrollView style={styles.listContainer}>
-          {confirmedAppointments.map(appointment => (
-            <AppointmentCard key={appointment.id} collegeCode={appointment.collegeCode} id={appointment.id} userName={appointment.userName} userEmail={appointment.userEmail} desc={appointment.desc} dateTime={appointment.dateTime} />
-          ))}
-        </ScrollView>
-      </>
+  function AppointmentScreen() {
+    return (
+      <ScrollView style={styles.listContainer}>
+        {confirmedAppointments.map(appointment => (
+          <AppointmentCard key={appointment.id} {...appointment} />
+        ))}
+      </ScrollView>
     )
   }
 
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Confirmed Appointments:</Text>
 
-        <Text style={styles.title}>Confirmed Appointments:</Text>
+      {confirmedAppointments.length === 0 ? <NoNewAppointmentsScreen /> : <AppointmentScreen />}
 
-      {
-        confirmedAppointments.length === 0 ? <NoNewAppointmentsScreen /> : <AppointmentScreen />
-      }
-        
-        
-      </View>
+      {/* The Modal Component */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={closeModal}
+      >
+        <View style={modalStyles.centeredView}>
+          <View style={modalStyles.modalView}>
+            {/* Close Button */}
+            <TouchableOpacity onPress={closeModal} style={modalStyles.closeButton}>
+              <Ionicons name="close" size={24} color="#000" />
+            </TouchableOpacity>
+
+            {/* Profile Image */}
+            <Image
+              source={require('../../assets/images/profile.png')}
+              style={modalStyles.modalProfilePic}
+            />
+
+            {selectedAppointment && (
+              <>
+                <Text style={modalStyles.modalTitle}>{selectedAppointment.userName}</Text>
+                <Text style={modalStyles.modalText}>{selectedAppointment.userEmail}</Text>
+                <Text style={modalStyles.modalDescription}>
+                  {selectedAppointment.desc}
+                </Text>
+
+                {/* Reschedule & Cancel Buttons */}
+                <View style={modalStyles.modalButtonContainer}>
+                  <TouchableOpacity style={modalStyles.rescheduleButton} onPress={handleReschedule}>
+                    <Text style={modalStyles.buttonText}>Reschedule</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={modalStyles.cancelButton} onPress={handleCancel}>
+                    <Text style={modalStyles.buttonText}>Cancel</Text>
+                  </TouchableOpacity>
+                </View>
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F5F8FF', // Main background color
+    backgroundColor: '#F5F8FF',
   },
   container: {
     flex: 1,
     backgroundColor: '#F5F8FF',
+    paddingHorizontal: 20, // Add horizontal padding
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 30,
-    backgroundColor:'#3E5793',
+    backgroundColor: '#3E5793',
     padding: 15,
   },
   profileImage: {
@@ -169,11 +220,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#3E5793',
     marginBottom: 20,
+    marginTop: 20,
   },
   listContainer: {
     flex: 1,
-    // Add padding bottom to make sure the last item is not covered by the nav bar
-    marginBottom: 80,
+    paddingBottom: 80,
   },
   card: {
     backgroundColor: '#E6E9F0',
@@ -211,6 +262,7 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     flexDirection: 'row',
+    marginTop: 5,
   },
   subTitle: {
     fontSize: 14,
@@ -223,35 +275,84 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#555',
   },
-  navBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: '#1C4A9E',
-    borderRadius: 30,
-    paddingVertical: 15,
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
-    right: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    elevation: 8,
-  },
-  navItem: {
+  // Note: I've moved the nav bar styles to the parent component
+  // as it's typically part of the main dashboard, not this screen.
+});
+
+// New styles for the modal
+const modalStyles = StyleSheet.create({
+  centeredView: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-  activeNavItem: {
-    backgroundColor: '#2E69D8',
-    borderRadius: 25,
-    width: 50,
-    height: 50,
-    justifyContent: 'center',
+  modalView: {
+    width: '90%',
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 25,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 15,
+    right: 15,
+  },
+  modalProfilePic: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    marginBottom: 10,
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#3C64B1',
+    marginBottom: 5,
+  },
+  modalText: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 15,
+  },
+  modalDescription: {
+    fontSize: 16,
+    color: '#333',
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: 20,
+  },
+  modalButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  rescheduleButton: {
+    flex: 1,
+    backgroundColor: '#FFC107',
+    borderRadius: 10,
+    paddingVertical: 12,
+    marginRight: 10,
+    alignItems: 'center',
+  },
+  cancelButton: {
+    flex: 1,
+    backgroundColor: '#F44336',
+    borderRadius: 10,
+    paddingVertical: 12,
+    marginLeft: 10,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
 

@@ -338,4 +338,93 @@ export const new_principal_styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 4,
   },
+  modalCenteredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.6)", // semi-transparent background
+  },
+  modalView: {
+    width: "85%",
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 25,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 15,
+  },
+  modalProfilePic: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    marginBottom: 10,
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 5,
+  },
+  modalText: {
+    fontSize: 16,
+    color: "#555",
+    marginBottom: 10,
+  },
+  modalBoldText: {
+    fontWeight: 'bold',
+  },
+  modalReasonTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginTop: 10,
+  },
+  modalReasonText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 15,
+  },
+  modalDateTime: {
+    fontSize: 14,
+    color: '#888',
+    marginBottom: 20,
+  },
+  modalButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  modalAcceptButton: {
+    flex: 1,
+    backgroundColor: "#4CAF50",
+    borderRadius: 10,
+    paddingVertical: 12,
+    marginRight: 10,
+    alignItems: 'center',
+  },
+  modalRejectButton: {
+    flex: 1,
+    backgroundColor: "#F44336",
+    borderRadius: 10,
+    paddingVertical: 12,
+    marginLeft: 10,
+    alignItems: 'center',
+  },
+  modalButtonText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
 })
