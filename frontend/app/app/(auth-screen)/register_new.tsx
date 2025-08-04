@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   Platform,
+  ScrollView,
 } from "react-native";
 
 import { register_styles } from "./new_style";
@@ -185,7 +186,7 @@ export default function Register() {
       start={{ x: 0.5, y: 0 }} // Starts from the top-center
       end={{ x: 0.5, y: 1 }} // Ends at the bottom-center
     >
-      <View style={register_styles.innerContainer}>
+      <ScrollView style={register_styles.innerContainer}>
         <View style={register_styles.pageTitle}>
           <TouchableOpacity
             style={register_styles.pageTitleIcon}
@@ -335,7 +336,7 @@ export default function Register() {
             </TouchableOpacity>
           </LinearGradient>
         </View>
-      </View>
+      </ScrollView>
     </LinearGradient>
   );
 }
