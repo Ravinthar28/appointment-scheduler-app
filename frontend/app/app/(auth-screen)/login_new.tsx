@@ -29,24 +29,47 @@ export default function Register() {
     "staff"
   );
 
-  interface data {
-    isLogin: string;
-    email: string;
-    collegeCode: string;
-    selectedRole: string;
-  }
-  const storeData = async (data: data) => {
-    try {
-      await AsyncStorage.setItem("isLogin", data.isLogin);
-      await AsyncStorage.setItem("email", data.email);
-      await AsyncStorage.setItem("collegeCode", data.collegeCode);
-      await AsyncStorage.setItem("selectedRole", data.selectedRole);
+  // interface data {
+  //   isLogin: string;
+  //   email: string;
+  //   collegeCode: string;
+  //   selectedRole: string;
+  // }
+  // const storeData = async (data: data) => {
+  //   try {
+  //     await AsyncStorage.setItem("isLogin", data.isLogin);
+  //     await AsyncStorage.setItem("email", data.email);
+  //     await AsyncStorage.setItem("collegeCode", data.collegeCode);
+  //     await AsyncStorage.setItem("selectedRole", data.selectedRole);
 
-      console.log("data stroed");
-    } catch (error) {
-      console.log("Error in storing the data in local storage");
-    }
-  };
+  //     console.log("data stroed");
+  //   } catch (error) {
+  //     console.log("Error in storing the data in local storage");
+  //   }
+  // };'
+
+  interface userData{
+  email: string,
+  collegeCode: string,
+  userType: string
+}
+
+const handleStaffLoginSuccess = async (userData:userData) => {
+  try {
+    await AsyncStorage.setItem("user", JSON.stringify(userData));
+  } catch (error) {
+    console.log("Error saving user data", error);
+  }
+};
+
+  const handlePrincipalLoginSuccess = async (userData:userData) => {
+  try {
+    await AsyncStorage.setItem("user", JSON.stringify(userData));
+  } catch (error) {
+    console.log("Error saving user data", error);
+  }
+};
+
 
   const handleLogin = async () => {
     try {
@@ -65,13 +88,13 @@ export default function Register() {
       if (!response.ok) {
         throw new Error("Faild to load");
       }
-      storeData({
-        isLogin: "true",
-        email: email,
-        collegeCode: collegeCode,
-        selectedRole: selectedRole,
-      });
-      if (selectedRole == "principal")
+      // storeData({
+      //   isLogin: "true",
+      //   email: email,
+      //   collegeCode: collegeCode,
+      //   selectedRole: selectedRole,
+      // });
+      if (selectedRole == "principal"){
         router.push({
           pathname: "/(principal-screen)",
           params: {
@@ -79,7 +102,10 @@ export default function Register() {
             collegeCode,
           },
         });
-      if (selectedRole == "staff")
+        handlePrincipalLoginSuccess({email,collegeCode,userType:'principal'})
+      }
+        
+      if (selectedRole == "staff"){
         router.push({
           pathname: "/(staff-screen)/new_index",
           params: {
@@ -87,6 +113,8 @@ export default function Register() {
             collegeCode,
           },
         });
+        handleStaffLoginSuccess({email,collegeCode,userType:'staff'})
+      }
     } catch (error) {
       console.log(error);
       alert("Check the email and password");

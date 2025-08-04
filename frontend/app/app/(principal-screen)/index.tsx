@@ -10,13 +10,14 @@ import {
   MaterialCommunityIcons,
   FontAwesome,
 } from "@expo/vector-icons"; // For icons
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { router, useLocalSearchParams, useRouter } from "expo-router";
 
 import { new_principal_styles } from "./style";
 import PrincipalHome from "./principal_home";
 import PendingAppointmentsScreen from "./pending_appointments";
 import ConfirmedAppointmentsScreen from "./confirm_appointments";
 import CancelAppointmentsScreen from "./cancel_appointment";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function PrincipalDashboard() {
 
@@ -28,6 +29,10 @@ export default function PrincipalDashboard() {
       const userData = useLocalSearchParams();
 
 
+  async function handleLogOutPress(){
+    await AsyncStorage.removeItem("user");
+    router.replace('/(auth-screen)/login_new');
+  }
   return (
     <LinearGradient
       colors={["#E0E8F7", "#F0F4F9"]} // Light blue/grey gradient for background
@@ -38,7 +43,7 @@ export default function PrincipalDashboard() {
           source={require("../../assets//images//profile.png")} // Replace with your image path
           style={new_principal_styles.profilePic}
         />
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleLogOutPress}>
           <Ionicons name="log-out-outline" size={30} color="#fff" />
         </TouchableOpacity>
       </View>
