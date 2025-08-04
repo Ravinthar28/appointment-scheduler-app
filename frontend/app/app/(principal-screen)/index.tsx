@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 import {
-  StyleSheet,
-  Text,
   View,
-  ScrollView,
   TouchableOpacity,
   Image,
 } from "react-native";
@@ -22,7 +19,6 @@ import ConfirmedAppointmentsScreen from "./confirm_appointments";
 import CancelAppointmentsScreen from "./cancel_appointment";
 
 export default function PrincipalDashboard() {
-  const router = useRouter();
 
   const [selectedTab, setSelectedTab] = useState<
     "home" | "pending" | "confirmed" | "past"

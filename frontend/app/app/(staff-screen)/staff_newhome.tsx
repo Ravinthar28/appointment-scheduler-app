@@ -13,7 +13,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 
 // Import components from their respective new files
-import { Header, NavBar } from "../(staff-screen)/new_index";
+import { Header, NavBar } from "./new_index";
 import RequestAppointmentModal from "../(staff-screen)/request_page";
 
 // Dummy data and other components remain the same
