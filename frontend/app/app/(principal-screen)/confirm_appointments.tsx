@@ -1,185 +1,109 @@
-import { View, Image, Text, TouchableOpacity, ScrollView } from "react-native";
-
-import { baseUrl } from "../apiUrl";
-import { StyleSheet } from "react-native";
+import { View, Image, Text, TouchableOpacity, ScrollView, StyleSheet, Modal } from "react-native";
 import React, { useEffect, useState } from "react";
-import { Modal } from "react-native";
 import { Feather, Ionicons } from "@expo/vector-icons";
-
 import DateTimePicker from '@react-native-community/datetimepicker';
-
-
+import { baseUrl } from "../apiUrl";
 
 interface confirmedAppointmentScreenProps {
-  email: string;
-  collegeCode: string;
+    email: string;
+    collegeCode: string;
 }
 
 interface appointments {
-  collegeCode: string;
-  id: string;
-  userName: string;
-  userEmail: string;
-  desc: string;
-  dateTime: Date;
+    collegeCode: string;
+    id: string;
+    userName: string;
+    userEmail: string;
+    desc: string;
+    dateTime: Date;
 }
 
-export default function ConfirmedAppointmentScreen({
-  email,
-  collegeCode,
-}: confirmedAppointmentScreenProps) {
-  const [confirmedAppointments, setConfirmedAppointments] = useState<
-    appointments[]
-  >([]);
-
-  const [selectedMeeting,setSelectedMeeting] = useState<appointments | null> (null);
-  const [showModel,setShowModel] = useState(false);
-
-  const [reMeetingDate, setReMeetingDate] = useState<Date>(new Date());
-
-  // FUNCTION TO FETCH THE REQUESTS DATA FROM THE DB
-  const fetchRequest = async () => {
-    try {
-      const url = `${baseUrl}/principal/appointments-data`;
-      const response = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, collegeCode }),
-      });
-      const result = await response.json();
-
-      setConfirmedAppointments(result.confirmedAppointments);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchRequest();
-  }, []);
-
-  const dummyData = [
-    {
-      id: "jfoweijfoiewj",
-      collegeCode:'9210',
-      userName: "Staff 1",
-      userEmail: "staff1@gmail.com",
-      desc: "fjiaewf ioewjf kajweiofj awejfio jewf joiwe fj",
-      dateTime: reMeetingDate,
-    },
-    {
-      id: "jfoweijfoiewj",
-      collegeCode:'9210',
-      userName: "Staff 2",
-      userEmail: "staff2@gmail.com",
-      desc: "fjiaewf ioewjf kajweiofj awejfio jewf joiwe fj",
-      dateTime: reMeetingDate,
-    },
-  ];
-
-  // FUNCTION TO EXTRACT THE DATE AND TIME FORMAT
-    const extractDateTime = (dateTime?: Date) => {
-      const dateObject = new Date(dateTime || new Date());
-      const date = dateObject.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
-      const time = `${
-        dateObject.getHours() > 12
-          ? dateObject.getHours() - 12
-          : dateObject.getHours()
-      }:${dateObject.getMinutes()} ${dateObject.getHours() > 12 ? "PM" : "AM"}`;
-  
-      return `${date}, ${time}`;
-    };
-
-
-      const acceptAppointment = async (btn: String) => {
-        if (btn === "reschedule" && selectedMeeting) {
-          selectedMeeting.dateTime = reMeetingDate;
-        }
-        try {
-          const url = `${baseUrl}/principal/accept-appointment`;
-          const response = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              selectedTab:'confirmed',
-              selectedMeeting,
-            }),
-          });
-          if (!response)
-            throw new Error("Failed to accept the appiontment by the principal");
-          alert(
-            `Appointment with ${
-              selectedMeeting?.userName
-            } is scheduled on ${extractDateTime(reMeetingDate)}`
-          );
-          // router.push({
-          //   pathname: "/(principal-screen)/home",
-          //   params: userData,
-          // });
-          setSelectedMeeting(null);
-        } catch (error) {
-          alert(error);
-        }
-        setShowModel(false);
-      };
-
-  function AppointmentModel(){
+// RescheduleModal component
+const RescheduleModal = ({ isVisible, onClose, appointment, onReschedule, onCancel }: any) => {
+    if (!appointment) return null;
 
     const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
-        const [showTimePicker, setShowTimePicker] = useState<boolean>(false);
-    
-        const onDateChange = (event: any, selectedDate?: Date) => {
-          const currentDate = selectedDate || reMeetingDate;
-          setShowDatePicker(false);
-          if (selectedDate) {
-            setReMeetingDate(currentDate);
-          }
-        };
-    
-        const onTimeChange = (event: any, selectedTime?: Date) => {
-          const currentTime = selectedTime || reMeetingDate;
-          setShowTimePicker(false);
-          if (selectedTime) {
-            setReMeetingDate(currentTime);
-          }
-        };
+    const [showTimePicker, setShowTimePicker] = useState<boolean>(false);
+    const [reMeetingDate, setReMeetingDate] = useState<Date>(new Date(appointment.dateTime));
 
-    function handleCloseModel () {
-      setShowModel(false);
-      setSelectedMeeting(null);
-    }
-    function handleReschedule(){
-      setShowModel(false);
-      
-    }
+    useEffect(() => {
+        if (appointment && appointment.dateTime) {
+            setReMeetingDate(new Date(appointment.dateTime));
+        }
+    }, [appointment]);
+
+    const onDateChange = (event: any, selectedDate?: Date) => {
+        const currentDate = selectedDate || reMeetingDate;
+        setShowDatePicker(false);
+        if (selectedDate) {
+            setReMeetingDate(currentDate);
+        }
+    };
+
+    const onTimeChange = (event: any, selectedTime?: Date) => {
+        const currentTime = selectedTime || reMeetingDate;
+        setShowTimePicker(false);
+        if (selectedTime) {
+            setReMeetingDate(currentTime);
+        }
+    };
+
+    const formatDate = (date: Date): string => {
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+    };
+
+    const formatTime = (date: Date): string => {
+        const options: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', hour12: true };
+        return new Intl.DateTimeFormat('en-US', options).format(date);
+    };
+
+    const extractDateTime = (dateTime?: Date) => {
+        const dateObject = new Date(dateTime || new Date());
+        const date = dateObject.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+        });
+        const time = `${
+            dateObject.getHours() > 12
+            ? dateObject.getHours() - 12
+            : dateObject.getHours()
+        }:${dateObject.getMinutes().toString().padStart(2, '0')} ${dateObject.getHours() >= 12 ? "PM" : "AM"}`;
+        
+        return `${date}, ${time}`;
+    };
+
+    const handleReschedulePress = () => {
+        onReschedule(reMeetingDate);
+    };
+
     return (
         <Modal
             animationType="fade"
             transparent={true}
-            visible={showModel}
-            onRequestClose={handleCloseModel}
+            visible={isVisible}
+            onRequestClose={onClose}
         >
             <View style={modalStyles.centeredView}>
                 <View style={modalStyles.modalView}>
-                    <TouchableOpacity style={modalStyles.closeButton} onPress={handleCloseModel}>
+                    <TouchableOpacity style={modalStyles.closeButton} onPress={onClose}>
                         <Ionicons name="close" size={24} color="#000" />
                     </TouchableOpacity>
                     <Image
                         source={require('../../assets/images/profile.png')}
                         style={modalStyles.modalAvatar}
                     />
-                    <Text style={modalStyles.modalStaffName}>{selectedMeeting?.userName}</Text>
-                    <Text style={modalStyles.modalStaffEmail}>{selectedMeeting?.userEmail}</Text>
+                    <Text style={modalStyles.modalStaffName}>{appointment.userName}</Text>
+                    <Text style={modalStyles.modalStaffEmail}>{appointment.userEmail}</Text>
                     <View style={modalStyles.modalContent}>
-                      <Text style={modalStyles.modalDateTime}>
-                          {extractDateTime(selectedMeeting?.dateTime)}
+                        <Text style={modalStyles.modalDateTime}>
+                            Original: {extractDateTime(new Date(appointment.dateTime))}
                         </Text>
                         <Text style={modalStyles.modalDescription}>
-                            {selectedMeeting?.desc}
+                            {appointment.desc}
                         </Text>
                         
                         <View style={modalStyles.inputRow}>
@@ -188,6 +112,7 @@ export default function ConfirmedAppointmentScreen({
                                 onPress={() => setShowDatePicker(true)}
                                 style={modalStyles.input}
                             >
+                                <Text>{formatDate(reMeetingDate)}</Text>
                                 <Feather name="calendar" size={20} color="#666" />
                             </TouchableOpacity>
                             {showDatePicker && (
@@ -205,7 +130,7 @@ export default function ConfirmedAppointmentScreen({
                                 onPress={() => setShowTimePicker(true)}
                                 style={modalStyles.inputTime}
                             >
-                               
+                                <Text>{formatTime(reMeetingDate)}</Text>
                                 <Ionicons name="time-outline" size={20} color="#666" />
                             </TouchableOpacity>
                             {showTimePicker && (
@@ -218,132 +143,227 @@ export default function ConfirmedAppointmentScreen({
                         </View>
                         
                         <View style={modalStyles.modalBtnContainer}>
-                            <TouchableOpacity style={modalStyles.rescheduleButton}>
-                            <Text style={modalStyles.rescheduleButtonText}>Reschedule</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={[modalStyles.rescheduleButton,modalStyles.cancelBtn]}>
-                            <Text style={modalStyles.rescheduleButtonText}>Cancel</Text>
-                        </TouchableOpacity>
+                            <TouchableOpacity style={modalStyles.rescheduleButton} onPress={handleReschedulePress}>
+                                <Text style={modalStyles.rescheduleButtonText}>Reschedule</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[modalStyles.rescheduleButton, modalStyles.cancelBtn]} onPress={onCancel}>
+                                <Text style={modalStyles.rescheduleButtonText}>Cancel</Text>
+                            </TouchableOpacity>
                         </View>
-                        
                     </View>
                 </View>
             </View>
         </Modal>
     );
-  }
+};
 
-  function handleAppointmentCardPress(data:appointments){
-    setSelectedMeeting(data);
-    setShowModel(true);
-  }
+export default function ConfirmedAppointmentScreen({
+    email,
+    collegeCode,
+}: confirmedAppointmentScreenProps) {
+    const [confirmedAppointments, setConfirmedAppointments] = useState<appointments[]>([]);
+    const [selectedMeeting, setSelectedMeeting] = useState<appointments | null>(null);
+    const [showModel, setShowModel] = useState(false);
 
-  function AppointmentCards() {
-    return (
-      <ScrollView style={{height:"100%"}}>
-        {dummyData.map((data) => (
-          <>
-            <TouchableOpacity style={styles.appointmentCardOuterContainer} onPress={()=>handleAppointmentCardPress(data)}>
-              <View style={styles.appointmentCard}>
-                <View style={styles.cardProfileContainer}>
-                  <Image
-                    source={require("../../assets/images/profile.png")}
-                    style={styles.cardProfilePic}
-                  />
-                </View>
-                <View style={styles.cardContent}>
-                  <Text style={styles.cardUserName}>{data.userName}</Text>
-                  <Text style={styles.cardUserEmail}>{data.userEmail}</Text>
-                  <Text numberOfLines={1} style={styles.cardDesc}>
-                    {data.desc}
-                  </Text>
-                  <Text style={styles.cardDateTime}>
-                    {extractDateTime(data.dateTime)}
-                  </Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          </>
-        ))}
-      </ScrollView>
-    );
-  }
+    // This state is not needed in the parent component if the modal handles it
+    // const [reMeetingDate, setReMeetingDate] = useState<Date>(new Date());
 
-  return (<View style={styles.container}>
+    const fetchRequest = async () => {
+        try {
+            const url = `${baseUrl}/principal/appointments-data`;
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, collegeCode }),
+            });
+            const result = await response.json();
+            setConfirmedAppointments(result.confirmedAppointments);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
-    <AppointmentCards />
+    useEffect(() => {
+        fetchRequest();
+    }, []);
 
-    {
-      showModel && <AppointmentModel />
+    const dummyData: appointments[] = [
+        {
+            id: "jfoweijfoiewj",
+            collegeCode: '9210',
+            userName: "Staff 1",
+            userEmail: "staff1@gmail.com",
+            desc: "This is a dummy description for staff 1",
+            dateTime: new Date(Date.now() - 3600000) // Example: 1 hour ago
+        },
+        {
+            id: "jfoweijfoiewj2",
+            collegeCode: '9210',
+            userName: "Staff 2",
+            userEmail: "staff2@gmail.com",
+            desc: "Another dummy description for staff 2",
+            dateTime: new Date(Date.now() + 86400000) // Example: 1 day from now
+        },
+    ];
+
+    const extractDateTime = (dateTime?: Date) => {
+        const dateObject = new Date(dateTime || new Date());
+        const date = dateObject.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+        });
+        const time = `${
+            dateObject.getHours() > 12
+            ? dateObject.getHours() - 12
+            : dateObject.getHours()
+        }:${dateObject.getMinutes().toString().padStart(2, '0')} ${dateObject.getHours() >= 12 ? "PM" : "AM"}`;
+        
+        return `${date}, ${time}`;
+    };
+
+    const acceptAppointment = async (newDateTime: Date) => {
+        if (selectedMeeting) {
+            try {
+                const updatedMeeting = { ...selectedMeeting, dateTime: newDateTime };
+                const url = `${baseUrl}/principal/accept-appointment`;
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        selectedTab: 'confirmed',
+                        selectedMeeting: updatedMeeting,
+                    }),
+                });
+                if (!response.ok) {
+                    throw new Error("Failed to accept the appointment by the principal");
+                }
+                alert(`Appointment with ${updatedMeeting.userName} is scheduled on ${extractDateTime(newDateTime)}`);
+                setShowModel(false);
+                setSelectedMeeting(null);
+                // You might want to refresh the list of appointments here
+                // fetchRequest();
+            } catch (error) {
+                alert(error);
+            }
+        }
+    };
+    
+    function handleAppointmentCardPress(data: appointments) {
+        setSelectedMeeting(data);
+        setShowModel(true);
     }
     
-  </View>);
+    function handleCloseModel() {
+        setShowModel(false);
+        setSelectedMeeting(null);
+    }
+
+    function AppointmentCards() {
+        return (
+            <ScrollView style={{ height: "100%" }}>
+                {dummyData.map((data) => (
+                    <TouchableOpacity
+                        key={data.id}
+                        style={styles.appointmentCardOuterContainer}
+                        onPress={() => handleAppointmentCardPress(data)}
+                    >
+                        <View style={styles.appointmentCard}>
+                            <View style={styles.cardProfileContainer}>
+                                <Image
+                                    source={require("../../assets/images/profile.png")}
+                                    style={styles.cardProfilePic}
+                                />
+                            </View>
+                            <View style={styles.cardContent}>
+                                <Text style={styles.cardUserName}>{data.userName}</Text>
+                                <Text style={styles.cardUserEmail}>{data.userEmail}</Text>
+                                <Text numberOfLines={1} style={styles.cardDesc}>
+                                    {data.desc}
+                                </Text>
+                                <Text style={styles.cardDateTime}>
+                                    {extractDateTime(data.dateTime)}
+                                </Text>
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+                ))}
+            </ScrollView>
+        );
+    }
+
+    return (
+        <View style={styles.container}>
+            <AppointmentCards />
+            <RescheduleModal
+                isVisible={showModel}
+                onClose={handleCloseModel}
+                appointment={selectedMeeting}
+                onReschedule={acceptAppointment}
+                onCancel={handleCloseModel}
+            />
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    display: "flex",
-    width: "100%",
-    height: "100%",
-    backgroundColor: "red",
-    paddingHorizontal: 5,
-  },
-
-  appointmentCardOuterContainer: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "#F5F8FF",
-    borderRadius: 10,
-    marginVertical:4
-  },
-  appointmentCard: {
-    display: "flex",
-    alignItems: "center",
-    flexDirection: "row",
-  },
-  cardProfileContainer: {
-    width: "20%",
-    height: "100%",
-    objectFit: "contain",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  cardProfilePic: {
-    width: 70,
-    height: 70,
-    borderRadius: "50%",
-  },
-  cardContent: {
-    width: "80%",
-    height: "100%",
-
-    padding: 10,
-  },
-  cardUserName: {
-    fontWeight: "bold",
-    fontSize: 20,
-    color: "#3C64B1",
-  },
-  cardUserEmail: {
-    marginVertical: 3,
-    color: "#666",
-  },
-  cardDesc: {
-    marginVertical: 2,
-    color: "#555",
-  },
-  cardDateTime: {
-    color: "#3C64B1",
-  },
-  appointmentModal:{
-    backgroundColor:"rgba(0,0,0,0.5)"
-  },
-  appointmentModalContainer:{
-    width:300,
-    height:300,
-    backgroundColor:"white"
-  }
+    container: {
+        flex: 1,
+        width: "100%",
+        backgroundColor: "#F5F8FF",
+        paddingHorizontal: 5,
+    },
+    appointmentCardOuterContainer: {
+        width: "100%",
+        backgroundColor: "#E6E9F0",
+        borderRadius: 10,
+        marginVertical: 4,
+        padding: 10,
+    },
+    appointmentCard: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    cardProfileContainer: {
+        width: 70,
+        height: 70,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    cardProfilePic: {
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+    },
+    cardContent: {
+        flex: 1,
+        paddingLeft: 10,
+    },
+    cardUserName: {
+        fontWeight: "bold",
+        fontSize: 20,
+        color: "#3C64B1",
+    },
+    cardUserEmail: {
+        marginVertical: 3,
+        color: "#666",
+    },
+    cardDesc: {
+        marginVertical: 2,
+        color: "#555",
+    },
+    cardDateTime: {
+        color: "#3C64B1",
+        marginTop: 5,
+    },
+    appointmentModal: {
+        backgroundColor: "rgba(0,0,0,0.5)"
+    },
+    appointmentModalContainer: {
+        width: 300,
+        height: 300,
+        backgroundColor: "white"
+    }
 });
 
 const modalStyles = StyleSheet.create({
@@ -402,9 +422,9 @@ const modalStyles = StyleSheet.create({
         textAlign: 'center',
         marginBottom: 20,
     },
-    modalDateTime:{
-      textAlign:"center",
-      marginBottom:5
+    modalDateTime: {
+        textAlign: "center",
+        marginBottom: 5
     },
     inputRow: {
         flexDirection: 'row',
@@ -413,8 +433,8 @@ const modalStyles = StyleSheet.create({
         marginBottom: 15,
     },
     inputLabel: {
-      fontSize: 14,
-      color: '#000',
+        fontSize: 14,
+        color: '#000',
     },
     input: {
         flex: 1,
@@ -446,18 +466,16 @@ const modalStyles = StyleSheet.create({
         width: '40%',
         alignItems: 'center',
     },
-    cancelBtn:{
-      backgroundColor:"#FF6347"
+    cancelBtn: {
+        backgroundColor: "#FF6347"
     },
     rescheduleButtonText: {
         color: '#fff',
         fontWeight: 'bold',
         fontSize: 16,
     },
-    modalBtnContainer:{
-      display:"flex",
-      alignItems:"center",
-      justifyContent:"space-around",
-      flexDirection:"row"
+    modalBtnContainer: {
+        flexDirection: "row",
+        justifyContent: "space-around",
     }
 });
