@@ -1,89 +1,68 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import {
+  View,
+  TouchableOpacity,
+  Image,
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient"; // For the background gradient
+import {
+  Ionicons,
+  MaterialCommunityIcons,
+  FontAwesome,
+} from "@expo/vector-icons"; // For icons
+import { useLocalSearchParams, useRouter } from "expo-router";
 
-type TabType = "home" | "upcoming" | "past";
+import { new_principal_styles } from "../(principal-screen)/style";
+import StaffHomeScreen from "./staff_newhome";
 
-// Header Component
-export const Header = () => {
+
+export default function PrincipalDashboard() {
+
+  const [selectedTab, setSelectedTab] = useState<
+    "home" | "upcomming" | "past"
+  >("home");
+  
+      // PARAMETER VALUES
+      const userData = useLocalSearchParams();
+
+
   return (
-    <View style={headerStyles.header}>
-      <Image
-        source={require("../../assets/images/profile.png")}
-        style={headerStyles.profileImage}
-      />
-      <TouchableOpacity onPress={() => router.push("../../(auth-screen)/login_new")}>
-        <Ionicons name="log-out-outline" size={30} color="#fff" />
-      </TouchableOpacity>
-    </View>
+    <LinearGradient
+      colors={["#E0E8F7", "#F0F4F9"]} // Light blue/grey gradient for background
+      style={new_principal_styles.container}
+    >
+      <View style={new_principal_styles.header}>
+        <Image
+          source={require("../../assets//images//profile.png")} // Replace with your image path
+          style={new_principal_styles.profilePic}
+        />
+        <TouchableOpacity>
+          <Ionicons name="log-out-outline" size={30} color="#fff" />
+        </TouchableOpacity>
+      </View>
+
+      {
+        selectedTab === "home" && <StaffHomeScreen email={userData.email} collegeCode= {userData.collegeCode}/>
+      }
+      
+
+      <View style={new_principal_styles.bottomNavBar}>
+        <TouchableOpacity style={new_principal_styles.navItem} onPress={()=> setSelectedTab('home')}>
+          <Ionicons name="home" size={28} color="#fff" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={new_principal_styles.navItem}
+          onPress={() => setSelectedTab('upcomming')}
+        >
+          <MaterialCommunityIcons name="history" size={28} color="#A7B7DC" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={new_principal_styles.navItem}
+          onPress={() => setSelectedTab('past')}
+        >
+          <FontAwesome name="calendar" size={28} color="#A7B7DC" />
+        </TouchableOpacity>
+      </View>
+    </LinearGradient>
   );
-};
-
-// NavBar Component
-export const NavBar = ({ selectedTab, setSelectedTab }: { selectedTab: TabType, setSelectedTab: (tab: TabType) => void }) => {
-  return (
-    <View style={navBarStyles.navBar}>
-      <TouchableOpacity
-        style={navBarStyles.navItem}
-        onPress={() => setSelectedTab("home")}
-      >
-        <Ionicons name="home-outline" size={24} color="#fff" />
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={navBarStyles.navItem}
-        onPress={() => setSelectedTab("upcoming")}
-      >
-        <Ionicons name="time-outline" size={24} color="#fff" />
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={navBarStyles.navItem}
-        onPress={() => setSelectedTab("past")}
-      >
-        <Ionicons name="checkmark-circle-outline" size={24} color="#fff" />
-      </TouchableOpacity>
-    </View>
-  );
-};
-
-const headerStyles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    backgroundColor: '#3E5793',
-    paddingVertical: 15,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-  },
-  profileImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-  },
-});
-
-const navBarStyles = StyleSheet.create({
-  navBar: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    backgroundColor: "#3E5793",
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 70,
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -5 },
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    elevation: 15,
-  },
-  navItem: {
-    padding: 10,
-  },
-});
+}

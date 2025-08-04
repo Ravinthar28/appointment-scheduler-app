@@ -1,6 +1,6 @@
 // File: app/(principal)/staff/StaffHomeScreen.js
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -12,9 +12,8 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-// Import components from their respective new files
-import { Header, NavBar } from "./new_index";
 import RequestAppointmentModal from "../(staff-screen)/request_page";
+import { baseUrl } from "../apiUrl";
 
 // Dummy data and other components remain the same
 const todaySchedule = [
@@ -44,20 +43,33 @@ const todaySchedule = [
   },
 ];
 
-interface MeetingDetails {
-  id: string;
-  time: string;
-  endTime: string;
-  type: string;
-  title: string;
-  description: string;
-}
 
+interface appointments {
+    collegeCode:string,
+    _id:string,
+    userName: string;
+    userEmail:string
+    desc: string;
+    dateTime: Date;
+  }
 interface MeetingModalProps {
   isVisible: boolean;
   onClose: () => void;
-  meeting: MeetingDetails | null;
+  meeting: appointments | null;
 }
+
+   // FUNCTION TO EXTRACT THE DATE AND TIME FORMAT
+    const extractDateTime = (dateTime : Date) => {
+      const dateObject = new Date(dateTime);
+      const date = dateObject.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+      const time = `${(dateObject.getHours() > 12)? dateObject.getHours()-12: dateObject.getHours()}:${dateObject.getMinutes()} ${(dateObject.getHours() > 12) ? 'PM' : 'AM'}`;
+
+      return `${date}, ${time}`;
+    };
 
 // Keep the MeetingModal here since it's specific to this screen's schedule cards
 const MeetingModal = ({ isVisible, onClose, meeting }: MeetingModalProps) => {
@@ -80,15 +92,15 @@ const MeetingModal = ({ isVisible, onClose, meeting }: MeetingModalProps) => {
               source={require("../../assets/images/profile.png")}
               style={modalStyles.modalAvatar}
             />
-            <Text style={modalStyles.modalStaffName}>Staff-3</Text>
-            <Text style={modalStyles.modalStaffEmail}>staffmail@gmail.com</Text>
+            <Text style={modalStyles.modalStaffName}>{meeting.userName}</Text>
+            <Text style={modalStyles.modalStaffEmail}>{meeting.userEmail}</Text>
           </View>
           <View style={modalStyles.modalContent}>
             <Text
               style={modalStyles.modalTime}
-            >{`${meeting.time} - ${meeting.endTime}`}</Text>
+            >{extractDateTime(meeting.dateTime)}</Text>
             <Text style={modalStyles.modalDescription}>
-              {meeting.description}
+              {meeting.desc}
             </Text>
           </View>
         </View>
@@ -101,38 +113,55 @@ const ScheduleCard = ({
   schedule,
   onPress,
 }: {
-  schedule: (typeof todaySchedule)[0];
-  onPress: (schedule: MeetingDetails) => void;
+  schedule: appointments
+  onPress: (schedule: appointments) => void;
 }) => (
   <TouchableOpacity
     style={principalHome.scheduleCard}
     onPress={() => onPress(schedule)}
   >
     <View style={principalHome.timeContainer}>
-      <Text style={principalHome.timeText}>{schedule.time}</Text>
-      <Text style={principalHome.endTimeText}>{schedule.endTime}</Text>
+      <Text style={principalHome.timeText}>{}</Text>
+      {/* <Text style={principalHome.endTimeText}>{schedule.endTime}</Text> */}
     </View>
     <View style={principalHome.divider} />
     <View style={principalHome.detailsContainer}>
-      <Text style={principalHome.meetingTitle}>{schedule.type}</Text>
-      <Text style={principalHome.meetingSubject}>{schedule.title}</Text>
+      <Text style={principalHome.meetingTitle}>{schedule.userName}</Text>
+      <Text style={principalHome.meetingSubject}>{schedule.userEmail}</Text>
       <Text style={principalHome.meetingDescription}>
-        {schedule.description}
+        {schedule.desc}
       </Text>
     </View>
   </TouchableOpacity>
 );
 
-const StaffHomeScreen = () => {
-  type TabType = "home" | "upcoming" | "past";
-  const [selectedTab, setSelectedTab] = useState<TabType>("home");
+interface staffHomeScreenProps{
+  email:string | string[],
+  collegeCode:string | string[]
+}
+const StaffHomeScreen = ({email,collegeCode}:staffHomeScreenProps) => {
+
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [selectedMeeting, setSelectedMeeting] = useState<MeetingDetails | null>(
+  const [selectedMeeting, setSelectedMeeting] = useState<appointments | null>(
     null
   );
   const [isRequestModalVisible, setIsRequestModalVisible] = useState(false);
 
-  const handleCardPress = (meeting: MeetingDetails) => {
+
+  const dataTemplate = {
+      _id:"",
+      collegeCode:"",
+      userName: "",
+      userEmail:"",
+      desc: "",
+      dateTime: new Date(),
+    }
+
+    const [upcomingAppointments, setUpcomingAppointments] = useState([dataTemplate]);
+
+  
+
+  const handleCardPress = (meeting: appointments) => {
     setSelectedMeeting(meeting);
     setModalVisible(true);
   };
@@ -145,8 +174,32 @@ const StaffHomeScreen = () => {
     setIsRequestModalVisible(false);
   };
 
-  const renderHomeContent = () => (
-    <>
+  const renderHomeContent = () => {
+    // FUNCTION TO FETCH THE APPOINTMENT DATAS FROM DB
+      const fetchAppointmentData = async ()=>{
+        try{
+          const url = `${baseUrl}/staff/fetch-appointments`;
+          const response = await fetch(url,{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({email,collegeCode})
+          });
+          if(! response.ok) throw new Error("Faild to load data");
+          const data = await response.json();
+          console.log(data);
+          setUpcomingAppointments(data.upcomingAppointments);
+        }
+        catch(error){
+          console.log(error);
+        }
+      }
+
+    useEffect(()=>{
+          fetchAppointmentData();
+          console.log(upcomingAppointments);
+        },[]);
+    return(
+      <>
       <View style={principalHome.welcomeCard}>
         <Text style={principalHome.welcomeTitle}>Welcome Staff !!</Text>
         <Text style={principalHome.welcomeText}>
@@ -171,47 +224,28 @@ const StaffHomeScreen = () => {
 
       <View>
         <Text style={principalHome.sectionTitle}>Today's Schedule</Text>
-        {todaySchedule.map((schedule) => (
+        {upcomingAppointments.map((schedule) => (
           <ScheduleCard
-            key={schedule.id}
+            key={schedule._id}
             schedule={schedule}
             onPress={handleCardPress}
           />
         ))}
       </View>
     </>
-  );
-
-  const renderUpcomingContent = () => (
-    <View>
-      <Text style={principalHome.sectionTitle}>Upcoming Meetings</Text>
-      <Text style={principalHome.placeholderText}>
-        This is where you will list all your upcoming meetings.
-      </Text>
-    </View>
-  );
-
-  const renderPastContent = () => (
-    <View>
-      <Text style={principalHome.sectionTitle}>Past Meetings</Text>
-      <Text style={principalHome.placeholderText}>
-        This is where you will list all your past meetings.
-      </Text>
-    </View>
-  );
+    )
+  };
 
   return (
     <>
       <View style={{ flex: 1, backgroundColor: "#F5F8FF" }}>
-        <Header />
 
         <ScrollView contentContainerStyle={principalHome.scrollViewContent}>
-          {selectedTab === "home" && renderHomeContent()}
-          {selectedTab === "upcoming" && renderUpcomingContent()}
-          {selectedTab === "past" && renderPastContent()}
+          {
+            renderHomeContent()
+          }
         </ScrollView>
 
-        <NavBar selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
 
         <MeetingModal
           isVisible={modalVisible}
