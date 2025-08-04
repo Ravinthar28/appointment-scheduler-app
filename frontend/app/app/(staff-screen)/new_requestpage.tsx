@@ -28,7 +28,6 @@ const ScheduleCard = ({ schedule, onPress }: { schedule: MeetingDetails, onPress
     <View style={staffHome.divider} />
     <View style={staffHome.detailsContainer}>
       <Text style={staffHome.meetingTitle}>{schedule.type}</Text>
-      <Text style={staffHome.meetingSubject}>{schedule.title}</Text>
       <Text style={staffHome.meetingDescription}>{schedule.description}</Text>
     </View>
   </TouchableOpacity>
@@ -85,7 +84,6 @@ const RequestAppointmentModal = ({ isVisible, onClose }: { isVisible: boolean, o
           <Text style={modalStyles.modalStaffEmail}>principal@gmail.com</Text>
 
           <View style={modalStyles.modalContent}>
-            <TextInput style={modalStyles.textInput} placeholder="Subject" />
             <TextInput style={[modalStyles.textInput, modalStyles.multilineInput]} placeholder="Reason for appointment" multiline />
 
             <View style={modalStyles.inputRow}>
