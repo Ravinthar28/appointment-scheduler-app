@@ -216,12 +216,8 @@ const PendingAppointmentsScreen = ({email,collegeCode,selectedTab}:PendingAppoin
               throw new Error("Failed to accept the appiontment by the principal");
             alert(
               `Appointment with ${
-                selectedMeeting?.userName
-              } is scheduled on ${extractDateTime(
-                btn === "reschedule"
-                  ? tempDate
-                  : selectedMeeting?.dateTime || tempDate
-              )}`
+                selectedAppointment?.userName
+              } is scheduled on ${extractDateTime(selectedMeeting?.dateTime || tempDate)}`
             );
             // router.push({
             //   pathname: "/(principal-screen)",

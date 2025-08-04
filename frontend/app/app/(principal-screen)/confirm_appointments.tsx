@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { baseUrl } from "../apiUrl";
+import NoNewAppointmentsScreen from "./no_appointment";
 
 interface confirmedAppointmentScreenProps {
     email: string;
@@ -80,6 +81,12 @@ const RescheduleModal = ({ isVisible, onClose, appointment, onReschedule, onCanc
         onReschedule(reMeetingDate);
     };
 
+    
+
+    const handleCancelPress = () => {
+        onCancel()
+    }
+
     return (
         <Modal
             animationType="fade"
@@ -146,7 +153,7 @@ const RescheduleModal = ({ isVisible, onClose, appointment, onReschedule, onCanc
                             <TouchableOpacity style={modalStyles.rescheduleButton} onPress={handleReschedulePress}>
                                 <Text style={modalStyles.rescheduleButtonText}>Reschedule</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={[modalStyles.rescheduleButton, modalStyles.cancelBtn]} onPress={onCancel}>
+                            <TouchableOpacity style={[modalStyles.rescheduleButton, modalStyles.cancelBtn]} onPress={handleCancelPress}>
                                 <Text style={modalStyles.rescheduleButtonText}>Cancel</Text>
                             </TouchableOpacity>
                         </View>
@@ -248,6 +255,31 @@ export default function ConfirmedAppointmentScreen({
             }
         }
     };
+
+    // FUNCTION FOR CANCELING THE APPOINTMENT
+      const cancelAppointment = async () => {
+        if(selectedMeeting){
+            selectedMeeting.collegeCode = collegeCode
+        }
+        console.log(selectedMeeting);
+        try {
+          const url = `${baseUrl}/principal/cancel-appointment`;
+          const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              selectedTab:"confirmed",
+              selectedMeeting,
+            }),
+          });
+          if (!response) throw new Error("Error in canceling the appointment");
+          const result = await response.json();
+          alert("Appointment Canceled");
+          setSelectedMeeting(null);
+        } catch (error) {
+          console.log(error);
+        }
+      };
     
     function handleAppointmentCardPress(data: appointments) {
         setSelectedMeeting(data);
@@ -262,7 +294,7 @@ export default function ConfirmedAppointmentScreen({
     function AppointmentCards() {
         return (
             <ScrollView style={{ height: "100%" }}>
-                {dummyData.map((data) => (
+                {confirmedAppointments.map((data) => (
                     <TouchableOpacity
                         key={data.id}
                         style={styles.appointmentCardOuterContainer}
@@ -294,13 +326,17 @@ export default function ConfirmedAppointmentScreen({
 
     return (
         <View style={styles.container}>
-            <AppointmentCards />
+            <Text style={styles.title}>Confirmed Appointments</Text>
+            {
+                confirmedAppointments.length === 0 ? <NoNewAppointmentsScreen /> : <AppointmentCards />
+            }
             <RescheduleModal
                 isVisible={showModel}
                 onClose={handleCloseModel}
                 appointment={selectedMeeting}
                 onReschedule={acceptAppointment}
-                onCancel={handleCloseModel}
+                onCancel={cancelAppointment}
+                
             />
         </View>
     );
@@ -313,6 +349,14 @@ const styles = StyleSheet.create({
         backgroundColor: "#F5F8FF",
         paddingHorizontal: 5,
     },
+    title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
+    paddingHorizontal: 20,
+    marginTop: 25,
+    marginBottom: 20,
+  },
     appointmentCardOuterContainer: {
         width: "100%",
         backgroundColor: "#E6E9F0",
@@ -479,3 +523,4 @@ const modalStyles = StyleSheet.create({
         justifyContent: "space-around",
     }
 });
+

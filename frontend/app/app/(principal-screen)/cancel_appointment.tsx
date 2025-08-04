@@ -171,8 +171,8 @@ const CancelAppointmentsScreen = ({email,collegeCode}:CancelAPpointmentScreenPro
                 </TouchableOpacity>
             </View>
             <View style={styles.cardContent}>
-                <Text style={styles.subTitle}>Sub:</Text>
-                <Text style={styles.subText}>{appointment.desc}</Text>
+                <Text style={styles.subTitle}>Msg:</Text>
+                <Text style={styles.subText} numberOfLines={1}>{appointment.desc}</Text>
             </View>
         </TouchableOpacity>
     );
@@ -279,12 +279,13 @@ const styles = StyleSheet.create({
         borderColor: '#fff',
     },
     title: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        color: '#3E5793',
-        marginBottom: 20,
-        marginLeft: 15,
-    },
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
+    paddingHorizontal: 20,
+    marginTop: 25,
+    marginBottom: 20,
+  },
     listContainer: {
         flex: 1,
         paddingHorizontal: 15,
