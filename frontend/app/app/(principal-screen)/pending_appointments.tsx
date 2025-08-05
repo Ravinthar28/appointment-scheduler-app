@@ -348,7 +348,7 @@ const PendingAppointmentsScreen = ({email,collegeCode,selectedTab}:PendingAppoin
     <>
       <View style={styles.container}>
       {/* Title */}
-      <Text style={styles.title}>Pending Appointments</Text>
+      <Text style={styles.title}>New Appointments</Text>
 
       {
         pendingAppointments.length === 0 ? <NoNewAppointmentsScreen /> : <AppointmentScreen />

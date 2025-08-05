@@ -231,6 +231,7 @@ export default function ConfirmedAppointmentScreen({
 
     const acceptAppointment = async (newDateTime: Date) => {
         if (selectedMeeting) {
+            selectedMeeting.collegeCode = collegeCode;
             try {
                 const updatedMeeting = { ...selectedMeeting, dateTime: newDateTime };
                 const url = `${baseUrl}/principal/accept-appointment`;

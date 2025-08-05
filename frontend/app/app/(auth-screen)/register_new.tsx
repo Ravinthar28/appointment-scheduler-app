@@ -146,7 +146,7 @@ export default function Register() {
           throw new Error("Failed to fetch teh data");
         }
         alert("Registerd Successfully");
-        router.push('/(auth-screen)/login')
+        router.push('/(auth-screen)/login_new')
       //   const usersData = await AsyncStorage.getItem('registeredUsers');
       //   const users = usersData ? JSON.parse(usersData) : [];
   
