@@ -102,7 +102,9 @@ const acceptAppointment = async (userData) => {
     const staff = users.staffs.find(data => data.mailId == userData.selectedMeeting.userEmail);
     const staffToken = staff.expoPushToken;
 
-    if (userData.selectedTab === "pending") {
+    
+
+    if (userData.selectedTab === "pending" || userData.selectedTab === "past") {
       // STORES THE ACCEPTED APPOINTMENT IN STAFF'S UPCOMMING APPOINTMENTS
       const staffUpdate = await schema.findOneAndUpdate(
         { "staffs.mailId": userData.selectedMeeting.userEmail },
@@ -117,7 +119,8 @@ const acceptAppointment = async (userData) => {
         { new: true, upsert: false }
       );
 
-      // REMOVES THE ACCEPTED APPOINTMENT FROM THE PRINCIPALS PENDING APPOINTMENTS
+      if(userData.selectedTab === 'pending'){
+        // REMOVES THE ACCEPTED APPOINTMENT FROM THE PRINCIPALS PENDING APPOINTMENTS
       const removeAppointment = await schema.findOneAndUpdate(
         { "principal.pendingAppointments.id": userData.selectedMeeting.id },
         {
@@ -129,10 +132,11 @@ const acceptAppointment = async (userData) => {
         },
         { new: true }
       );
+      }
 
     await sendPushNotification(staffToken,"Appointment Scheduled",`Your appointment with the principal is scheduled on ${extractDateTime(userData.selectedMeeting.dateTime)}`);
 
-      if (staffUpdate && principalUpdate && removeAppointment) return 200;
+      if (staffUpdate && principalUpdate) return 200;
       else return 500;
     }
     if (userData.selectedTab === "confirmed") {

@@ -393,7 +393,7 @@ const PendingAppointmentsScreen = ({email,collegeCode,selectedTab}:PendingAppoin
                   <TouchableOpacity
                     style={styles.acceptButton}
                     onPress={()=>{
-                      acceptAppointment('accept');
+                      acceptAppointment('pending');
                       
                     }}
                   >

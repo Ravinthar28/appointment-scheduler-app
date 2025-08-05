@@ -20,12 +20,31 @@ interface RescheduleModalProps {
   isVisible: boolean;
   onClose: () => void;
   appointment: appointments | null;
+  collegeCode:string
 }
 
+// FUNCTION TO EXTRACT THE DATE AND TIME FORMAT
+      const extractDateTime = (dateTime: Date) => {
+        const dateObject = new Date(dateTime);
+        const date = dateObject.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+        const time = `${
+          dateObject.getHours() > 12
+            ? dateObject.getHours() - 12
+            : dateObject.getHours()
+        }:${dateObject.getMinutes()} ${dateObject.getHours() > 12 ? "PM" : "AM"}`;
+    
+        return `${date}, ${time}`;
+      };
+
 // Modal component
-const RescheduleModal = ({ isVisible, onClose, appointment }: RescheduleModalProps) => {
+const RescheduleModal = ({ isVisible, onClose, appointment,collegeCode }: RescheduleModalProps) => {
     if (!appointment) return null;
 
+    appointment.collegeCode = collegeCode;
     const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
     const [showTimePicker, setShowTimePicker] = useState<boolean>(false);
     const [reMeetingDate, setReMeetingDate] = useState<Date>(new Date());
@@ -57,6 +76,36 @@ const RescheduleModal = ({ isVisible, onClose, appointment }: RescheduleModalPro
       const options: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', hour12: true };
       return new Intl.DateTimeFormat('en-US', options).format(date);
     };
+
+    // FUNCTION FOR ACCEPTING THE APPOINTMENT BASED ON THE STAFF ASSIGNED TIME AND RESCHEDULED TIME BY THE PRINCIPAL
+              const acceptAppointment = async () => {
+                appointment.dateTime = reMeetingDate;
+                try {
+                  const url = `${baseUrl}/principal/accept-appointment`;
+                  const response = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      selectedTab:'past',
+                      selectedMeeting:appointment,
+                    }),
+                  });
+                  if (!response)
+                    throw new Error("Failed to accept the appiontment by the principal");
+                  alert(
+                    `Appointment with ${
+                      appointment?.userName
+                    } is scheduled on ${extractDateTime(appointment?.dateTime || reMeetingDate)}`
+                  );
+                  // router.push({
+                  //   pathname: "/(principal-screen)",
+                  //   params: {email,collegeCode,selectedTab},
+                  // });
+                } catch (error) {
+                  alert(error);
+                }
+                onClose
+              };
 
     return (
         <Modal
@@ -117,8 +166,8 @@ const RescheduleModal = ({ isVisible, onClose, appointment }: RescheduleModalPro
                             )}
                         </View>
 
-                        <TouchableOpacity style={modalStyles.rescheduleButton}>
-                            <Text style={modalStyles.rescheduleButtonText}>Reschedule</Text>
+                        <TouchableOpacity style={modalStyles.rescheduleButton} onPress={acceptAppointment}>
+                            <Text style={modalStyles.rescheduleButtonText}>Revisit</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -199,6 +248,7 @@ const CancelAppointmentsScreen = ({email,collegeCode}:CancelAPpointmentScreenPro
         }
       };
 
+
     const [refreshing, setRefreshing] = useState(false);
     
       // refresh control function
@@ -248,6 +298,7 @@ const CancelAppointmentsScreen = ({email,collegeCode}:CancelAPpointmentScreenPro
                 isVisible={modalVisible}
                 onClose={() => setModalVisible(false)}
                 appointment={selectedAppointment}
+                collegeCode = {collegeCode}
             />
         
         </>
