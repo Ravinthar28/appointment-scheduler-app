@@ -16,11 +16,8 @@ import {
 import Icon from "react-native-vector-icons/Ionicons";
 import {
   Ionicons,
-  MaterialCommunityIcons,
-  FontAwesome,
   Feather,
 } from "@expo/vector-icons";
-import { router } from "expo-router";
 import { baseUrl } from "../apiUrl";
 import { new_principal_styles } from "./style";
 import NoNewAppointmentsScreen from "./no_appointment";
@@ -308,45 +305,6 @@ const PendingAppointmentsScreen = ({email,collegeCode,selectedTab}:PendingAppoin
     await fetchRequest();
     setRefreshing(false);
   };
-
-    // FUNCTION TO GENERATE APPOINTMENTS CARD
-    const GenerateAppointmentsCard = ({
-      collegeCode,
-      id,
-      userName,
-      userEmail,
-      desc,
-      dateTime,
-    }: appointments) => {
-      return (
-        <TouchableOpacity
-          key={id}
-          style={new_principal_styles.card}
-          onPress={() => {
-            setSelectedMeeting({
-              collegeCode,
-              id,
-              userName,
-              userEmail,
-              desc,
-              dateTime,
-            });
-          }}
-        >
-          <View style={new_principal_styles.avatar} />
-          <View style={{ flex: 1 }}>
-            <Text style={new_principal_styles.cardName}>Meeting with {userName}</Text>
-            <Text style={new_principal_styles.cardTime}>
-              {extractDateTime(dateTime)}
-            </Text>
-            {/* {meeting.message && <Text style={new_principal_styles.cardMessage}>{meeting.message}</Text>} */}
-          </View>
-          <TouchableOpacity>
-            
-          </TouchableOpacity>
-        </TouchableOpacity>
-      );
-    };
 
     useEffect(() => {
         fetchRequest();
