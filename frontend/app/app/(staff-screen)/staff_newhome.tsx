@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Modal,
+  RefreshControl,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -124,8 +125,11 @@ const ScheduleCard = ({
   >
     <View style={principalHome.timeContainer}>
       <Text style={principalHome.timeText}>
-  {new Date(schedule.dateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-</Text>
+        {new Date(schedule.dateTime).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+      </Text>
 
       {/* <Text style={principalHome.endTimeText}>{schedule.endTime}</Text> */}
     </View>
@@ -133,7 +137,9 @@ const ScheduleCard = ({
     <View style={principalHome.detailsContainer}>
       <Text style={principalHome.meetingTitle}>Appointment with Principal</Text>
       {/* <Text style={principalHome.meetingSubject}>{schedule.userEmail}</Text> */}
-      <Text style={principalHome.meetingDescription} numberOfLines={1}>{schedule.desc}</Text>
+      <Text style={principalHome.meetingDescription} numberOfLines={1}>
+        {schedule.desc}
+      </Text>
     </View>
   </TouchableOpacity>
 );
@@ -188,27 +194,45 @@ const StaffHomeScreen = ({ email, collegeCode }: staffHomeScreenProps) => {
       fetchAppointmentData();
     }, []);
 
+    const [refreshing, setRefreshing] = useState(false);
+
+    // refresh control function
+    const handleRefresh = async () => {
+      setRefreshing(true);
+      await fetchAppointmentData();
+      setRefreshing(false);
+    };
     function UpComingAppointmentsCards() {
       return (
         <>
-          {upcomingAppointments
-            .filter((appointment) => {
-              const apptDate = new Date(appointment?.dateTime);
-              const today = new Date();
-
-              return (
-                apptDate.getDate() === today.getDate() &&
-                apptDate.getMonth() === today.getMonth() &&
-                apptDate.getFullYear() === today.getFullYear()
-              );
-            })
-            .map((schedule) => (
-              <ScheduleCard
-                key={schedule._id}
-                schedule={schedule}
-                onPress={handleCardPress}
+          <ScrollView
+            contentContainerStyle={principalHome.scrollViewContent}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
               />
-            ))}
+            }
+          >
+            {upcomingAppointments
+              .filter((appointment) => {
+                const apptDate = new Date(appointment?.dateTime);
+                const today = new Date();
+
+                return (
+                  apptDate.getDate() === today.getDate() &&
+                  apptDate.getMonth() === today.getMonth() &&
+                  apptDate.getFullYear() === today.getFullYear()
+                );
+              })
+              .map((schedule) => (
+                <ScheduleCard
+                  key={schedule._id}
+                  schedule={schedule}
+                  onPress={handleCardPress}
+                />
+              ))}
+          </ScrollView>
         </>
       );
     }
@@ -217,8 +241,8 @@ const StaffHomeScreen = ({ email, collegeCode }: staffHomeScreenProps) => {
         <View style={principalHome.welcomeCard}>
           <Text style={principalHome.welcomeTitle}>Welcome Staff !!</Text>
           <Text style={principalHome.welcomeText}>
-            Hello Staff! You have meetings lined up for today. Wishing you a
-            successful day.
+            Dear Staff, please note that you have meetings scheduled for today.
+            We wish you a successful day.
           </Text>
         </View>
 
@@ -253,9 +277,7 @@ const StaffHomeScreen = ({ email, collegeCode }: staffHomeScreenProps) => {
   return (
     <>
       <View style={{ flex: 1, backgroundColor: "#F5F8FF" }}>
-        <ScrollView contentContainerStyle={principalHome.scrollViewContent}>
-          {renderHomeContent()}
-        </ScrollView>
+        {renderHomeContent()}
 
         <MeetingModal
           isVisible={modalVisible}

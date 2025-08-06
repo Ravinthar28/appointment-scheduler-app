@@ -190,8 +190,7 @@ export default function PrincipalHome({
           Welcome Principal !!
         </Text>
         <Text style={new_principal_styles.welcomeDescription}>
-          Lorem ipsum dolor sit amet consectetur. Sit adipiscing gravida in
-          faucibus.
+          Hello, Principal! I hope you have a wonderful and productive day with your appointments.
         </Text>
       </View>
 
