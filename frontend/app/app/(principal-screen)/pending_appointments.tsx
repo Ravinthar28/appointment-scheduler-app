@@ -395,11 +395,6 @@ const PendingAppointmentsScreen = ({email,collegeCode,selectedTab}:PendingAppoin
   
     const[rescheduleModalVisible,setRescheduleModalVisible] = useState(false);
 
-  const handleSettingsPress = (staffId: string) => {
-    // Type 'staffId' as string
-    console.log(`Settings pressed for Staff- ${staffId}`);
-    // Implement navigation or action for settings
-  };
 
   const handleAppointmentCardPress = (appointment: appointments) => {
     // Type 'appointment' as Appointment
@@ -444,11 +439,7 @@ const PendingAppointmentsScreen = ({email,collegeCode,selectedTab}:PendingAppoin
                   <Text style={styles.staffName}>{appointment.userName}</Text>
                   <Text style={styles.staffEmail}>{appointment.userEmail}</Text>
                 </View>
-                <TouchableOpacity
-                  onPress={() => handleSettingsPress(appointment.id)}
-                >
-                  <Icon name="settings-outline" size={24} color="#666" />
-                </TouchableOpacity>
+
               </View>
               <View style={styles.cardBody}>
                 <Text style={styles.descriptionText}>

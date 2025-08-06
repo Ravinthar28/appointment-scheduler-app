@@ -216,9 +216,6 @@ const CancelAppointmentsScreen = ({email,collegeCode}:CancelAPpointmentScreenPro
                     <Text style={styles.staffName}>{appointment.userName}</Text>
                     <Text style={styles.staffEmail}>{appointment.userEmail}</Text>
                 </View>
-                <TouchableOpacity style={styles.settingsIcon}>
-                    <Feather name="settings" size={20} color="#888" />
-                </TouchableOpacity>
             </View>
             <View style={styles.cardContent}>
                 <Text style={styles.subTitle}>Msg:</Text>
@@ -367,9 +364,7 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#666',
     },
-    settingsIcon: {
-        padding: 5,
-    },
+
     cardContent: {
         flexDirection: 'row',
     },
