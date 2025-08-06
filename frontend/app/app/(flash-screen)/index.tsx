@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, TouchableOpacity, StyleSheet, ImageBackground,ActivityIndicator  } from 'react-native';
+import { Text, View, TouchableOpacity, StyleSheet, ImageBackground,ActivityIndicator, SafeAreaView  } from 'react-native';
 import {styles} from "./new_style";
 
 // ROUTER
@@ -78,7 +78,8 @@ export default function WelcomeScreen() {
   }
 
   return (
-    <ImageBackground
+    <SafeAreaView style={{flex:1}}>
+      <ImageBackground
       source={collegePhoto}
       style={styles.imageBackground}
       resizeMode="cover"
@@ -96,5 +97,7 @@ export default function WelcomeScreen() {
         }
       </LinearGradient>
     </ImageBackground>
+    </SafeAreaView>
+    
   );
 }

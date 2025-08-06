@@ -3,6 +3,7 @@ import {
   View,
   TouchableOpacity,
   Image,
+  SafeAreaView,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient"; // For the background gradient
 import {
@@ -34,7 +35,8 @@ export default function PrincipalDashboard() {
     router.replace('/(auth-screen)/login_new');
   }
   return (
-    <LinearGradient
+    <SafeAreaView style={{flex:1}}>
+      <LinearGradient
       colors={["#E0E8F7", "#F0F4F9"]} // Light blue/grey gradient for background
       style={new_principal_styles.container}
     >
@@ -85,5 +87,7 @@ export default function PrincipalDashboard() {
         </TouchableOpacity>
       </View>
     </LinearGradient>
+    </SafeAreaView>
+    
   );
 }

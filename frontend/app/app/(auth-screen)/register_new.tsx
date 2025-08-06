@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Platform,
   ScrollView,
+  SafeAreaView,
 } from "react-native";
 
 import { register_styles } from "./new_style";
@@ -180,7 +181,8 @@ export default function Register() {
     fullName && email && phone && collegeCode && password && selectedRole;
 
   return (
-    <LinearGradient
+    <SafeAreaView style={{flex:1}}>
+      <LinearGradient
       colors={["#2D3F75", "#3A508C", "#5C7FB7", "#7D9DCF"]} //
       style={register_styles.container}
       start={{ x: 0.5, y: 0 }} // Starts from the top-center
@@ -338,5 +340,7 @@ export default function Register() {
         </View>
       </ScrollView>
     </LinearGradient>
+    </SafeAreaView>
+    
   );
 }
