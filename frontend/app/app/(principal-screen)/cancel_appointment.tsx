@@ -4,6 +4,7 @@ import { Ionicons, FontAwesome5, Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { baseUrl } from '../apiUrl';
+import NoNewAppointmentsScreen from './no_appointment';
 
 // Define the type for the appointment object
 interface appointments {
@@ -262,28 +263,9 @@ const CancelAppointmentsScreen = ({email,collegeCode}:CancelAPpointmentScreenPro
       fetchRequest();
     }, []);
   
-    // FUNCTION TO EXTRACT THE DATE AND TIME FORMAT
-    const extractDateTime = (dateTime: Date) => {
-      const dateObject = new Date(dateTime);
-      const date = dateObject.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
-      const time = `${
-        dateObject.getHours() > 12
-          ? dateObject.getHours() - 12
-          : dateObject.getHours()
-      }:${dateObject.getMinutes()} ${dateObject.getHours() > 12 ? "PM" : "AM"}`;
-  
-      return `${date}, ${time}`;
-    };
-
-    return (
-        <><View style={styles.container}>
-
-                <Text style={styles.title}>Closed Appointments</Text>
-
+    function AppointmentCards(){
+        return(
+            <>
                 <ScrollView style={styles.listContainer} refreshControl={
                         <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
                       }>
@@ -291,6 +273,19 @@ const CancelAppointmentsScreen = ({email,collegeCode}:CancelAPpointmentScreenPro
                         <AppointmentCard key={appointment.id} appointment={appointment} onPress={handleCardPress} />
                     ))}
                 </ScrollView>
+            </>
+        )
+    }
+
+    return (
+        <><View style={styles.container}>
+
+                <Text style={styles.title}>Closed Appointments</Text>
+
+                {
+                    pastAppointments.length === 0 ? <NoNewAppointmentsScreen /> : <AppointmentCards />
+                }
+                
 
             </View>
             
@@ -510,7 +505,7 @@ const modalStyles = StyleSheet.create({
         alignItems: 'center',
     },
     rescheduleButton: {
-        backgroundColor: '#FFC107',
+        backgroundColor: '#008000',
         borderRadius: 50,
         paddingVertical: 15,
         marginTop: 20,
