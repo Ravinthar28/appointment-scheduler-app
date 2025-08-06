@@ -18,11 +18,14 @@ import {
   Ionicons,
   MaterialCommunityIcons,
   FontAwesome,
+  Feather,
 } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { baseUrl } from "../apiUrl";
 import { new_principal_styles } from "./style";
 import NoNewAppointmentsScreen from "./no_appointment";
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 
 const { width, height } = Dimensions.get("window"); // Get screen height for modal positioning
 
@@ -93,6 +96,175 @@ interface PendingAppointmentsScreenProps {
   collegeCode?:string | string[]
   selectedTab?:string
 }
+
+interface appointments {
+    collegeCode: string;
+    id: string;
+    userName: string;
+    userEmail: string;
+    desc: string;
+    dateTime: Date;
+  }
+interface RescheduleModalProps {
+  isVisible: boolean;
+  onClose: () => void;
+  appointment: appointments | null;
+  collegeCode:string
+}
+
+// FUNCTION TO EXTRACT THE DATE AND TIME FORMAT
+      const extractDateTime = (dateTime: Date) => {
+        const dateObject = new Date(dateTime);
+        const date = dateObject.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+        const time = `${
+          dateObject.getHours() > 12
+            ? dateObject.getHours() - 12
+            : dateObject.getHours()
+        }:${dateObject.getMinutes()} ${dateObject.getHours() > 12 ? "PM" : "AM"}`;
+    
+        return `${date}, ${time}`;
+      };
+      
+// Modal component
+const RescheduleModal = ({ isVisible, onClose, appointment,collegeCode }: RescheduleModalProps) => {
+    if (!appointment) return null;
+
+    appointment.collegeCode = collegeCode;
+    const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+    const [showTimePicker, setShowTimePicker] = useState<boolean>(false);
+    const [reMeetingDate, setReMeetingDate] = useState<Date>(new Date());
+
+    const onDateChange = (event: any, selectedDate?: Date) => {
+      const currentDate = selectedDate || reMeetingDate;
+      setShowDatePicker(false);
+      if (selectedDate) {
+        setReMeetingDate(currentDate);
+      }
+    };
+
+    const onTimeChange = (event: any, selectedTime?: Date) => {
+      const currentTime = selectedTime || reMeetingDate;
+      setShowTimePicker(false);
+      if (selectedTime) {
+        setReMeetingDate(currentTime);
+      }
+    };
+
+    const formatDate = (date: Date): string => {
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}-${month}-${year}`;
+    };
+
+    const formatTime = (date: Date): string => {
+      const options: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', hour12: true };
+      return new Intl.DateTimeFormat('en-US', options).format(date);
+    };
+
+    // FUNCTION FOR ACCEPTING THE APPOINTMENT BASED ON THE STAFF ASSIGNED TIME AND RESCHEDULED TIME BY THE PRINCIPAL
+              const acceptAppointment = async () => {
+                appointment.dateTime = reMeetingDate;
+                try {
+                  const url = `${baseUrl}/principal/accept-appointment`;
+                  const response = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      selectedTab:'pending',
+                      selectedMeeting:appointment,
+                    }),
+                  });
+                  if (!response)
+                    throw new Error("Failed to accept the appiontment by the principal");
+                  alert(
+                    `Appointment with ${
+                      appointment?.userName
+                    } is scheduled on ${extractDateTime(appointment?.dateTime || reMeetingDate)}`
+                  );
+                  // router.push({
+                  //   pathname: "/(principal-screen)",
+                  //   params: {email,collegeCode,selectedTab},
+                  // });
+                } catch (error) {
+                  alert(error);
+                }
+                onClose
+              };
+
+    return (
+        <Modal
+            animationType="fade"
+            transparent={true}
+            visible={isVisible}
+            onRequestClose={onClose}
+        >
+            <View style={modalStyles.centeredView}>
+                <View style={modalStyles.modalView}>
+                    <TouchableOpacity style={modalStyles.closeButton} onPress={onClose}>
+                        <Ionicons name="close" size={24} color="#000" />
+                    </TouchableOpacity>
+                    <Image
+                        source={require('../../assets/images/profile.png')}
+                        style={modalStyles.modalAvatar}
+                    />
+                    <Text style={modalStyles.modalStaffName}>{appointment.userName}</Text>
+                    <Text style={modalStyles.modalStaffEmail}>{appointment.userEmail}</Text>
+                    <View style={modalStyles.modalContent}>
+                        <Text style={modalStyles.modalDescription}>
+                            {appointment.desc}
+                        </Text>
+                        
+                        <View style={modalStyles.inputRow}>
+                            <Text style={modalStyles.inputLabel}>Re-meeting Date:</Text>
+                            <TouchableOpacity
+                                onPress={() => setShowDatePicker(true)}
+                                style={modalStyles.input}
+                            >
+                                <Text>{formatDate(reMeetingDate)}</Text>
+                                <Feather name="calendar" size={20} color="#666" />
+                            </TouchableOpacity>
+                            {showDatePicker && (
+                                <DateTimePicker
+                                    mode="date"
+                                    value={reMeetingDate}
+                                    minimumDate={new Date()}
+                                    onChange={onDateChange}
+                                />
+                            )}
+                        </View>
+                        <View style={modalStyles.inputRow}>
+                            <Text style={modalStyles.inputLabel}>Re-meeting Time:</Text>
+                            <TouchableOpacity
+                                onPress={() => setShowTimePicker(true)}
+                                style={modalStyles.inputTime}
+                            >
+                                <Text>{formatTime(reMeetingDate)}</Text>
+                                <Ionicons name="time-outline" size={20} color="#666" />
+                            </TouchableOpacity>
+                            {showTimePicker && (
+                                <DateTimePicker
+                                    mode="time"
+                                    value={reMeetingDate}
+                                    onChange={onTimeChange}
+                                />
+                            )}
+                        </View>
+
+                        <TouchableOpacity style={modalStyles.rescheduleButton} onPress={acceptAppointment}>
+                            <Text style={modalStyles.rescheduleButtonText}>Reschedule</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+        </Modal>
+    );
+};
+
 const PendingAppointmentsScreen = ({email,collegeCode,selectedTab}:PendingAppointmentsScreenProps) => {
 
   const [selectedMeeting, setSelectedMeeting] = useState<appointments | null>(
@@ -262,6 +434,8 @@ const PendingAppointmentsScreen = ({email,collegeCode,selectedTab}:PendingAppoin
   // Type selectedAppointment to be either an Appointment or null
   const [selectedAppointment, setSelectedAppointment] =
     useState<appointments | null>(null);
+  
+    const[rescheduleModalVisible,setRescheduleModalVisible] = useState(false);
 
   const handleSettingsPress = (staffId: string) => {
     // Type 'staffId' as string
@@ -280,22 +454,10 @@ const PendingAppointmentsScreen = ({email,collegeCode,selectedTab}:PendingAppoin
     setSelectedAppointment(null);
   };
 
-  // Ensure selectedAppointment is not null before accessing its properties
-  const handleAccept = () => {
-    if (selectedAppointment) {
-      console.log("Accepted appointment for:", selectedAppointment.userName);
-      // Implement accept logic
-      handleCloseModal();
-    }
-  };
-
-  const handleReject = () => {
-    if (selectedAppointment) {
-      console.log("Rejected appointment for:", selectedAppointment.userName);
-      // Implement reject logic
-      handleCloseModal();
-    }
-  };
+  const handleRescheduleBtnPress = () => {
+    setModalVisible(false);
+    setRescheduleModalVisible(true);
+  }
 
   function AppointmentScreen(){
     return(
@@ -382,7 +544,9 @@ const PendingAppointmentsScreen = ({email,collegeCode,selectedTab}:PendingAppoin
                 <Text style={styles.modalStaffEmail}>
                   {selectedAppointment.userName}
                 </Text>
-
+                <Text>
+                  {extractDateTime(selectedAppointment.dateTime)}
+                </Text>
                 <View style={styles.modalDescriptionContainer}>
                   <Text style={styles.modalDescriptionText}>
                     {selectedAppointment.desc}
@@ -406,11 +570,24 @@ const PendingAppointmentsScreen = ({email,collegeCode,selectedTab}:PendingAppoin
                     <Text style={styles.rejectButtonText}>Reject</Text>
                   </TouchableOpacity>
                 </View>
+                <TouchableOpacity
+                    style={styles.rescheduleButton}
+                    onPress={()=>handleRescheduleBtnPress()}
+                  >
+                    <Text style={[styles.rejectButtonText,{color:"#ffffff"}]}>Reschedule</Text>
+                  </TouchableOpacity>
               </>
             )}
           </View>
         </View>
       </Modal>
+
+      <RescheduleModal
+                isVisible={rescheduleModalVisible}
+                onClose={() => setRescheduleModalVisible(false)}
+                appointment={selectedAppointment}
+                collegeCode = {collegeCode}
+            />
     </View>
     </>
   );
@@ -578,6 +755,117 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
+  rescheduleButton: {
+        backgroundColor: '#008000',
+        borderRadius: 50,
+        paddingVertical: 15,
+        marginTop: 20,
+        width: '100%',
+        alignItems: 'center',
+    },
+});
+
+const modalStyles = StyleSheet.create({
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+        width: '90%',
+    },
+    closeButton: {
+        position: 'absolute',
+        right: 15,
+        top: 15,
+    },
+    modalAvatar: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        marginBottom: 10,
+    },
+    modalStaffName: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#3C64B1',
+    },
+    modalStaffEmail: {
+        fontSize: 14,
+        color: '#666',
+        marginBottom: 20,
+    },
+    modalContent: {
+        width: '100%',
+    },
+    modalDescription: {
+        backgroundColor: '#E6E9F0',
+        padding: 15,
+        borderRadius: 10,
+        fontSize: 14,
+        color: '#555',
+        textAlign: 'center',
+        marginBottom: 20,
+    },
+    inputRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 15,
+    },
+    inputLabel: {
+      fontSize: 14,
+      color: '#000',
+    },
+    input: {
+        flex: 1,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+        padding: 10,
+        marginLeft: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    inputTime: {
+        flex: 1,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+        padding: 10,
+        marginLeft: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    rescheduleButton: {
+        backgroundColor: '#008000',
+        borderRadius: 50,
+        paddingVertical: 15,
+        marginTop: 20,
+        width: '100%',
+        alignItems: 'center',
+    },
+    rescheduleButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
 });
 
 export default PendingAppointmentsScreen;
