@@ -202,7 +202,12 @@ const cancelAppointment = async (userData)=>{
       {$pull:{'principal.confirmedAppointments':{id:userData.selectedMeeting.id}}},
       {new:true,upsert:false}
     );
-    if(updatePrincipal) removed = true;
+    const updateStaff = await schema.findOneAndUpdate(
+      {'staffs.mailId':userData.selectedMeeting.userEmail},
+      {$pull:{'staffs.$.upcomingAppointments':{id:userData.selectedMeeting.id}}},
+      {new:true,upsert:false}
+    );
+    if(updatePrincipal && updateStaff) removed = true;
     }
 
     // TO CANCEL THE APPOINTMENT FROM PAST TAB

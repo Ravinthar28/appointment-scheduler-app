@@ -5,4 +5,4 @@
 
 
 // college URL
-export const baseUrl = "http://192.168.13.100:3000"
+export const baseUrl = "http://192.168.82.146:3000"

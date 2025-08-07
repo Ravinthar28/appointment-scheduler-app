@@ -4,6 +4,8 @@ import {
   TouchableOpacity,
   Image,
   SafeAreaView,
+  StatusBar,
+  useColorScheme
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient"; // For the background gradient
 import {
@@ -22,6 +24,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function PrincipalDashboard() {
 
+  const colorScheme = useColorScheme();
+
+  const isDarkMode = colorScheme === "dark"
+  const statusBarBg = isDarkMode ? "black" : "white";
+
+   const statusBarStyle = isDarkMode ? 'light-content' : 'dark-content';
+
   const [selectedTab, setSelectedTab] = useState<
     "home" | "pending" | "confirmed" | "past"
   >("home");
@@ -35,7 +44,9 @@ export default function PrincipalDashboard() {
     router.replace('/(auth-screen)/login_new');
   }
   return (
-    <SafeAreaView style={{flex:1}}>
+    <>
+      <StatusBar backgroundColor={statusBarBg} barStyle={statusBarStyle} />
+      <SafeAreaView style={{flex:1,backgroundColor:"white"}}>
       <LinearGradient
       colors={["#E0E8F7", "#F0F4F9"]} // Light blue/grey gradient for background
       style={new_principal_styles.container}
@@ -88,6 +99,8 @@ export default function PrincipalDashboard() {
       </View>
     </LinearGradient>
     </SafeAreaView>
+    </>
+    
     
   );
 }
