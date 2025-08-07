@@ -1,103 +1,185 @@
-import React, { useEffect, useState } from 'react';
-import { Text, View, TouchableOpacity, StyleSheet, ImageBackground,ActivityIndicator, SafeAreaView  } from 'react-native';
-import {styles} from "./new_style";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Image,
+  StyleSheet,
+  SafeAreaView,
+  Modal,
+  Text,
+  ImageBackground,
+} from "react-native";
+import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { LinearGradient } from "expo-linear-gradient";
 
-// ROUTER
-import { useRouter } from 'expo-router';
-// This library provides a way to create a smooth gradient overlay.
-import { LinearGradient } from 'expo-linear-gradient';
-
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
-export default function WelcomeScreen() {
+export default function SplashScreen() {
   const router = useRouter();
 
-  const collegePhoto = require('../../assets/images/college-building.jpeg'); // Make sure to provide your own college photo here.
+    const [isUserFound, setUserFound] = useState(false);
 
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
+    useEffect(() => {
     const checkLoginStatus = async () => {
       const storedUser = await AsyncStorage.getItem("user");
       if (storedUser) {
-        const user = JSON.parse(storedUser);
-        if (user.userType === "principal") {
-          router.push({
-            pathname:"/(principal-screen)",
-            params:{
-              email:user.email,
-              collegeCode:user.collegeCode
-            }
-          })
-        } else {
-          // staff route
-          router.push({
-            pathname:"/(staff-screen)/new_index",
-            params:{
-              email:user.email,
-              collegeCode:user.collegeCode
-            }
-          })
-
-        }
-      }
-      setLoading(false);
+        setUserFound(true);
+        } 
     };
 
     checkLoginStatus();
   }, []);
 
-
-  function FlashScreen(){
-    return(
-      // ImageBackground is used to display the college photo as the background.
-      <>
-        {/* The content (text and buttons) is placed inside the gradient. */}
-        <View style={styles.content}>
-          <Text style={styles.title}>Welcome Back Sign In{"\n"}or Register</Text>
-          <Text style={styles.subtitle}>Connect With Your Principal Schedule{"\n"}Meeting.No Waiting.</Text>
-
-          <TouchableOpacity
-            style={styles.loginButton}
-            onPress={() => router.push('/(auth-screen)/login_new')}
-          >
-            <Text style={styles.buttonText}>Login</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.registerButton}
-            onPress={() => router.push('/(auth-screen)/register_new')}
-          >
-            <Text style={styles.buttonText}>Register</Text>
-          </TouchableOpacity>
-        </View>
-      </>
+  useEffect(()=>{
+    setTimeout(async ()=>{
+      const storedUser = await AsyncStorage.getItem("user");
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        if (user.userType === "principal") {
+          router.push({
+            pathname: "/(principal-screen)",
+            params: {
+              email: user.email,
+              collegeCode: user.collegeCode,
+            },
+          });
+        } else {
+          // staff route
+          router.push({
+            pathname: "/(staff-screen)/new_index",
+            params: {
+              email: user.email,
+              collegeCode: user.collegeCode,
+            },
+          });
+        }
+      }
+      else{
+        router.push("/(flash-screen)/flash_screen");
+      }
+      setAppLogoModal(false);
+    },6000);
     
-    )
-  }
+  },[isUserFound]);
+
+  const [collegeLogoModal,setCollegeLogoModal] = useState(false);
+  const [overLayScreen,setOverLayScreen] = useState(["rgba(0, 0, 50, 0.4)", "rgba(45, 59, 101, 0.8)"]);
+  const [appLogoModal,setAppLogoModal] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setCollegeLogoModal(true);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setCollegeLogoModal(false);
+      setAppLogoModal(true);
+      setOverLayScreen(['rgba(33, 66, 253, 0.8)', 'rgba(69, 97, 253, 0.8)'])
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+
+
+
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     router.replace('/(auth-screen)/register_new');
+  //   }, 3000);
+
+  //   return () => clearTimeout(timer);
+  // }, []);
 
   return (
-    <SafeAreaView style={{flex:1}}>
-      <ImageBackground
-      source={collegePhoto}
-      style={styles.imageBackground}
-      resizeMode="cover"
+    <ImageBackground
+      source={require("../../assets/images/college-building.jpeg")}
+      style={styles.imgBg}
     >
-      {/* A semi-transparent LinearGradient is layered on top of the image. */}
-      {/* This creates the dark, atmospheric overlay effect seen in the example image. */}
       <LinearGradient
-        colors={['rgba(0, 0, 50, 0.4)', 'rgba(45, 59, 101, 0.8)']} // Dark, transparent gradient to a more solid blue.
+        colors={overLayScreen} // Dark, transparent gradient to a more solid blue.
         style={styles.gradientOverlay}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
+      ></LinearGradient>
+
+      <Modal
+        animationType="fade"
+        transparent
+        visible={collegeLogoModal}
       >
-        {
-          loading ? <ActivityIndicator size = "large" /> : <FlashScreen />
-        }
-      </LinearGradient>
+        <View style={styles.modalInnerContainer}>
+          <View style={styles.logoContainer}>
+            <Image
+              style={styles.clgLogo}
+              source={require('../../assets/images/College_logo.png')}
+            />
+            <Text style={styles.logoTxt}>VMS</Text>
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        animationType="fade"
+        transparent
+        visible={appLogoModal}
+      >
+        <View style={styles.modalInnerContainer}>
+          <View style={styles.logoContainer}>
+            <Image
+              style={styles.appLogo}
+              source={require('../../assets/images/app-logo.png')}
+            />
+            <Text style={styles.logoTxt}>NSCET</Text>
+            <Text style={[styles.logoTxt,styles.appLogoTxt]}>Visitors Management System</Text>
+          </View>
+        </View>
+      </Modal>
     </ImageBackground>
-    </SafeAreaView>
-    
   );
 }
+
+const styles = StyleSheet.create({
+  imgBg: {
+    width: "100%",
+    height: "100%",
+  },
+  gradientOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    paddingBottom: 50, // Pushes content up from the bottom edge
+  },
+  modalInnerContainer: {
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  logoContainer: {
+    width: "100%",
+    height: 400,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  clgLogo: {
+    width: 300,
+    height: 150,
+  },
+  logoTxt : {
+    fontSize:25,
+    fontWeight:"400",
+    color:"#ffffff",
+    letterSpacing:3
+  },
+  appLogo:{
+    width:150,
+    height:100
+  },
+  appLogoTxt:{
+    textAlign:"center"
+  }
+});
