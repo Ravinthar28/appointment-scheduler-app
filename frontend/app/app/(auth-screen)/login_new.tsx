@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   SafeAreaView,
+  ActivityIndicator,
 } from "react-native";
 
 import { register_styles } from "./new_style";
@@ -26,6 +27,7 @@ export default function Register() {
   const [collegeCode, setCollegeCode] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading,setIsLoading] = useState(false);
   const [selectedRole, setSelectedRole] = useState<"staff" | "principal">(
     "staff"
   );
@@ -74,6 +76,7 @@ const handleStaffLoginSuccess = async (userData:userData) => {
 
   const handleLogin = async () => {
     try {
+      setIsLoading(true);
       const userData = {
         email,
         password,
@@ -120,7 +123,7 @@ const handleStaffLoginSuccess = async (userData:userData) => {
       console.log(error);
       alert("Check the email and password");
     }
-
+    setIsLoading(false);
     // if (selectedRole === 'staff') {
     //    router.push('/(staff-screen)/home');
     //  } else if (selectedRole === 'principal') {
@@ -138,6 +141,9 @@ const handleStaffLoginSuccess = async (userData:userData) => {
       start={{ x: 0.5, y: 0 }} // Starts from the top-center
       end={{ x: 0.5, y: 1 }} // Ends at the bottom-center
     >
+      {
+        isLoading && <ActivityIndicator size={'large'} style={{flex:1}} />
+      }
       <View style={register_styles.innerContainer}>
         <View style={register_styles.pageTitle}>
           <TouchableOpacity

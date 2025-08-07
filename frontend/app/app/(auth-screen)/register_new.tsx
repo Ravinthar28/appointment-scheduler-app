@@ -9,6 +9,7 @@ import {
   Platform,
   ScrollView,
   SafeAreaView,
+  ActivityIndicator,
 } from "react-native";
 
 import { register_styles } from "./new_style";
@@ -92,6 +93,7 @@ export default function Register() {
   const [collegeCode, setCollegeCode] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading,setIsLoading] = useState(false);
   const [selectedRole, setSelectedRole] = useState<"staff" | "principal">(
     "staff"
   );
@@ -128,6 +130,8 @@ export default function Register() {
       }
   
       try {
+        setIsLoading(true);
+        console.log(isLoading);
         const userData = {
           fullName,
           email,
@@ -148,33 +152,12 @@ export default function Register() {
         }
         alert("Registerd Successfully");
         router.push('/(auth-screen)/login_new')
-      //   const usersData = await AsyncStorage.getItem('registeredUsers');
-      //   const users = usersData ? JSON.parse(usersData) : [];
-  
-      //   const emailExists = users.some((user: any) => user.email === email);
-      //   if (emailExists) {
-      //     Alert.alert('Already Registered', 'This email is already registered.');
-      //     return;
-      //   }
-  
-      //   users.push(userData);
-      //   await AsyncStorage.setItem('registeredUsers', JSON.stringify(users));
-  
-      //   Alert.alert('Registration Successful', 'You can now log in.', [
-      //     {
-      //       text: 'OK',
-      //       onPress: () => router.push('/login'),
-      //     },
-      //   ]);
-      // } catch (error) {
-      //   console.error(error);
-      //   Alert.alert('Error', 'Failed to register. Please try again.');
       }
       catch (error){
         alert('Make sure the college code you provided is correct')
         console.log(error);
       }
-      
+      setIsLoading(false);
     };
 
   const isFormValid =
@@ -182,6 +165,9 @@ export default function Register() {
 
   return (
     <SafeAreaView style={{flex:1}}>
+      {
+        isLoading && <ActivityIndicator size={'large'} style={{flex:1}} />
+      }
       <LinearGradient
       colors={["#2D3F75", "#3A508C", "#5C7FB7", "#7D9DCF"]} //
       style={register_styles.container}
