@@ -311,8 +311,8 @@ const PendingAppointmentsScreen = ({email,collegeCode,selectedTab}:PendingAppoin
       }, []);
     
       // FUNCTION TO EXTRACT THE DATE AND TIME FORMAT
-      const extractDateTime = (dateTime: Date) => {
-        const dateObject = new Date(dateTime);
+      const extractDateTime = (dateTime?: Date) => {
+        const dateObject = new Date(dateTime || new Date());
         const date = dateObject.toLocaleDateString("en-US", {
           year: "numeric",
           month: "long",
@@ -347,7 +347,7 @@ const PendingAppointmentsScreen = ({email,collegeCode,selectedTab}:PendingAppoin
             alert(
               `Appointment with ${
                 selectedAppointment?.userName
-              } is scheduled on ${extractDateTime(selectedMeeting?.dateTime || tempDate)}`
+              } is scheduled on ${extractDateTime(selectedAppointment?.dateTime)}`
             );
             // router.push({
             //   pathname: "/(principal-screen)",
