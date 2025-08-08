@@ -63,6 +63,10 @@ export const register_styles = StyleSheet.create({
     marginBottom: 6,
     fontWeight: '500',
   },
+  requiredAsteriskRed: {
+    color: 'red',
+    fontSize: 16,
+  },
   input: {
     backgroundColor: '#D9D9D9',
     color: '#000000',

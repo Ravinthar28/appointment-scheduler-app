@@ -7,7 +7,6 @@ import { useRouter } from 'expo-router';
 // This library provides a way to create a smooth gradient overlay.
 import { LinearGradient } from 'expo-linear-gradient';
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function WelcomeScreen() {
@@ -15,38 +14,6 @@ export default function WelcomeScreen() {
 
   const collegePhoto = require('../../assets/images/college-building.jpeg'); // Make sure to provide your own college photo here.
 
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      const storedUser = await AsyncStorage.getItem("user");
-      if (storedUser) {
-        const user = JSON.parse(storedUser);
-        if (user.userType === "principal") {
-          router.push({
-            pathname:"/(principal-screen)",
-            params:{
-              email:user.email,
-              collegeCode:user.collegeCode
-            }
-          })
-        } else {
-          // staff route
-          router.push({
-            pathname:"/(staff-screen)/new_index",
-            params:{
-              email:user.email,
-              collegeCode:user.collegeCode
-            }
-          })
-
-        }
-      }
-      setLoading(false);
-    };
-
-    checkLoginStatus();
-  }, []);
 
 
   function FlashScreen(){
@@ -92,9 +59,9 @@ export default function WelcomeScreen() {
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
       >
-        {
-          loading ? <ActivityIndicator size = "large" /> : <FlashScreen />
-        }
+        
+      <FlashScreen />
+        
       </LinearGradient>
     </ImageBackground>
     </SafeAreaView>

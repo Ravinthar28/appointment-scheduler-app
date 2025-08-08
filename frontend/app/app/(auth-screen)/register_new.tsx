@@ -218,7 +218,10 @@ export default function Register() {
 
           {/* Email */}
           <View style={register_styles.inputBox}>
-            <Text style={register_styles.label}>Email</Text>
+            <Text style={register_styles.label}>
+              Email
+              <Text style={register_styles.requiredAsteriskRed}> *</Text>
+              </Text>
             <TextInput
               placeholder="Enter your email"
               placeholderTextColor="#000000"
@@ -334,7 +337,7 @@ export default function Register() {
               onPress={handleNext}
               disabled={!isFormValid}
             >
-              <Text style={register_styles.nextButtonText}>Next</Text>
+              <Text style={register_styles.nextButtonText}>Register</Text>
             </TouchableOpacity>
           </LinearGradient>
         </View>

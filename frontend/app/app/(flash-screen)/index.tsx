@@ -53,7 +53,7 @@ export default function SplashScreen() {
         }
       }
       else{
-        router.push("/(flash-screen)/flash_screen");
+        router.push("./(flash-screen)/flash_screen");
       }
       setAppLogoModal(false);
     },6000);
