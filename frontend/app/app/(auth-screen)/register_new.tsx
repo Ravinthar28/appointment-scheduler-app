@@ -165,15 +165,15 @@ export default function Register() {
 
   return (
     <SafeAreaView style={{flex:1}}>
-      {
-        isLoading && <ActivityIndicator size={'large'} style={{flex:1}} />
-      }
       <LinearGradient
       colors={["#2D3F75", "#3A508C", "#5C7FB7", "#7D9DCF"]} //
       style={register_styles.container}
       start={{ x: 0.5, y: 0 }} // Starts from the top-center
       end={{ x: 0.5, y: 1 }} // Ends at the bottom-center
     >
+      {
+        isLoading && <ActivityIndicator size={'large'} style={{flex:1}} />
+      }
       <ScrollView style={register_styles.innerContainer}>
         <View style={register_styles.pageTitle}>
           <TouchableOpacity
