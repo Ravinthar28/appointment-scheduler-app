@@ -1,5 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   View,
@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ActivityIndicator,
+  BackHandler,
 } from "react-native";
 
 import { register_styles } from "./new_style";
@@ -32,24 +33,6 @@ export default function Register() {
     "staff"
   );
 
-  // interface data {
-  //   isLogin: string;
-  //   email: string;
-  //   collegeCode: string;
-  //   selectedRole: string;
-  // }
-  // const storeData = async (data: data) => {
-  //   try {
-  //     await AsyncStorage.setItem("isLogin", data.isLogin);
-  //     await AsyncStorage.setItem("email", data.email);
-  //     await AsyncStorage.setItem("collegeCode", data.collegeCode);
-  //     await AsyncStorage.setItem("selectedRole", data.selectedRole);
-
-  //     console.log("data stroed");
-  //   } catch (error) {
-  //     console.log("Error in storing the data in local storage");
-  //   }
-  // };'
 
   interface userData{
   email: string,
@@ -72,6 +55,23 @@ const handleStaffLoginSuccess = async (userData:userData) => {
     console.log("Error saving user data", error);
   }
 };
+
+const handleBackPress = () => {
+      
+    router.push('/(flash-screen)/flash_screen');
+    return true
+    };
+  
+     useEffect(() => {
+      // Add back button listener
+      const backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        handleBackPress
+      );
+  
+      // Cleanup the listener on unmount
+      return () => backHandler.remove();
+    }, []);
 
 
   const handleLogin = async () => {

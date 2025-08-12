@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   TouchableOpacity,
   Image,
   SafeAreaView,
   StatusBar,
-  useColorScheme
+  useColorScheme,
+  BackHandler,
+  Alert
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient"; // For the background gradient
 import {
@@ -31,6 +33,35 @@ export default function PrincipalDashboard() {
 
    const statusBarStyle = isDarkMode ? 'light-content' : 'dark-content';
 
+    const handleBackPress = () => {
+
+    Alert.alert('Exit App', 'Are you sure you want to exit?', [
+      {
+        text: 'Cancel',
+        onPress: () => null, // Do nothing on cancel
+        style: 'cancel',
+      },
+      {
+        text: 'Yes',
+        onPress: () => BackHandler.exitApp(),
+      },
+    ]);
+
+    setSelectedTab('home');
+    return true;
+
+  };
+
+   useEffect(() => {
+    // Add back button listener
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      handleBackPress
+    );
+    // Cleanup the listener on unmount
+    return () => backHandler.remove();
+  }, []);
+
   const [selectedTab, setSelectedTab] = useState<
     "home" | "pending" | "confirmed" | "past"
   >("home");
@@ -41,7 +72,7 @@ export default function PrincipalDashboard() {
 
   async function handleLogOutPress(){
     await AsyncStorage.removeItem("user");
-    router.replace('/(auth-screen)/login_new');
+    router.replace('/(flash-screen)/flash_screen');
   }
   return (
     <>
