@@ -16,6 +16,11 @@ const newAppointment = async (userData) => {
     const user = await schema.findOne({ "staffs.mailId": userData.email });
     const staff = user.staffs.find((data) => data.mailId === userData.email);
     if (!user) return 500;
+
+    // WORKING ON DATE TIME CHECK
+    const checkDateTime = await schema.find({'principal.confirmedAppointments.dateTime':userData.dateTime});
+    if(checkDateTime.length != 0) console.log(false); 
+
     const model = await schema.findOneAndUpdate(
       { "staffs.mailId": userData.email },
       {
@@ -36,9 +41,8 @@ const newAppointment = async (userData) => {
     const users = await schema.findOne({})
     const principalToken = users.principal.expoPushToken;
 
-    // -------------- working --------------
     await sendPushNotification(principalToken,"Appointment Request",`You have a new appointment request from ${staff.name}`)
-    // ---------------------------
+
 
     if (model) return 200;
     else return 500;
