@@ -94,7 +94,6 @@ const RequestAppointmentModal = ({
           desc:reason,
           dateTime:meetingDate
         }
-        console.log(messageData);
         const url = `${baseUrl}/principal/appointment-request`;
         const response = await fetch(url,{
           method:'POST',
@@ -102,7 +101,8 @@ const RequestAppointmentModal = ({
           body:JSON.stringify(messageData)
         });
         if(! response.ok) throw new Error("Faild to save the message");
-        alert('Request sent to the principal successfully');
+        const result = await response.json();
+        alert(result.res);
         // router.push({
         //   pathname:'/(staff-screen)/home',
         //   params:userData

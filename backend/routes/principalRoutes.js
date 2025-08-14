@@ -9,7 +9,8 @@ router.post('/appointment-request',async (req,res)=>{
     try{
         const userData = req.body;
         const response = await newAppointment(userData);
-        if(response) res.sendStatus(200)
+        if(response == 200) res.json({res:"Request sent to the principal successfully"});
+        if(response == "date-not-available") res.json({res:"The choosed date is not available"});
     }
     catch(error){
         console.log(error);

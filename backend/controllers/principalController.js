@@ -19,7 +19,7 @@ const newAppointment = async (userData) => {
 
     // WORKING ON DATE TIME CHECK
     const checkDateTime = await schema.find({'principal.confirmedAppointments.dateTime':userData.dateTime});
-    if(checkDateTime.length != 0) console.log(false); 
+    if(checkDateTime.length != 0) return("date-not-available"); 
 
     const model = await schema.findOneAndUpdate(
       { "staffs.mailId": userData.email },
