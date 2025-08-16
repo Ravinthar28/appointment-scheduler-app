@@ -279,17 +279,27 @@ export default function ConfirmedAppointmentScreen({
         if (!response.ok) {
           throw new Error("Failed to accept the appointment by the principal");
         }
-        alert(
+        const result = await response.json();
+        if(result.result === 'success'){
+          alert(
           `Appointment with ${
             updatedMeeting.userName
           } is scheduled on ${extractDateTime(newDateTime)}`
         );
+        }
+        else if(result.result === 'date-not-available'){
+          alert('The choosed date is not available');
+        }
+        else{
+          alert('Something went wrong');
+        }
+        
         setShowModel(false);
         setSelectedMeeting(null);
         // You might want to refresh the list of appointments here
         // fetchRequest();
       } catch (error) {
-        alert(error);
+        alert("The selected date is not available");
       }
     }
   };

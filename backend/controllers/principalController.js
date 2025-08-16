@@ -102,6 +102,10 @@ const acceptAppointment = async (userData) => {
       mongoose.models[collectionName] ||
       mongoose.model(collectionName, registerSchema);
 
+    
+    const checkDateTime = await schema.find({'principal.confirmedAppointments.dateTime':msgData.dateTime});
+    if(checkDateTime.length != 0) return "date-not-available"; 
+
     const users = await schema.findOne({"staffs.mailId":userData.selectedMeeting.userEmail});
     const staff = users.staffs.find(data => data.mailId == userData.selectedMeeting.userEmail);
     const staffToken = staff.expoPushToken;
@@ -140,7 +144,7 @@ const acceptAppointment = async (userData) => {
 
     await sendPushNotification(staffToken,"Appointment Scheduled",`Your appointment with the principal is scheduled on ${extractDateTime(userData.selectedMeeting.dateTime)}`);
 
-      if (staffUpdate && principalUpdate) return 200;
+      if (staffUpdate && principalUpdate) return 'success';
       else return 500;
     }
     if (userData.selectedTab === "confirmed") {
@@ -175,7 +179,7 @@ const acceptAppointment = async (userData) => {
 
     await sendPushNotification(staffToken,"Appointment Scheduled",`Your appointment with the principal is scheduled on ${extractDateTime(userData.selectedMeeting.dateTime)}`);
 
-      if (principal && staff) return 200;
+      if (principal && staff) return 'success';
       else return 500;
     }
   } catch (error) {

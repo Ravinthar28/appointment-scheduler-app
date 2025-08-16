@@ -35,9 +35,10 @@ router.post('/appointments-data',async (req,res)=>{
 router.post('/accept-appointment',async (req,res)=>{
     try{
         const userData = req.body;
-        const response = acceptAppointment(userData);
-        if(response) res.sendStatus(200);
-        else res.sendStatus(500);
+        const response = await acceptAppointment(userData);
+        if(response === 'success') res.json({res:"success"});
+        else if(response === 'date-not-available') res.json({res:'date-not-available'})
+        else res.json({res:"Something went wrong"});
     }
     catch(error){
         console.log(error);
