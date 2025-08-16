@@ -280,14 +280,14 @@ export default function ConfirmedAppointmentScreen({
           throw new Error("Failed to accept the appointment by the principal");
         }
         const result = await response.json();
-        if(result.result === 'success'){
+        if(result.res === 'success'){
           alert(
           `Appointment with ${
             updatedMeeting.userName
           } is scheduled on ${extractDateTime(newDateTime)}`
         );
         }
-        else if(result.result === 'date-not-available'){
+        else if(result.res === 'date-not-available'){
           alert('The choosed date is not available');
         }
         else{
