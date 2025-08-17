@@ -9,10 +9,13 @@ import {
   Modal,
   RefreshControl,
 } from "react-native";
-import { Ionicons, FontAwesome5, Feather } from "@expo/vector-icons";
+import { Ionicons, Feather } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { baseUrl } from "../apiUrl";
 import NoNewAppointmentsScreen from "./no_appointment";
+
+// STYLES
+import { cancel_styles,cancel_modalStyles } from "./style";
 
 // Define the type for the appointment object
 interface appointments {
@@ -134,27 +137,27 @@ const RescheduleModal = ({
       visible={isVisible}
       onRequestClose={onClose}
     >
-      <View style={modalStyles.centeredView}>
-        <View style={modalStyles.modalView}>
-          <TouchableOpacity style={modalStyles.closeButton} onPress={onClose}>
+      <View style={cancel_modalStyles.centeredView}>
+        <View style={cancel_modalStyles.modalView}>
+          <TouchableOpacity style={cancel_modalStyles.closeButton} onPress={onClose}>
             <Ionicons name="close" size={24} color="#000" />
           </TouchableOpacity>
           <Image
             source={require("../../assets/images/profile.png")}
-            style={modalStyles.modalAvatar}
+            style={cancel_modalStyles.modalAvatar}
           />
-          <Text style={modalStyles.modalStaffName}>{appointment.userName}</Text>
-          <Text style={modalStyles.modalStaffEmail}>
+          <Text style={cancel_modalStyles.modalStaffName}>{appointment.userName}</Text>
+          <Text style={cancel_modalStyles.modalStaffEmail}>
             {appointment.userEmail}
           </Text>
-          <View style={modalStyles.modalContent}>
-            <Text style={modalStyles.modalDescription}>{appointment.desc}</Text>
+          <View style={cancel_modalStyles.modalContent}>
+            <Text style={cancel_modalStyles.modalDescription}>{appointment.desc}</Text>
 
-            <View style={modalStyles.inputRow}>
-              <Text style={modalStyles.inputLabel}>Re-meeting Date:</Text>
+            <View style={cancel_modalStyles.inputRow}>
+              <Text style={cancel_modalStyles.inputLabel}>Re-meeting Date:</Text>
               <TouchableOpacity
                 onPress={() => setShowDatePicker(true)}
-                style={modalStyles.input}
+                style={cancel_modalStyles.input}
               >
                 <Text>{formatDate(reMeetingDate)}</Text>
                 <Feather name="calendar" size={20} color="#666" />
@@ -168,11 +171,11 @@ const RescheduleModal = ({
                 />
               )}
             </View>
-            <View style={modalStyles.inputRow}>
-              <Text style={modalStyles.inputLabel}>Re-meeting Time:</Text>
+            <View style={cancel_modalStyles.inputRow}>
+              <Text style={cancel_modalStyles.inputLabel}>Re-meeting Time:</Text>
               <TouchableOpacity
                 onPress={() => setShowTimePicker(true)}
-                style={modalStyles.inputTime}
+                style={cancel_modalStyles.inputTime}
               >
                 <Text>{formatTime(reMeetingDate)}</Text>
                 <Ionicons name="time-outline" size={20} color="#666" />
@@ -187,10 +190,10 @@ const RescheduleModal = ({
             </View>
 
             <TouchableOpacity
-              style={modalStyles.rescheduleButton}
+              style={cancel_modalStyles.rescheduleButton}
               onPress={acceptAppointment}
             >
-              <Text style={modalStyles.rescheduleButtonText}>Revisit</Text>
+              <Text style={cancel_modalStyles.rescheduleButtonText}>Revisit</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -230,20 +233,20 @@ const CancelAppointmentsScreen = ({
   };
 
   const AppointmentCard = ({ appointment, onPress }: AppointmentCardProps) => (
-    <TouchableOpacity style={styles.card} onPress={() => onPress(appointment)}>
-      <View style={styles.cardHeader}>
+    <TouchableOpacity style={cancel_styles.card} onPress={() => onPress(appointment)}>
+      <View style={cancel_styles.cardHeader}>
         <Image
           source={require("../../assets/images/profile.png")}
-          style={styles.staffAvatar}
+          style={cancel_styles.staffAvatar}
         />
-        <View style={styles.cardTitleContainer}>
-          <Text style={styles.staffName}>{appointment.userName}</Text>
-          <Text style={styles.staffEmail}>{appointment.userEmail}</Text>
+        <View style={cancel_styles.cardTitleContainer}>
+          <Text style={cancel_styles.staffName}>{appointment.userName}</Text>
+          <Text style={cancel_styles.staffEmail}>{appointment.userEmail}</Text>
         </View>
       </View>
-      <View style={styles.cardContent}>
-        <Text style={styles.subTitle}>Msg:</Text>
-        <Text style={styles.subText} numberOfLines={1}>
+      <View style={cancel_styles.cardContent}>
+        <Text style={cancel_styles.subTitle}>Msg:</Text>
+        <Text style={cancel_styles.subText} numberOfLines={1}>
           {appointment.desc}
         </Text>
       </View>
@@ -289,7 +292,7 @@ const CancelAppointmentsScreen = ({
     return (
       <>
         <ScrollView
-          style={styles.listContainer}
+          style={cancel_styles.listContainer}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
           }
@@ -308,8 +311,8 @@ const CancelAppointmentsScreen = ({
 
   return (
     <>
-      <View style={styles.container}>
-        <Text style={styles.title}>Closed Appointments</Text>
+      <View style={cancel_styles.container}>
+        <Text style={cancel_styles.title}>Closed Appointments</Text>
 
         {pastAppointments.length === 0 ? (
           <NoNewAppointmentsScreen />
@@ -328,221 +331,7 @@ const CancelAppointmentsScreen = ({
   );
 };
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#F5F8FF",
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "#F5F8FF",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 30,
-    backgroundColor: "#3E5793",
-    padding: 15,
-  },
-  profileImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    borderWidth: 2,
-    borderColor: "#fff",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#333",
-    paddingHorizontal: 20,
-    marginTop: 25,
-    marginBottom: 20,
-  },
-  listContainer: {
-    flex: 1,
-    paddingHorizontal: 15,
-  },
-  card: {
-    backgroundColor: "#E6E9F0",
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: "#A8B3C7",
-  },
-  cardHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  staffAvatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 15,
-  },
-  cardTitleContainer: {
-    flex: 1,
-  },
-  staffName: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#3C64B1",
-  },
-  staffEmail: {
-    fontSize: 12,
-    color: "#666",
-  },
 
-  cardContent: {
-    flexDirection: "row",
-  },
-  subTitle: {
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "#000",
-    marginRight: 5,
-  },
-  subText: {
-    flex: 1,
-    fontSize: 14,
-    color: "#555",
-  },
-  navBar: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    backgroundColor: "#1C4A9E",
-    borderRadius: 30,
-    paddingVertical: 15,
-    position: "absolute",
-    bottom: 20,
-    left: 20,
-    right: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    elevation: 8,
-  },
-  navItem: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  activeNavItem: {
-    backgroundColor: "#2E69D8",
-    borderRadius: 25,
-    width: 50,
-    height: 50,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
 
-const modalStyles = StyleSheet.create({
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-    width: "90%",
-  },
-  closeButton: {
-    position: "absolute",
-    right: 15,
-    top: 15,
-  },
-  modalAvatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginBottom: 10,
-  },
-  modalStaffName: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#3C64B1",
-  },
-  modalStaffEmail: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 20,
-  },
-  modalContent: {
-    width: "100%",
-  },
-  modalDescription: {
-    backgroundColor: "#E6E9F0",
-    padding: 15,
-    borderRadius: 10,
-    fontSize: 14,
-    color: "#555",
-    textAlign: "center",
-    marginBottom: 20,
-  },
-  inputRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 15,
-  },
-  inputLabel: {
-    fontSize: 14,
-    color: "#000",
-  },
-  input: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    padding: 10,
-    marginLeft: 10,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  inputTime: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    padding: 10,
-    marginLeft: 10,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  rescheduleButton: {
-    backgroundColor: "#008000",
-    borderRadius: 50,
-    paddingVertical: 15,
-    marginTop: 20,
-    width: "100%",
-    alignItems: "center",
-  },
-  rescheduleButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-});
 
 export default CancelAppointmentsScreen;

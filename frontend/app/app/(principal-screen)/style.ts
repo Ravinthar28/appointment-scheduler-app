@@ -17,9 +17,6 @@ export const new_principal_styles = StyleSheet.create({
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
   },
-  body:{
-    
-  },
   profilePic: {
     width: 45,
     height: 45,
@@ -251,3 +248,220 @@ export const new_principal_styles = StyleSheet.create({
     fontSize: 16,
   },
 })
+
+export const cancel_styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#F5F8FF",
+  },
+  container: {
+    flex: 1,
+    backgroundColor: "#F5F8FF",
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 30,
+    backgroundColor: "#3E5793",
+    padding: 15,
+  },
+  profileImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: "#fff",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
+    paddingHorizontal: 20,
+    marginTop: 25,
+    marginBottom: 20,
+  },
+  listContainer: {
+    flex: 1,
+    paddingHorizontal: 15,
+  },
+  card: {
+    backgroundColor: "#E6E9F0",
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: "#A8B3C7",
+  },
+  cardHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  staffAvatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 15,
+  },
+  cardTitleContainer: {
+    flex: 1,
+  },
+  staffName: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#3C64B1",
+  },
+  staffEmail: {
+    fontSize: 12,
+    color: "#666",
+  },
+
+  cardContent: {
+    flexDirection: "row",
+  },
+  subTitle: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#000",
+    marginRight: 5,
+  },
+  subText: {
+    flex: 1,
+    fontSize: 14,
+    color: "#555",
+  },
+  navBar: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    backgroundColor: "#1C4A9E",
+    borderRadius: 30,
+    paddingVertical: 15,
+    position: "absolute",
+    bottom: 20,
+    left: 20,
+    right: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 8,
+  },
+  navItem: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  activeNavItem: {
+    backgroundColor: "#2E69D8",
+    borderRadius: 25,
+    width: 50,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
+
+export const cancel_modalStyles = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: "90%",
+  },
+  closeButton: {
+    position: "absolute",
+    right: 15,
+    top: 15,
+  },
+  modalAvatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    marginBottom: 10,
+  },
+  modalStaffName: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#3C64B1",
+  },
+  modalStaffEmail: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 20,
+  },
+  modalContent: {
+    width: "100%",
+  },
+  modalDescription: {
+    backgroundColor: "#E6E9F0",
+    padding: 15,
+    borderRadius: 10,
+    fontSize: 14,
+    color: "#555",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  inputRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 15,
+  },
+  inputLabel: {
+    fontSize: 14,
+    color: "#000",
+  },
+  input: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    padding: 10,
+    marginLeft: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  inputTime: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    padding: 10,
+    marginLeft: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  rescheduleButton: {
+    backgroundColor: "#008000",
+    borderRadius: 50,
+    paddingVertical: 15,
+    marginTop: 20,
+    width: "100%",
+    alignItems: "center",
+  },
+  rescheduleButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+});
