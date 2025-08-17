@@ -73,3 +73,48 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+export const index_styles = StyleSheet.create({
+  imgBg: {
+    width: "100%",
+    height: "100%",
+  },
+  gradientOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    paddingBottom: 50, // Pushes content up from the bottom edge
+  },
+  modalInnerContainer: {
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  logoContainer: {
+    width: "100%",
+    height: 400,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  clgLogo: {
+    width: 300,
+    height: 150,
+  },
+  logoTxt : {
+    fontSize:25,
+    fontWeight:"400",
+    color:"#ffffff",
+    letterSpacing:3
+  },
+  appLogo:{
+    width:150,
+    height:100
+  },
+  appLogoTxt:{
+    textAlign:"center"
+  }
+});
+

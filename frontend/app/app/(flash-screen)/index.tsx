@@ -12,6 +12,8 @@ import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 
+import { index_styles } from "./new_style";
+
 export default function SplashScreen() {
   const router = useRouter();
 
@@ -96,11 +98,11 @@ export default function SplashScreen() {
   return (
     <ImageBackground
       source={require("../../assets/images/college-building.jpeg")}
-      style={styles.imgBg}
+      style={index_styles.imgBg}
     >
       <LinearGradient
         colors={overLayScreen} // Dark, transparent gradient to a more solid blue.
-        style={styles.gradientOverlay}
+        style={index_styles.gradientOverlay}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
       ></LinearGradient>
@@ -110,13 +112,13 @@ export default function SplashScreen() {
         transparent
         visible={collegeLogoModal}
       >
-        <View style={styles.modalInnerContainer}>
-          <View style={styles.logoContainer}>
+        <View style={index_styles.modalInnerContainer}>
+          <View style={index_styles.logoContainer}>
             <Image
-              style={styles.clgLogo}
+              style={index_styles.clgLogo}
               source={require('../../assets/images/College_logo.png')}
             />
-            <Text style={styles.logoTxt}>VMS</Text>
+            <Text style={index_styles.logoTxt}>VMS</Text>
           </View>
         </View>
       </Modal>
@@ -125,14 +127,14 @@ export default function SplashScreen() {
         transparent
         visible={appLogoModal}
       >
-        <View style={styles.modalInnerContainer}>
-          <View style={styles.logoContainer}>
+        <View style={index_styles.modalInnerContainer}>
+          <View style={index_styles.logoContainer}>
             <Image
-              style={styles.appLogo}
+              style={index_styles.appLogo}
               source={require('../../assets/images/app-logo.png')}
             />
-            <Text style={styles.logoTxt}>NSCET</Text>
-            <Text style={[styles.logoTxt,styles.appLogoTxt]}>Visitors Management System</Text>
+            <Text style={index_styles.logoTxt}>NSCET</Text>
+            <Text style={[index_styles.logoTxt,index_styles.appLogoTxt]}>Visitors Management System</Text>
           </View>
         </View>
       </Modal>
@@ -140,46 +142,3 @@ export default function SplashScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  imgBg: {
-    width: "100%",
-    height: "100%",
-  },
-  gradientOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: "flex-end",
-    alignItems: "center",
-    paddingBottom: 50, // Pushes content up from the bottom edge
-  },
-  modalInnerContainer: {
-    width: "100%",
-    height: "100%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  logoContainer: {
-    width: "100%",
-    height: 400,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  clgLogo: {
-    width: 300,
-    height: 150,
-  },
-  logoTxt : {
-    fontSize:25,
-    fontWeight:"400",
-    color:"#ffffff",
-    letterSpacing:3
-  },
-  appLogo:{
-    width:150,
-    height:100
-  },
-  appLogoTxt:{
-    textAlign:"center"
-  }
-});
