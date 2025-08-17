@@ -262,7 +262,7 @@ const StaffHomeScreen = ({ email, collegeCode }: staffHomeScreenProps) => {
           </Text>
         </TouchableOpacity>
 
-        <View>
+        <View style={{flex:1}}>
           <Text style={principalHome.sectionTitle}>Today's Schedule</Text>
           {upcomingAppointments.length === 0 ? (
             <NoNewAppointmentsScreen />

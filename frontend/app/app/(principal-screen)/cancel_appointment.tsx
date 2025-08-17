@@ -113,13 +113,20 @@ const RescheduleModal = ({
       });
       if (!response)
         throw new Error("Failed to accept the appiontment by the principal");
-      alert(
-        `Appointment with ${
-          appointment?.userName
-        } is scheduled on ${extractDateTime(
-          appointment?.dateTime || reMeetingDate
-        )}`
-      );
+      const result = await response.json();
+        if(result.res === 'success'){
+          alert(
+          `Appointment with ${
+            appointment.userName
+          } is scheduled on ${extractDateTime(appointment.dateTime)}`
+        );
+        }
+        else if(result.res === 'date-not-available'){
+          alert('The choosed date is not available');
+        }
+        else{
+          alert('Something went wrong');
+        }
       // router.push({
       //   pathname: "/(principal-screen)",
       //   params: {email,collegeCode,selectedTab},
