@@ -20,8 +20,8 @@ import { router, useLocalSearchParams, useRouter } from "expo-router";
 import { new_principal_styles } from "../(principal-screen)/style";
 import PrincipalHome from "../(principal-screen)/principal_home";
 import PendingAppointmentsScreen from "../(principal-screen)/pending_appointments";
-import ConfirmedAppointmentsScreen from "../(principal-screen)/confirm_appointments";
-import CancelAppointmentsScreen from "../(principal-screen)/cancel_appointment";
+import ConfirmedAppointmentsScreen from "./confirm_appointments";
+import CancelAppointmentsScreen from "./cancel_appointment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function PrincipalDashboard() {

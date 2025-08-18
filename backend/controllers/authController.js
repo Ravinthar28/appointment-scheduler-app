@@ -122,7 +122,6 @@ async function loginSecretary(data) {
         const schema = mongoose.models[collectionName] || mongoose.model(collectionName,registerSchema);
 
         const user = await schema.findOne({'secretary.mailId':data.email});
-        console.log(user);
         if(user){
             if(user.secretary.password == data.password) return 200;
             else return 401;
