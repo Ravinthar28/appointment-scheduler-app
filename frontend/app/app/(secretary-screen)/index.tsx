@@ -17,9 +17,9 @@ import {
 } from "@expo/vector-icons"; // For icons
 import { router, useLocalSearchParams, useRouter } from "expo-router";
 
-import { new_principal_styles } from "../(principal-screen)/style";
-import PrincipalHome from "../(principal-screen)/principal_home";
-import PendingAppointmentsScreen from "../(principal-screen)/pending_appointments";
+import { new_principal_styles } from "./style";
+import SecretaryHome from "./secretary_home";
+import PendingAppointmentsScreen from "./pending_appointments";
 import ConfirmedAppointmentsScreen from "./confirm_appointments";
 import CancelAppointmentsScreen from "./cancel_appointment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -93,7 +93,7 @@ export default function PrincipalDashboard() {
       </View>
 
       {
-        selectedTab === "home" && <PrincipalHome email={userData.email} collegeCode= {userData.collegeCode}/>
+        selectedTab === "home" && <SecretaryHome email={userData.email} collegeCode= {userData.collegeCode}/>
       }
       {
         selectedTab === 'pending' && <PendingAppointmentsScreen email={userData.email} collegeCode={userData.collegeCode} selectedTab="pending" />
