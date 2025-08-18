@@ -18,14 +18,14 @@ const newAppointment = async (userData) => {
     if (!user) return 500;
 
 
-    const checkDateTime = await schema.find({'principal.confirmedAppointments.dateTime':userData.dateTime});
+    const checkDateTime = await schema.find({'secretary.confirmedAppointments.dateTime':userData.dateTime});
     if(checkDateTime.length != 0) return("date-not-available"); 
 
     const model = await schema.findOneAndUpdate(
       { "staffs.mailId": userData.email },
       {
         $push: {
-          "principal.pendingAppointments": {
+          "secretary.pendingAppointments": {
             userName: staff.name,
             userEmail: staff.mailId,
             desc: userData.desc,

@@ -18,7 +18,7 @@ const AppointmentModal = ({
   isVisible,
   onClose,
   email,
-  collegeCode
+  collegeCode,
 }: {
   isVisible: boolean;
   onClose: () => void;
@@ -94,7 +94,7 @@ const AppointmentModal = ({
           desc:reason,
           dateTime:meetingDate
         }
-        const url = `${baseUrl}/principal/appointment-request`;
+        const url = `${baseUrl}/secretary/appointment-request`;
         const response = await fetch(url,{
           method:'POST',
           headers:{'Content-Type':'application/json'},

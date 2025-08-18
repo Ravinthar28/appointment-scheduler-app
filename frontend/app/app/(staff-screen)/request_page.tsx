@@ -18,12 +18,12 @@ const RequestAppointmentModal = ({
   isVisible,
   onClose,
   email,
-  collegeCode
+  collegeCode,
 }: {
   isVisible: boolean;
   onClose: () => void;
   email:string;
-  collegeCode:string
+  collegeCode:string,
 }) => {
   const [meetingDate, setMeetingDate] = useState<Date>(new Date());
   const [reason, setReason] = useState<string>("");
