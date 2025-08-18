@@ -5,6 +5,7 @@ const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const staffRoutes = require('./routes/staffRoutes');
 const pricipalRoutes = require('./routes/principalRoutes');
+const secretaryRoutes = require('./routes/secretaryRoutes');
 // DB
 const connectDB = require('./config/db');
 
@@ -24,6 +25,7 @@ app.use(express.json());
 app.use('/auth',authRoutes);
 app.use('/staff',staffRoutes);
 app.use('/principal',pricipalRoutes)
+app.use('/secretary',secretaryRoutes)
 
 connectDB().then(()=>{
     app.listen(port,()=>{

@@ -198,7 +198,7 @@ export default function SecretaryHome({
         Today's Schedule
       </Text>
 
-      {confirmedAppointments.length === 0 ? (
+      {confirmedAppointments && confirmedAppointments.length === 0 ? (
         <NoNewAppointmentsScreen />
       ) : (
         <AppointmentScreen />
