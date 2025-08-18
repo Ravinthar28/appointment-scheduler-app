@@ -30,6 +30,9 @@ async function createPrincipal(data){
     }
 }
 
+export async function createSecretary(data){
+
+}
 async function createStaff(data) {
     const collectionName = data["collegeCode"]
     try{

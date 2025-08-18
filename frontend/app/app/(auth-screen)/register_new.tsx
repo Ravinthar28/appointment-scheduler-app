@@ -294,7 +294,6 @@ export default function Register() {
               </View>
             </View>
 
-            {/* Role Toggle */}
             {/* Role Dropdown */}
 <View style={register_styles.inputBox}>
   <Text style={[register_styles.label, { fontSize: 20 }]}>

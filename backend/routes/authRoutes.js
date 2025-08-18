@@ -3,6 +3,7 @@ const express = require('express');
 
 const { createPrincipal, loginPrincipal }= require('../controllers/authController');
 const {createStaff, loginStaff} = require('../controllers/authController');
+const { createSeceratary } = require('../controllers/authController')
 
 const router = express.Router();
 
@@ -13,10 +14,13 @@ router.post('/register',async (req,res)=>{
     try{
       // FOR PRINCIPAL REGISTER
       if(role == 'principal'){
-        const result = await createPrincipal(data.userData)
+        const result = await createPrincipal(data.userData);
         if(result) res.sendStatus(result);
       }
       // FOR STAFF REGISTER
+      else if(role === 'secretary'){
+        const result = await createSeceratary(data.userData);
+      }
       else if(role == 'staff'){
         const result = await createStaff(data.userData)
           if(result) res.json("Registed Successfully");
