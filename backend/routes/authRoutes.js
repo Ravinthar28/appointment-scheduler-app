@@ -17,10 +17,12 @@ router.post('/register',async (req,res)=>{
         const result = await createPrincipal(data.userData);
         if(result) res.sendStatus(result);
       }
-      // FOR STAFF REGISTER
+      // FOR SECERATARY REGISTER
       else if(role === 'secretary'){
         const result = await createSeceratary(data.userData);
+        if(result) res.json("Registed Successfully")
       }
+      // FOR STAFF REGISTER
       else if(role == 'staff'){
         const result = await createStaff(data.userData)
           if(result) res.json("Registed Successfully");
