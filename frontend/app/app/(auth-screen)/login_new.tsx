@@ -30,7 +30,7 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading,setIsLoading] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<"staff" | "principal">(
+  const [selectedRole, setSelectedRole] = useState<"staff" | "principal" | "secretary">(
     "staff"
   );
 
@@ -103,6 +103,16 @@ const handleBackPress = () => {
         handleLoginSuccess({email,collegeCode,userType:'principal'})
       }
         
+      if(selectedRole == "secretary"){
+        router.push({
+          pathname:"/(secretary-screen)",
+          params:{
+            email,
+            collegeCode
+          },
+        });
+        handleLoginSuccess({email,collegeCode,userType:'secretary'});
+      }
       if (selectedRole == "staff"){
         router.push({
           pathname: "/(staff-screen)/new_index",

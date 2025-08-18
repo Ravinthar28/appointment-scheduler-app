@@ -3,7 +3,7 @@ const express = require('express');
 
 const { createPrincipal, loginPrincipal }= require('../controllers/authController');
 const {createStaff, loginStaff} = require('../controllers/authController');
-const { createSeceratary } = require('../controllers/authController')
+const { createSecretary, loginSecretary } = require('../controllers/authController')
 
 const router = express.Router();
 
@@ -19,8 +19,8 @@ router.post('/register',async (req,res)=>{
       }
       // FOR SECERATARY REGISTER
       else if(role === 'secretary'){
-        const result = await createSeceratary(data.userData);
-        if(result) res.json("Registed Successfully")
+        const result = await createSecretary(data.userData);
+        if(result) res.json("Registed Successfully");
       }
       // FOR STAFF REGISTER
       else if(role == 'staff'){
@@ -44,6 +44,10 @@ router.post('/login',async (req,res)=>{
   try{
     if(role == 'principal'){
       const result = await loginPrincipal(data.userData);
+      if(result) res.sendStatus(result);
+    }
+    else if(role == 'secretary'){
+      const result = await loginSecretary(data.userData);
       if(result) res.sendStatus(result);
     }
     else if(role == 'staff'){

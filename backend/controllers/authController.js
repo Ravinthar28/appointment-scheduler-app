@@ -30,7 +30,7 @@ async function createPrincipal(data){
     }
 }
 
-export async function createSecretary(data){
+async function createSecretary(data){
     const collectionName = data["collegeCode"]
     try{
         const schema = mongoose.models[collectionName] || mongoose.model(collectionName,registerSchema)
@@ -116,6 +116,26 @@ async function loginPrincipal(data){
     }
 }
 
+async function loginSecretary(data) {
+    try{
+        const collectionName = data.collegeCode;
+        const schema = mongoose.models[collectionName] || mongoose.model(collectionName,registerSchema);
+
+        const user = await schema.findOne({'secretary.mailId':data.email});
+        console.log(user);
+        if(user){
+            if(user.secretary.password == data.password) return 200;
+            else return 401;
+        }
+        else{
+            return 401;
+        }
+    }
+    catch(error){
+        return 401;
+    }
+}
+
 async function loginStaff(data){
     try{
         const collectionName = data.collegeCode;
@@ -138,5 +158,7 @@ module.exports = {
     createPrincipal,
     createStaff,
     loginPrincipal,
-    loginStaff
+    loginStaff,
+    createSecretary,
+    loginSecretary
 }

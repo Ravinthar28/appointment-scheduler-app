@@ -23,6 +23,7 @@ export default function RootLayout() {
         <Stack.Screen name="(flash-screen)" options={{headerShown:false}}/>
         <Stack.Screen name="(auth-screen)" options={{headerShown:false}}/>
         <Stack.Screen name="(principal-screen)" options={{headerShown:false}} />
+        <Stack.Screen name="(secretary-screen)" options={{headerShown:false}} />
         <Stack.Screen name="(staff-screen)" options={{headerShown:false}} />
         <Stack.Screen name="+not-found" />
       </Stack>
