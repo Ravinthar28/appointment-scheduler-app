@@ -40,7 +40,7 @@ export default function Register() {
   userType: string
 }
 
-const handleStaffLoginSuccess = async (userData:userData) => {
+const handleLoginSuccess = async (userData:userData) => {
   try {
     await AsyncStorage.setItem("user", JSON.stringify(userData));
   } catch (error) {
@@ -48,13 +48,6 @@ const handleStaffLoginSuccess = async (userData:userData) => {
   }
 };
 
-  const handlePrincipalLoginSuccess = async (userData:userData) => {
-  try {
-    await AsyncStorage.setItem("user", JSON.stringify(userData));
-  } catch (error) {
-    console.log("Error saving user data", error);
-  }
-};
 
 const handleBackPress = () => {
       
@@ -106,7 +99,7 @@ const handleBackPress = () => {
             collegeCode,
           },
         });
-        handlePrincipalLoginSuccess({email,collegeCode,userType:'principal'})
+        handleLoginSuccess({email,collegeCode,userType:'principal'})
       }
         
       if (selectedRole == "staff"){
@@ -117,7 +110,7 @@ const handleBackPress = () => {
             collegeCode,
           },
         });
-        handleStaffLoginSuccess({email,collegeCode,userType:'staff'})
+        handleLoginSuccess({email,collegeCode,userType:'staff'})
       }
     } catch (error) {
       console.log(error);
