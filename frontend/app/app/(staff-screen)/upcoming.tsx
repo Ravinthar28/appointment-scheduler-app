@@ -26,6 +26,7 @@ interface appointments {
   userEmail: string;
   desc: string;
   dateTime: Date;
+  appointmentWith:string;
 }
 
 // FUNCTION TO EXTRACT THE DATE AND TIME FORMAT
@@ -110,7 +111,7 @@ const ScheduleCard = ({
     </View>
     <View style={principalHome.divider} />
     <View style={principalHome.detailsContainer}>
-      <Text style={principalHome.meetingTitle}>Appointment with Principal</Text>
+      <Text style={principalHome.meetingTitle}>Appointment with {(schedule.appointmentWith === 'principal')? 'Principal' : 'Secretary'}</Text>
       {/* <Text style={principalHome.meetingSubject}>{schedule.userEmail}</Text> */}
       <Text style={principalHome.meetingDescription} numberOfLines={1}>
         {schedule.desc}

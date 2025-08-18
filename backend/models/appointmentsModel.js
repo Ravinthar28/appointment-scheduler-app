@@ -9,7 +9,8 @@ const appointmentModel = new mongoose.Schema({
     userEmail:String,
     desc:String,
     dateTime:Date,
-    collegeCode:String
+    collegeCode:String,
+    appointmentWith:String
 })
 
 module.exports = appointmentModel

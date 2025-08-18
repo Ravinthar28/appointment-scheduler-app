@@ -92,7 +92,8 @@ const AppointmentModal = ({
           email:email,
           collegeCode:collegeCode,
           desc:reason,
-          dateTime:meetingDate
+          dateTime:meetingDate,
+          appointmentWith:'secretary'
         }
         const url = `${baseUrl}/secretary/appointment-request`;
         const response = await fetch(url,{

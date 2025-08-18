@@ -20,7 +20,6 @@ const newAppointment = async (userData) => {
 
     const checkDateTime = await schema.find({'secretary.confirmedAppointments.dateTime':userData.dateTime});
     if(checkDateTime.length != 0) return("date-not-available"); 
-
     const model = await schema.findOneAndUpdate(
       { "staffs.mailId": userData.email },
       {
@@ -30,7 +29,8 @@ const newAppointment = async (userData) => {
             userEmail: staff.mailId,
             desc: userData.desc,
             dateTime: userData.dateTime,
-            collegeCode:collectionName
+            collegeCode:collectionName,
+            appointmentWith: userData.appointmentWith
           },
         },
       },
@@ -61,9 +61,9 @@ const pendingAppointments = async (userData) => {
       mongoose.model(collectionName, registerSchema);
     const user = await schema.findOne({});
     const responseData = {
-      pendingAppointments: user.principal.pendingAppointments,
-      confirmedAppointments: user.principal.confirmedAppointments,
-      pastAppointments: user.principal.pastAppointments,
+      pendingAppointments: user.secretary.pendingAppointments,
+      confirmedAppointments: user.secretary.confirmedAppointments,
+      pastAppointments: user.secretary.pastAppointments,
     };
     if (user) return responseData;
     else return 500;
@@ -96,6 +96,7 @@ const acceptAppointment = async (userData) => {
       userEmail: userData.selectedMeeting.userEmail,
       desc: userData.selectedMeeting.desc,
       dateTime: userData.selectedMeeting.dateTime,
+      appointmentWith:'secretary'
     };
     const collectionName = userData.selectedMeeting.collegeCode;
     const schema =
@@ -103,7 +104,7 @@ const acceptAppointment = async (userData) => {
       mongoose.model(collectionName, registerSchema);
 
     
-    const checkDateTime = await schema.find({'principal.confirmedAppointments.dateTime':msgData.dateTime});
+    const checkDateTime = await schema.find({'secretary.confirmedAppointments.dateTime':msgData.dateTime});
     if(checkDateTime.length != 0) return "date-not-available"; 
 
     const users = await schema.findOne({"staffs.mailId":userData.selectedMeeting.userEmail});
@@ -120,20 +121,20 @@ const acceptAppointment = async (userData) => {
         { new: true, upsert: false }
       );
 
-      // STORE THE ACCEPTED APPOINTMENT IN PRINCIPALS CONFIRMEND APPOINTMENTS
-      const principalUpdate = await schema.findOneAndUpdate(
+      // STORE THE ACCEPTED APPOINTMENT IN SECRETARY CONFIRMEND APPOINTMENTS
+      const secretaryUpdate = await schema.findOneAndUpdate(
         {},
-        { $push: { "principal.confirmedAppointments": msgData } },
+        { $push: { "secretary.confirmedAppointments": msgData } },
         { new: true, upsert: false }
       );
 
       if(userData.selectedTab === 'pending'){
-        // REMOVES THE ACCEPTED APPOINTMENT FROM THE PRINCIPALS PENDING APPOINTMENTS
+        // REMOVES THE ACCEPTED APPOINTMENT FROM THE SECRETARY PENDING APPOINTMENTS
       const removeAppointment = await schema.findOneAndUpdate(
-        { "principal.pendingAppointments.id": userData.selectedMeeting.id },
+        { "secretary.pendingAppointments.id": userData.selectedMeeting.id },
         {
           $pull: {
-            "principal.pendingAppointments": {
+            "secretary.pendingAppointments": {
               id: userData.selectedMeeting.id,
             },
           },
@@ -142,17 +143,17 @@ const acceptAppointment = async (userData) => {
       );
       }
 
-    await sendPushNotification(staffToken,"Appointment Scheduled",`Your appointment with the principal is scheduled on ${extractDateTime(userData.selectedMeeting.dateTime)}`);
+    await sendPushNotification(staffToken,"Appointment Scheduled",`Your appointment with the secretary is scheduled on ${extractDateTime(userData.selectedMeeting.dateTime)}`);
 
-      if (staffUpdate && principalUpdate) return 'success';
+      if (staffUpdate && secretaryUpdate) return 'success';
       else return 500;
     }
     if (userData.selectedTab === "confirmed") {
-      const principal = await schema.findOneAndUpdate(
-        { "principal.confirmedAppointments.id": userData.selectedMeeting.id },
+      const secretary = await schema.findOneAndUpdate(
+        { "drvtrysty.confirmedAppointments.id": userData.selectedMeeting.id },
         {
           $set: {
-            "principal.confirmedAppointments.$.dateTime":
+            "secretary.confirmedAppointments.$.dateTime":
               userData.selectedMeeting.dateTime,
           },
         },
@@ -177,9 +178,9 @@ const acceptAppointment = async (userData) => {
         }
       );
 
-    await sendPushNotification(staffToken,"Appointment Scheduled",`Your appointment with the principal is scheduled on ${extractDateTime(userData.selectedMeeting.dateTime)}`);
+    await sendPushNotification(staffToken,"Appointment Scheduled",`Your appointment with the secretary is scheduled on ${extractDateTime(userData.selectedMeeting.dateTime)}`);
 
-      if (principal && staff) return 'success';
+      if (secretary && staff) return 'success';
       else return 500;
     }
   } catch (error) {

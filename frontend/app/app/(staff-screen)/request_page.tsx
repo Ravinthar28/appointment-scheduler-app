@@ -92,7 +92,8 @@ const RequestAppointmentModal = ({
           email:email,
           collegeCode:collegeCode,
           desc:reason,
-          dateTime:meetingDate
+          dateTime:meetingDate,
+          appointmentWith:'principal'
         }
         const url = `${baseUrl}/principal/appointment-request`;
         const response = await fetch(url,{

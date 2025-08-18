@@ -34,48 +34,6 @@ interface Appointment {
 // Data for demonstration (same as before)
 const appointments: Appointment[] = [
   // Explicitly type the appointments array
-  {
-    id: "1",
-    name: "Staff-1",
-    email: "staffmail@gmail.com",
-    description: "staff-meeting.",
-    avatar: require("../../assets/images/profile.png"), // Placeholder image
-  },
-  {
-    id: "2",
-    name: "Staff-2",
-    email: "staffmail@gmail.com",
-    description: "staff-meeting.",
-    avatar: require("../../assets/images/profile.png"),
-  },
-  {
-    id: "3",
-    name: "Staff-3",
-    email: "staffmail@gmail.com",
-    description: "staff meeting.",
-    avatar: require("../../assets/images/profile.png"),
-  },
-  {
-    id: "4",
-    name: "Staff-4",
-    email: "staffmail@gmail.com",
-    description: "staff meeting.",
-    avatar: require("../../assets/images/profile.png"),
-  },
-  {
-    id: "5",
-    name: "Staff-5",
-    email: "staffmail@gmail.com",
-    description: "staff meeting.",
-    avatar: require("../../assets/images/profile.png"),
-  },
-  {
-    id: "6",
-    name: "Staff-6",
-    email: "staffmail@gmail.com",
-    description: "staff meeting.",
-    avatar: require("../../assets/images/profile.png"),
-  },
 ];
 
 // Define Props for the component if it receives navigation from a navigator
@@ -172,7 +130,7 @@ const RescheduleModal = ({
   const acceptAppointment = async () => {
     appointment.dateTime = reMeetingDate;
     try {
-      const url = `${baseUrl}/principal/accept-appointment`;
+      const url = `${baseUrl}/secretary/accept-appointment`;
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -306,7 +264,7 @@ const PendingAppointmentsScreen = ({
   // FUNCTION TO FETCH THE REQUESTS DATA FROM THE DB
   const fetchRequest = async () => {
     try {
-      const url = `${baseUrl}/principal/appointments-data`;
+      const url = `${baseUrl}/secretary/appointments-data`;
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
