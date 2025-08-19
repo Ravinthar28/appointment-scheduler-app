@@ -9,6 +9,21 @@ export const register_styles = StyleSheet.create({
     paddingVertical:60,
     paddingHorizontal:20
   },
+  dropdownContainer: {
+  backgroundColor: "#D9D9D9",
+  borderRadius: 20,
+  width: "100%",
+  marginTop: 5,
+},
+dropdown: {
+  color: "#000",
+  backgroundColor: "#D9D9D9",
+  fontSize: 16,
+  width: "100%",
+  height: 50,
+  borderRadius: 15,
+},
+
   outerContainer: {
     width:"100%",
     height:"100%",

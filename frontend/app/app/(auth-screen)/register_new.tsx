@@ -16,6 +16,8 @@ import {
 import { register_styles } from "./new_style";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { Picker } from "@react-native-picker/picker";
+
 
 // BASE URL
 import { baseUrl } from "../apiUrl";
@@ -293,49 +295,25 @@ export default function Register() {
             </View>
 
             {/* Role Toggle */}
-            <Text style={[register_styles.label, { fontSize: 25 }]}>
-              Select Role
-            </Text>
-            <LinearGradient
-              colors={["#1F3988", "#080E22"]}
-              style={register_styles.toggleContainer}
-            >
-              <TouchableOpacity
-                style={[
-                  register_styles.toggleButton,
-                  selectedRole === "staff" && register_styles.toggleSelected,
-                ]}
-                onPress={() => setSelectedRole("staff")}
-              >
-                <Text
-                  style={
-                    selectedRole === "staff"
-                      ? register_styles.toggleTextSelected
-                      : register_styles.toggleText
-                  }
-                >
-                  Staff
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  register_styles.toggleButton,
-                  selectedRole === "principal" &&
-                    register_styles.toggleSelected,
-                ]}
-                onPress={() => setSelectedRole("principal")}
-              >
-                <Text
-                  style={
-                    selectedRole === "principal"
-                      ? register_styles.toggleTextSelected
-                      : register_styles.toggleText
-                  }
-                >
-                  Principal
-                </Text>
-              </TouchableOpacity>
-            </LinearGradient>
+            {/* Role Dropdown */}
+<View style={register_styles.inputBox}>
+  <Text style={[register_styles.label, { fontSize: 20 }]}>
+    Select Role
+  </Text>
+  <View style={register_styles.dropdownContainer}>
+    <Picker
+      selectedValue={selectedRole}
+      style={register_styles.dropdown}
+      dropdownIconColor="#000"
+      onValueChange={(itemValue) => setSelectedRole(itemValue)}
+    >
+      <Picker.Item label="Staff" value="staff" />
+      <Picker.Item label="Principal" value="principal" />
+      <Picker.Item label="Secretary" value="secretary" />
+    </Picker>
+  </View>
+</View>
+
 
             {/* Next Button */}
 
