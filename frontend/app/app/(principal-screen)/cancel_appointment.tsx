@@ -159,6 +159,9 @@ const RescheduleModal = ({
           </Text>
           <View style={cancel_modalStyles.modalContent}>
             <Text style={cancel_modalStyles.modalDescription}>{appointment.desc}</Text>
+            <Text style={{ color: "#3C64B1", marginTop: 5 }}>
+              {extractDateTime(appointment.dateTime)}
+            </Text>
 
             <View style={cancel_modalStyles.inputRow}>
               <Text style={cancel_modalStyles.inputLabel}>Re-meeting Date:</Text>

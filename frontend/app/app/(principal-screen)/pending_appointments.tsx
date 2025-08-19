@@ -529,6 +529,9 @@ const PendingAppointmentsScreen = ({
                     <Text style={styles.modalDescriptionText}>
                       {selectedAppointment.desc}
                     </Text>
+                    <Text style={styles.cardDateTime}>
+                      {extractDateTime(selectedAppointment.dateTime)}
+                    </Text>
                   </View>
 
                   <View style={styles.modalButtonContainer}>
@@ -578,6 +581,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f0f2f5", // Light background similar to image
+  },
+    cardDateTime: {
+    color: "#3C64B1",
+    marginTop: 5,
   },
   title: {
     fontSize: 24,

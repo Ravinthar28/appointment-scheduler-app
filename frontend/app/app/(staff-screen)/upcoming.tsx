@@ -81,6 +81,9 @@ const MeetingModal = ({ isVisible, onClose, meeting }: MeetingModalProps) => {
               {extractDateTime(meeting.dateTime)}
             </Text>
             <Text style={modalStyles.modalDescription}>{meeting.desc}</Text>
+            <Text style={styles.cardDateTime}>
+              {extractDateTime(meeting.dateTime)}
+            </Text>
           </View>
         </View>
       </View>
@@ -104,6 +107,7 @@ const ScheduleCard = ({
         {new Date(schedule.dateTime).toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
+          hour12: true,
         })}
       </Text>
 
@@ -222,6 +226,10 @@ const styles = StyleSheet.create({
     marginTop: 50,
     fontSize: 18,
     color: "#666",
+  },
+      cardDateTime: {
+    color: "#3C64B1",
+    marginTop: 5,
   },
 });
 
