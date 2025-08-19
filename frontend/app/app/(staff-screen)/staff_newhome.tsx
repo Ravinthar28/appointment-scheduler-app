@@ -14,6 +14,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 
 import RequestAppointmentModal from "../(staff-screen)/request_page";
+import AppointmentModal from "./request_secretary";
 import { baseUrl } from "../apiUrl";
 import NoNewAppointmentsScreen from "../(principal-screen)/no_appointment";
 
@@ -154,6 +155,8 @@ const StaffHomeScreen = ({ email, collegeCode }: staffHomeScreenProps) => {
     null
   );
   const [isRequestModalVisible, setIsRequestModalVisible] = useState(false);
+  const [appointmentModalVisible, setAppointmentModalVisible] = useState(false);
+
 
   const [upcomingAppointments, setUpcomingAppointments] = useState<
     appointments[]
@@ -245,22 +248,27 @@ const StaffHomeScreen = ({ email, collegeCode }: staffHomeScreenProps) => {
             We wish you a successful day.
           </Text>
         </View>
-
+        <Text style={principalHome.sectionTitle}>Request Appointments:</Text>
         <View style={principalHome.mainImageContainer}>
-          <Image
-            source={require("../../assets/images/Principal.jpg")}
-            style={principalHome.mainImage}
-          />
+          <View style={principalHome.imageBox}>
+            <TouchableOpacity onPress={() => setAppointmentModalVisible(true)}>
+              <Image
+                source={require("../../assets/images/profile.png")}
+                style={principalHome.mainImage}
+              />
+              <Text style={principalHome.mainImageText}>Secretary</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={principalHome.imageBox}>
+            <TouchableOpacity onPress={openRequestModal}>
+              <Image
+                source={require("../../assets/images/Principal.jpg")}
+                style={principalHome.mainImage}
+              />
+              <Text style={principalHome.mainImageText}>Principal</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-
-        <TouchableOpacity
-          style={principalHome.requestButton}
-          onPress={openRequestModal}
-        >
-          <Text style={principalHome.requestButtonText}>
-            Request Appointment
-          </Text>
-        </TouchableOpacity>
 
         <View style={{flex:1}}>
           <Text style={principalHome.sectionTitle}>Today's Schedule</Text>
@@ -291,6 +299,12 @@ const StaffHomeScreen = ({ email, collegeCode }: staffHomeScreenProps) => {
           email={email}
           collegeCode={collegeCode}
         />
+        <AppointmentModal
+        isVisible={appointmentModalVisible}
+        onClose={() => setAppointmentModalVisible(false)}
+        email={email}  
+        collegeCode={collegeCode}       
+/>
       </View>
     </>
   );
@@ -313,6 +327,13 @@ export const principalHome = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
   },
+ mainImageText:{
+   color: "#1b1919ff",
+   fontSize: 14,
+   marginTop: 5,
+   fontWeight: "bold",
+   textAlign: "center"
+ },
   welcomeText: {
     color: "#fff",
     fontSize: 14,
@@ -322,6 +343,10 @@ export const principalHome = StyleSheet.create({
     alignItems: "center",
     marginTop: -20,
     marginBottom: 10,
+    flexDirection: "row",
+    width:"100%",
+    paddingHorizontal: 20,
+    justifyContent: "center",
   },
   mainImage: {
     width: 120,
@@ -329,6 +354,7 @@ export const principalHome = StyleSheet.create({
     borderRadius: 60,
     borderWidth: 5,
     borderColor: "#fff",
+
   },
   requestButton: {
     backgroundColor: "#3E5793",
@@ -337,6 +363,16 @@ export const principalHome = StyleSheet.create({
     alignItems: "center",
     marginBottom: 30,
   },
+  imageBox: {
+    alignItems: "center",
+    marginHorizontal: 30,
+  },
+  imageLabel: {
+    marginTop: 8,
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#fff",       
+},
   requestButtonText: {
     color: "#fff",
     fontWeight: "bold",
@@ -347,6 +383,7 @@ export const principalHome = StyleSheet.create({
     fontWeight: "bold",
     color: "#3E5793",
     marginBottom: 20,
+    marginLeft: 20,
   },
   scheduleCard: {
     flexDirection: "row",
