@@ -177,7 +177,7 @@ export default function Register() {
         body: JSON.stringify({ userData }),
       });
       if (!response.ok) {
-        throw new Error("Failed to fetch teh data");
+        throw new Error("Failed to fetch the data");
       }
       alert("Registerd Successfully");
       router.push("/(auth-screen)/login_new");

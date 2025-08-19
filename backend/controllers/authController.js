@@ -31,7 +31,35 @@ async function createPrincipal(data){
 }
 
 export async function createSecretary(data){
+    const collectionName = data["collegeCode"]
+    try{
+        const schema = mongoose.models[collectionName] || mongoose.model(collectionName,registerSchema)
+        const newSecretary = {
+            name:data['fullName'],
+            phoneNo:data['phone'],
+            mailId:data['email'],
+            password:data['password'],
+            upcomingAppointments:[],
+            pastAppointments:[],
+            expoPushToken:data["expoPushToken"]
+        }
+        const model = await schema.findOneAndUpdate(
+            {},
+            {$set:{secretary:newSecretary}},
+            {new:true,upsert:false}
+        );
+        if(! model){
+            console.log("console errror");
+            return null
+        }
 
+        return model;
+        
+        
+    }
+    catch(error){
+        console.log(error);
+    }
 }
 async function createStaff(data) {
     const collectionName = data["collegeCode"]
