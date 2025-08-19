@@ -300,16 +300,7 @@ export default function Register() {
               <Text style={[register_styles.label, { fontSize: 20 }]}>
                 Select Role
               </Text>
-              <View style={register_styles.dropdownContainer}>
-                <Picker
-                  selectedValue={selectedRole}
-                  style={register_styles.dropdown}
-                  dropdownIconColor="#000"
-                  onValueChange={(itemValue) => setSelectedRole(itemValue)}
-                >
-                  <Picker.Item label="Staff" value="staff" />
-    Select Role
-  </Text>
+
   <View style={register_styles.dropdownContainer}>
     <Picker
       selectedValue={selectedRole}
