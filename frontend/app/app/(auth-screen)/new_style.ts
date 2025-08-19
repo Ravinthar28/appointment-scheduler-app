@@ -21,6 +21,7 @@ dropdown: {
   fontSize: 16,
   width: "100%",
   height: 50,
+  cursor: "pointer",
   borderRadius: 15,
 },
 
