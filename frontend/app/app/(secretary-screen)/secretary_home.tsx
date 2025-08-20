@@ -68,7 +68,7 @@ export default function SecretaryHome({
   // FUNCTION TO FETCH THE REQUESTS DATA FROM THE DB
   const fetchRequest = async () => {
     try {
-      const url = `${baseUrl}/principal/appointments-data`;
+      const url = `${baseUrl}/secretary/appointments-data`;
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -187,7 +187,7 @@ export default function SecretaryHome({
     <>
       <View style={new_principal_styles.welcomeCard}>
         <Text style={new_principal_styles.welcomeTitle}>
-          Welcome Principal !!
+          Welcome Secretary !!
         </Text>
         <Text style={new_principal_styles.welcomeDescription}>
           Hello, Principal! I hope you have a wonderful and productive day with your appointments.

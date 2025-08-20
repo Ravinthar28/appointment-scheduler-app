@@ -102,7 +102,7 @@ const RescheduleModal = ({
   const acceptAppointment = async () => {
     appointment.dateTime = reMeetingDate;
     try {
-      const url = `${baseUrl}/principal/accept-appointment`;
+      const url = `${baseUrl}/secretary/accept-appointment`;
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -262,7 +262,7 @@ const CancelAppointmentsScreen = ({
   // FUNCTION TO FETCH THE REQUESTS DATA FROM THE DB
   const fetchRequest = async () => {
     try {
-      const url = `${baseUrl}/principal/appointments-data`;
+      const url = `${baseUrl}/secretary/appointments-data`;
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

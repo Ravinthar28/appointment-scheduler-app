@@ -208,7 +208,7 @@ export default function ConfirmedAppointmentScreen({
 
   const fetchRequest = async () => {
     try {
-      const url = `${baseUrl}/principal/appointments-data`;
+      const url = `${baseUrl}/secretary/appointments-data`;
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -225,24 +225,6 @@ export default function ConfirmedAppointmentScreen({
     fetchRequest();
   }, []);
 
-  const dummyData: appointments[] = [
-    {
-      id: "jfoweijfoiewj",
-      collegeCode: "9210",
-      userName: "Staff 1",
-      userEmail: "staff1@gmail.com",
-      desc: "This is a dummy description for staff 1",
-      dateTime: new Date(Date.now() - 3600000), // Example: 1 hour ago
-    },
-    {
-      id: "jfoweijfoiewj2",
-      collegeCode: "9210",
-      userName: "Staff 2",
-      userEmail: "staff2@gmail.com",
-      desc: "Another dummy description for staff 2",
-      dateTime: new Date(Date.now() + 86400000), // Example: 1 day from now
-    },
-  ];
 
   const extractDateTime = (dateTime?: Date) => {
     const dateObject = new Date(dateTime || new Date());
@@ -267,7 +249,7 @@ export default function ConfirmedAppointmentScreen({
       selectedMeeting.collegeCode = collegeCode;
       try {
         const updatedMeeting = { ...selectedMeeting, dateTime: newDateTime };
-        const url = `${baseUrl}/principal/accept-appointment`;
+        const url = `${baseUrl}/secretary/accept-appointment`;
         const response = await fetch(url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -309,9 +291,8 @@ export default function ConfirmedAppointmentScreen({
     if (selectedMeeting) {
       selectedMeeting.collegeCode = collegeCode;
     }
-    console.log(selectedMeeting);
     try {
-      const url = `${baseUrl}/principal/cancel-appointment`;
+      const url = `${baseUrl}/secretary/cancel-appointment`;
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
