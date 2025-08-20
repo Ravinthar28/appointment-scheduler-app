@@ -26,7 +26,7 @@ interface appointments {
   userEmail: string;
   desc: string;
   dateTime: Date;
-  appointmentWith:string;
+  appointmentWith: string;
 }
 
 // FUNCTION TO EXTRACT THE DATE AND TIME FORMAT
@@ -41,7 +41,9 @@ const extractDateTime = (dateTime: Date) => {
     dateObject.getHours() > 12
       ? dateObject.getHours() - 12
       : dateObject.getHours()
-  }:${dateObject.getMinutes()} ${dateObject.getHours() > 12 ? "PM" : "AM"}`;
+  }:${dateObject.getMinutes().toString().padStart(2, "0")} ${
+    dateObject.getHours() > 12 ? "PM" : "AM"
+  }`;
 
   return `${date}, ${time}`;
 };
@@ -110,13 +112,13 @@ const ScheduleCard = ({
           hour12: true,
         })}
       </Text>
-
-      {/* <Text style={principalHome.endTimeText}>{schedule.endTime}</Text> */}
     </View>
     <View style={principalHome.divider} />
     <View style={principalHome.detailsContainer}>
-      <Text style={principalHome.meetingTitle}>Appointment with {(schedule.appointmentWith === 'principal')? 'Principal' : 'Secretary'}</Text>
-      {/* <Text style={principalHome.meetingSubject}>{schedule.userEmail}</Text> */}
+      <Text style={principalHome.meetingTitle}>
+        Appointment with{" "}
+        {schedule.appointmentWith === "principal" ? "Principal" : "Secretary"}
+      </Text>
       <Text style={principalHome.meetingDescription} numberOfLines={1}>
         {schedule.desc}
       </Text>
@@ -171,23 +173,52 @@ const UpcomingMeetingsScreen = ({
     await fetchAppointmentData();
     setRefreshing(false);
   };
+
+  // 🔹 Group appointments by date
+  const groupAppointmentsByDate = (appointments: appointments[]) => {
+    return appointments.reduce(
+      (groups: { [key: string]: appointments[] }, appointment) => {
+        const date = new Date(appointment.dateTime).toLocaleDateString("en-GB", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+        if (!groups[date]) {
+          groups[date] = [];
+        }
+        groups[date].push(appointment);
+        return groups;
+      },
+      {}
+    );
+  };
+
   function UpComingAppointmentsCards() {
+    const groupedAppointments = groupAppointmentsByDate(upcomingAppointments);
+    // Sort dates in ascending order (earliest first)
+    const dates = Object.keys(groupedAppointments).sort(
+      (a, b) => new Date(a).getTime() - new Date(b).getTime()
+    );
+
     return (
-      <>
-        <ScrollView
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-          }
-        >
-          {upcomingAppointments.map((schedule) => (
-            <ScheduleCard
-              key={schedule._id}
-              schedule={schedule}
-              onPress={handleCardPress}
-            />
-          ))}
-        </ScrollView>
-      </>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
+      >
+        {dates.map((date) => (
+          <View key={date} style={{ marginBottom: 20 }}>
+            <Text style={styles.dateHeader}>{date}</Text>
+            {groupedAppointments[date].map((schedule) => (
+              <ScheduleCard
+                key={schedule._id}
+                schedule={schedule}
+                onPress={handleCardPress}
+              />
+            ))}
+          </View>
+        ))}
+      </ScrollView>
     );
   }
 
@@ -227,9 +258,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#666",
   },
-      cardDateTime: {
+  cardDateTime: {
     color: "#3C64B1",
     marginTop: 5,
+  },
+  dateHeader: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#2C3E50",
+    marginBottom: 10,
   },
 });
 

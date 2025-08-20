@@ -475,6 +475,9 @@ const PendingAppointmentsScreen = ({
                     {/* Shortened description for list view */}
                     {appointment.desc.substring(0, 70)}...
                   </Text>
+                  <Text style={styles.cardDateTime}>
+                    {extractDateTime(appointment.dateTime)}
+                    </Text>
                 </View>
               </TouchableOpacity>
             )
@@ -528,9 +531,6 @@ const PendingAppointmentsScreen = ({
                   <View style={styles.modalDescriptionContainer}>
                     <Text style={styles.modalDescriptionText}>
                       {selectedAppointment.desc}
-                    </Text>
-                    <Text style={styles.cardDateTime}>
-                      {extractDateTime(selectedAppointment.dateTime)}
                     </Text>
                   </View>
 
