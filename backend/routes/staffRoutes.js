@@ -7,7 +7,8 @@ const router = express.Router();
 const {
     fetchPrincipal,
     requestAppointmentController,
-    fetchAppointmentsController
+    fetchAppointmentsController,
+    modalDataController
     } = require('../controllers/staffController');
 
 // const { fetchDataController } = require('../controllers/staffController');
@@ -49,6 +50,18 @@ router.post('/fetch-appointments',async (req,res)=>{
         res.sendStatus(500);
     }
 });
+
+router.post('/fetch-modal-data',async(req,res)=>{
+    try{
+        const userData = req.body;
+        const response = await modalDataController(userData);
+        if(response) res.json(response);
+    }
+    catch(error){
+        console.log(error);
+        res.sendStatus(500);
+    }
+})
 
 router.post('/request-appointment',async (req,res)=>{
     try{

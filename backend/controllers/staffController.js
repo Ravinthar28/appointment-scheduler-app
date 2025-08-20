@@ -60,6 +60,29 @@ async function fetchAppointmentsController(userData){
     }
 }
 
+async function modalDataController(userData){
+    try{
+        const collectionName = userData.collegeCode;
+        const schema = mongoose.models[collectionName] || mongoose.model(collectionName,registerSchema);
+        const users = await schema.findOne({})
+        if(users){
+            return({
+                principalData:{
+                    name:users.principal.name,
+                    mailId:users.principal.mailId
+                },
+                secretaryData:{
+                    name:users.secretary.name,
+                    mailId:users.secretary.mailId
+                }
+            })
+        }
+    }
+    catch(error){
+        console.log(error);
+    }
+}
+
 async function requestAppointmentController(messageData){
     try{
         const collectionName = messageData.collegeCode;
@@ -85,5 +108,6 @@ async function requestAppointmentController(messageData){
 module.exports = {
     fetchPrincipal,
     fetchAppointmentsController,
-    requestAppointmentController
+    requestAppointmentController,
+    modalDataController
 }

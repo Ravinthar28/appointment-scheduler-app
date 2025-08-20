@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -117,14 +117,38 @@ const AppointmentModal = ({
       onClose();
     };
 
-  const handleRequestAppointment = () => {
-    console.log("Appointment Requested:");
-    console.log("Reason:", reason);
-    console.log("Date:", formatDate(meetingDate));
-    console.log("Time:", formatTime(meetingDate));
-    setReason("");
-    onClose();
-  };
+  interface modalDataProps{
+      principalData:{
+        name:string,
+        mailId:string
+      },
+      secretaryData:{
+        name:string,
+        mailId:string
+      }
+    }
+    const [requestModalData,setRequestModalData] = useState<modalDataProps | null>(null);
+        const fetchModalData = async ()=>{
+          try{
+            const reqBody = {
+              collegeCode
+            }
+            const url = `${baseUrl}/staff/fetch-modal-data`;
+            const response = await fetch(url,{
+              method:'POST',
+              headers:{'Content-Type':'application/json'},
+              body:JSON.stringify(reqBody)
+            })
+            const data = await response.json();
+            setRequestModalData(data);
+          }catch(error){
+            console.log(error);
+          }
+        }
+  
+        useEffect(() => {
+              fetchModalData();
+            }, []);
 
   return (
     <Modal
@@ -139,13 +163,19 @@ const AppointmentModal = ({
             <Ionicons name="close" size={24} color="#000" />
           </TouchableOpacity>
           <Image
-            source={require("../../assets/images/Principal.jpg")}
+            source={require("../../assets/images/secretary_pic.jpg")}
             style={modalStyles.modalAvatar}
           />
           <Text style={modalStyles.modalStaffName}>
-            Dr. C. Mathalai Sundaram
+            {
+              requestModalData?.secretaryData.name
+            }
           </Text>
-          <Text style={modalStyles.modalStaffEmail}>principal@gmail.com</Text>
+          <Text style={modalStyles.modalStaffEmail}>
+            {
+              requestModalData?.secretaryData.mailId
+            }
+          </Text>
 
           <View style={modalStyles.modalContent}>
             <TextInput

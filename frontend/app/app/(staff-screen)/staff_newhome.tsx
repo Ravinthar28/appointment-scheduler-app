@@ -194,9 +194,30 @@ const StaffHomeScreen = ({ email, collegeCode }: staffHomeScreenProps) => {
       }
     };
 
+    const [requestModalData,setRequestModalData] = useState();
+    const fetchModalData = async ()=>{
+      try{
+        const reqBody = {
+          collegeCode
+        }
+        const url = `${baseUrl}/staff/fetch-modal-data`;
+        const response = await fetch(url,{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(reqBody)
+        })
+        const data = await response.json();
+        setRequestModalData(data);
+      }catch(error){
+        console.log(error);
+      }
+    }
     useEffect(() => {
       fetchAppointmentData();
+      fetchModalData();
     }, []);
+
+    console.log(requestModalData);
 
     const [refreshing, setRefreshing] = useState(false);
 
@@ -240,6 +261,7 @@ const StaffHomeScreen = ({ email, collegeCode }: staffHomeScreenProps) => {
         </>
       );
     }
+    
     return (
       <>
         <View style={principalHome.welcomeCard}>
@@ -254,7 +276,7 @@ const StaffHomeScreen = ({ email, collegeCode }: staffHomeScreenProps) => {
           <View style={principalHome.imageBox}>
             <TouchableOpacity onPress={() => setAppointmentModalVisible(true)}>
               <Image
-                source={require("../../assets/images/profile.png")}
+                source={require("../../assets/images/secretary_pic.jpg")}
                 style={principalHome.mainImage}
               />
               <Text style={principalHome.mainImageText}>Secretary</Text>

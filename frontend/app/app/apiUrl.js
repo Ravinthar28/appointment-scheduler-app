@@ -3,7 +3,7 @@
 
 //export const baseUrl = "http://localhost:3000"
 
-export const baseUrl = "http://10.248.84.146:3000"
+export const baseUrl = "http://localhost:3000"
 
 
 
