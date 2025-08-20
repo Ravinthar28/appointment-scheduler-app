@@ -84,7 +84,7 @@ export default function PrincipalDashboard() {
     >
       <View style={new_principal_styles.header}>
         <Image
-          source={require("../../assets//images//profile.png")} // Replace with your image path
+          source={require("../../assets//images//Principal.jpg")} // Replace with your image path
           style={new_principal_styles.profilePic}
         />
         <TouchableOpacity onPress={handleLogOutPress}>
