@@ -83,9 +83,6 @@ const MeetingModal = ({ isVisible, onClose, meeting }: MeetingModalProps) => {
               {extractDateTime(meeting.dateTime)}
             </Text>
             <Text style={modalStyles.modalDescription}>{meeting.desc}</Text>
-            <Text style={styles.cardDateTime}>
-              {extractDateTime(meeting.dateTime)}
-            </Text>
           </View>
         </View>
       </View>

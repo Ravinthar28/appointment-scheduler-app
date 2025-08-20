@@ -58,6 +58,31 @@ cron.schedule('* * * * *', async () => {
           }
         }]
       );
+
+      // SECRETARY PART
+      await DynamicModel.updateMany(
+        { "secretary.confirmedAppointments.dateTime": { $lte: now } },
+        [{
+          $set: {
+            "secretary.pastAppointments": {
+              $concatArrays: ["$secretary.pastAppointments", {
+                $filter: {
+                  input: "$secretary.confirmedAppointments",
+                  as: "appt",
+                  cond: { $lte: ["$$appt.dateTime", now] }
+                }
+              }]
+            },
+            "secretary.confirmedAppointments": {
+              $filter: {
+                input: "$secretary.confirmedAppointments",
+                as: "appt",
+                cond: { $gt: ["$$appt.dateTime", now] }
+              }
+            }
+          }
+        }]
+      );
     }
   } catch (err) {
     console.error('❌ Cron job error:', err);

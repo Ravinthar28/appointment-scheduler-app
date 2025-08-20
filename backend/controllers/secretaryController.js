@@ -39,9 +39,9 @@ const newAppointment = async (userData) => {
 
 
     const users = await schema.findOne({})
-    const principalToken = users.principal.expoPushToken;
+    const secretaryToken = users.secretary.expoPushToken;
 
-    await sendPushNotification(principalToken,"Appointment Request",`You have a new appointment request from ${staff.name}`)
+    await sendPushNotification(secretaryToken,"Appointment Request",`You have a new appointment request from ${staff.name}`)
 
 
     if (model) return 200;
@@ -245,7 +245,7 @@ const cancelAppointment = async (userData)=>{
     const users = await schema.findOne({'staffs.mailId':msgData.userEmail});
     const staff = users.staffs.find(data => data.mailId === msgData.userEmail);
     const expoPushToken = staff.expoPushToken;
-    await sendPushNotification(expoPushToken,'Appointment Canceled','Your Appointment was canceled by the principal');
+    await sendPushNotification(expoPushToken,'Appointment Canceled','Your Appointment was canceled by the secretary');
     
     if(removed && updatePrincipalCanceled && updateStaffCanceled) return true;
   }
