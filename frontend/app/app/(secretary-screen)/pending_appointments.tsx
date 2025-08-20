@@ -312,7 +312,7 @@ const PendingAppointmentsScreen = ({
     }
     try {
 
-      const url = `${baseUrl}/principal/accept-appointment`;
+      const url = `${baseUrl}/secretary/accept-appointment`;
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -351,7 +351,7 @@ const PendingAppointmentsScreen = ({
   // FUNCTION FOR CANCELING THE APPOINTMENT
   const cancelAppointment = async () => {
     try {
-      const url = `${baseUrl}/principal/cancel-appointment`;
+      const url = `${baseUrl}/secretary/cancel-appointment`;
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

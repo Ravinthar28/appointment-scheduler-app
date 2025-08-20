@@ -150,7 +150,7 @@ const acceptAppointment = async (userData) => {
     }
     if (userData.selectedTab === "confirmed") {
       const secretary = await schema.findOneAndUpdate(
-        { "drvtrysty.confirmedAppointments.id": userData.selectedMeeting.id },
+        { "secretary.confirmedAppointments.id": userData.selectedMeeting.id },
         {
           $set: {
             "secretary.confirmedAppointments.$.dateTime":
@@ -198,6 +198,7 @@ const cancelAppointment = async (userData)=>{
       userEmail: userData.selectedMeeting.userEmail,
       desc: userData.selectedMeeting.desc,
       dateTime: userData.selectedMeeting.dateTime,
+      appointmentWith:'secretary'
     };
 
     const collectionName = userData.selectedMeeting.collegeCode;
@@ -207,8 +208,8 @@ const cancelAppointment = async (userData)=>{
     // TO CANCEL THE APPOINTMENT FROM CONFIRMED TAB
     if(userData.selectedTab == 'confirmed'){
       const updatePrincipal = await schema.findOneAndUpdate(
-      {'principal.confirmedAppointments.id':userData.selectedMeeting.id},
-      {$pull:{'principal.confirmedAppointments':{id:userData.selectedMeeting.id}}},
+      {'secretary.confirmedAppointments.id':userData.selectedMeeting.id},
+      {$pull:{'secretary.confirmedAppointments':{id:userData.selectedMeeting.id}}},
       {new:true,upsert:false}
     );
     const updateStaff = await schema.findOneAndUpdate(
@@ -222,8 +223,8 @@ const cancelAppointment = async (userData)=>{
     // TO CANCEL THE APPOINTMENT FROM PAST TAB
     if(userData.selectedTab == 'pending'){
       const updatePrincipal = await schema.findOneAndUpdate(
-      {'principal.pendingAppointments.id':userData.selectedMeeting.id},
-      {$pull:{'principal.pendingAppointments':{id:userData.selectedMeeting.id}}},
+      {'secretary.pendingAppointments.id':userData.selectedMeeting.id},
+      {$pull:{'secretary.pendingAppointments':{id:userData.selectedMeeting.id}}},
       {new:true,upsert:false}
     );
     if(updatePrincipal) removed = true;
@@ -231,7 +232,7 @@ const cancelAppointment = async (userData)=>{
     
     const updatePrincipalCanceled = await schema.findOneAndUpdate(
       {},
-      {$push:{'principal.canceledAppointments':msgData}},
+      {$push:{'secretary.canceledAppointments':msgData}},
       {new:true,upsert:false}
     );
 

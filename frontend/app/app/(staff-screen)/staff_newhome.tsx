@@ -218,7 +218,7 @@ const StaffHomeScreen = ({ email, collegeCode }: staffHomeScreenProps) => {
               />
             }
           >
-            {upcomingAppointments
+            {upcomingAppointments && upcomingAppointments
               .filter((appointment) => {
                 const apptDate = new Date(appointment?.dateTime);
                 const today = new Date();
@@ -273,7 +273,7 @@ const StaffHomeScreen = ({ email, collegeCode }: staffHomeScreenProps) => {
 
         <View style={{flex:1}}>
           <Text style={principalHome.sectionTitle}>Today's Schedule</Text>
-          {upcomingAppointments.length === 0 ? (
+          {upcomingAppointments && upcomingAppointments.length === 0 ? (
             <NoNewAppointmentsScreen />
           ) : (
             <UpComingAppointmentsCards />

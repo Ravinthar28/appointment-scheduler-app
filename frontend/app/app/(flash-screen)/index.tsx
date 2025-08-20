@@ -43,7 +43,17 @@ export default function SplashScreen() {
               collegeCode: user.collegeCode,
             },
           });
-        } else {
+        } 
+        else if(user.userType === 'secretary'){
+          router.push({
+            pathname: "/(secretary-screen)",
+            params: {
+              email: user.email,
+              collegeCode: user.collegeCode,
+            },
+          });
+        }
+        else {
           // staff route
           router.push({
             pathname: "/(staff-screen)/new_index",

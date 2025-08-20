@@ -11,9 +11,6 @@ const connectDB = require('./config/db');
 
 require('./scheduler');
 
-
-
-
 const app = express();
 const port = 3000;
 
