@@ -194,30 +194,9 @@ const StaffHomeScreen = ({ email, collegeCode }: staffHomeScreenProps) => {
       }
     };
 
-    const [requestModalData,setRequestModalData] = useState();
-    const fetchModalData = async ()=>{
-      try{
-        const reqBody = {
-          collegeCode
-        }
-        const url = `${baseUrl}/staff/fetch-modal-data`;
-        const response = await fetch(url,{
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify(reqBody)
-        })
-        const data = await response.json();
-        setRequestModalData(data);
-      }catch(error){
-        console.log(error);
-      }
-    }
     useEffect(() => {
       fetchAppointmentData();
-      fetchModalData();
     }, []);
-
-    console.log(requestModalData);
 
     const [refreshing, setRefreshing] = useState(false);
 
