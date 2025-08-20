@@ -433,6 +433,9 @@ const PendingAppointmentsScreen = ({
                     {/* Shortened description for list view */}
                     {appointment.desc.substring(0, 70)}...
                   </Text>
+                  <Text style={{color: "#3C64B1", marginTop: 5 }}>
+                    {extractDateTime(appointment.dateTime)}
+                  </Text>
                 </View>
               </TouchableOpacity>
             )
