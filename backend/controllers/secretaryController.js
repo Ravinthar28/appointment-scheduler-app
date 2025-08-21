@@ -30,7 +30,7 @@ const newAppointment = async (userData) => {
             desc: userData.desc,
             dateTime: userData.dateTime,
             collegeCode:collectionName,
-            appointmentWith: userData.appointmentWith
+            appointmentWith:'secretary'
           },
         },
       },

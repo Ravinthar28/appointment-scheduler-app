@@ -96,8 +96,9 @@ const ScheduleCard = ({
 }: {
   schedule: appointments;
   onPress: (schedule: appointments) => void;
-}) => (
-  <TouchableOpacity
+}) => {
+  return(
+    <TouchableOpacity
     style={principalHome.scheduleCard}
     onPress={() => onPress(schedule)}
   >
@@ -121,7 +122,8 @@ const ScheduleCard = ({
       </Text>
     </View>
   </TouchableOpacity>
-);
+  )
+};
 
 const UpcomingMeetingsScreen = ({
   email,

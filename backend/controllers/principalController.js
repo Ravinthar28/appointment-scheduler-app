@@ -31,7 +31,7 @@ const newAppointment = async (userData) => {
             desc: userData.desc,
             dateTime: userData.dateTime,
             collegeCode:collectionName,
-            appointmentWith:userData.appointmentWith
+            appointmentWith:'principal'
           },
         },
       },
@@ -97,6 +97,7 @@ const acceptAppointment = async (userData) => {
       userEmail: userData.selectedMeeting.userEmail,
       desc: userData.selectedMeeting.desc,
       dateTime: userData.selectedMeeting.dateTime,
+      appointmentWith:'principal'
     };
     const collectionName = userData.selectedMeeting.collegeCode;
     const schema =
@@ -198,6 +199,7 @@ const cancelAppointment = async (userData)=>{
       userEmail: userData.selectedMeeting.userEmail,
       desc: userData.selectedMeeting.desc,
       dateTime: userData.selectedMeeting.dateTime,
+      appointmentWith:'principal'
     };
 
     const collectionName = userData.selectedMeeting.collegeCode;
