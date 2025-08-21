@@ -190,7 +190,7 @@ export default function SecretaryHome({
           Welcome Secretary !!
         </Text>
         <Text style={new_principal_styles.welcomeDescription}>
-          Hello, Principal! I hope you have a wonderful and productive day with your appointments.
+          Hello, Secretary! I hope you have a wonderful and productive day with your appointments.
         </Text>
       </View>
 
