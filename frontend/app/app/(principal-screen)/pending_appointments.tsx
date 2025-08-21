@@ -525,7 +525,7 @@ const PendingAppointmentsScreen = ({
                     {selectedAppointment.userName}
                   </Text>
                   <Text style={styles.modalStaffEmail}>
-                    {selectedAppointment.userName}
+                    {selectedAppointment.userEmail}
                   </Text>
                   <Text>{extractDateTime(selectedAppointment.dateTime)}</Text>
                   <View style={styles.modalDescriptionContainer}>
