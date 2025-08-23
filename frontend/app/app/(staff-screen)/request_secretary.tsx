@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   Image,
   Platform,
-  Alert,
 } from "react-native";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";

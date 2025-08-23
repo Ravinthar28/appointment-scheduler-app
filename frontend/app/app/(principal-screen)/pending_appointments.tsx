@@ -6,8 +6,6 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
-  SafeAreaView,
-  StatusBar,
   Dimensions,
   Modal,
   ImageSourcePropType,
@@ -16,7 +14,6 @@ import {
 import Icon from "react-native-vector-icons/Ionicons";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import { baseUrl } from "../apiUrl";
-import { new_principal_styles } from "./style";
 import NoNewAppointmentsScreen from "./no_appointment";
 import DateTimePicker from "@react-native-community/datetimepicker";
 

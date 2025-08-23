@@ -1,6 +1,5 @@
 
 import { StyleSheet } from "react-native";
-import { green } from "react-native-reanimated/lib/typescript/Colors";
 
 export const new_principal_styles = StyleSheet.create({
   container: {

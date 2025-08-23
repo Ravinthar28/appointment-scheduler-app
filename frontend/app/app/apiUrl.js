@@ -3,10 +3,10 @@
 
 //export const baseUrl = "http://localhost:3000"
 
-export const baseUrl = "http://192.168.11.245:3000"
+// export const baseUrl = "http://192.168.14.231:5000"
 
 
 
 // college URL
 
-//export const baseUrl = "https://appointment-scheduler-15l0.onrender.com"
+export const baseUrl = "https://appointment-scheduler-15l0.onrender.com"

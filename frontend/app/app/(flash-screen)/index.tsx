@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   View,
   Image,
-  StyleSheet,
-  SafeAreaView,
   Modal,
   Text,
   ImageBackground,

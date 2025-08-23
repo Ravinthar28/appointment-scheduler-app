@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, Image, TouchableOpacity, SafeAreaView } from 'react-native';
+import { StyleSheet, View, Text, Image } from 'react-native';
 
 
 const NoNewAppointmentsScreen = () => {

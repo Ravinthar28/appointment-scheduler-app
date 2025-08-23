@@ -15,7 +15,7 @@ import {
   MaterialCommunityIcons,
   FontAwesome,
 } from "@expo/vector-icons"; // For icons
-import { router, useLocalSearchParams, useRouter } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 
 import { new_principal_styles } from "./style";
 import PrincipalHome from "./principal_home";
